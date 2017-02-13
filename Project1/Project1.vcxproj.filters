@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Grab_CameraEvents_Usb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
