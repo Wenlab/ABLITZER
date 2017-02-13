@@ -117,79 +117,68 @@ int main(int argc, char* argv[])
         info.SetDeviceClass( Camera_t::DeviceClass());
 
         // Create an instant camera object with the first found camera device matching the specified device class.
-        Camera_t camera( CTlFactory::GetInstance().CreateFirstDevice( info));
+        Camera_t camera( CTlFactory::GetInstance().CreateFirstDevice(info));
 
-        // Register the standard configuration event handler for enabling software triggering.
-        // The software trigger configuration handler replaces the default configuration
-        // as all currently registered configuration handlers are removed by setting the registration mode to RegistrationMode_ReplaceAll.
-        camera.RegisterConfiguration( new CSoftwareTriggerConfiguration, RegistrationMode_ReplaceAll, Cleanup_Delete);
+		// Open the camera for setting parameters.
+		camera.Open();
+
+		// Set the acquisition mode to single frame
+		camera.AcquisitionMode.SetValue(AcquisitionMode_Continuous);
+		// Select the frame burst start trigger
+		camera.TriggerSelector.SetIntValue(TriggerSelector_FrameBurstStart);
+		// Set the mode for the selected trigger
+		camera.TriggerMode.SetValue(TriggerMode_Off);
+		// Disable the acquisition frame rate parameter (this will disable the camera¡¯s
+		// internal frame rate control and allow you to control the frame rate with
+		// software frame start trigger signals)
+		camera.AcquisitionFrameRateEnable.SetValue(false);
+		// Select the frame start trigger
+		camera.TriggerSelector.SetValue(TriggerSelector_FrameStart);
+		// Set the mode for the selected trigger
+		camera.TriggerMode.SetValue(TriggerMode_On);
+		// Set the source for the selected trigger
+		camera.TriggerSource.SetValue(TriggerSource_Software);
+		// Set for the timed exposure mode
+		camera.ExposureMode.SetValue(ExposureMode_Timed);
+		// Set the exposure time
+		camera.ExposureTime.SetValue(3000.0);
+		// Execute an acquisition start command to prepare for frame acquisition
+
+
 		
-        // For demonstration purposes only, add sample configuration event handlers to print out information
-        // about camera use and image grabbing.
-        camera.RegisterConfiguration( new CConfigurationEventPrinter, RegistrationMode_Append, Cleanup_Delete); // Camera use.
 
-        // For demonstration purposes only, register another image event handler.
-        camera.RegisterImageEventHandler( new CSampleImageEventHandler, RegistrationMode_Append, Cleanup_Delete);
+		
 
-        // Camera event processing must be activated first, the default is off.
-        camera.GrabCameraEvents = true;
+		
+		// Start the grabbing of c_countOfImagesToGrab images.
+		camera.StartGrabbing(c_countOfImagesToGrab);
+
+		// This smart pointer will receive the grab result data.
+		CGrabResultPtr ptrGrabResult;
+
+		camera.AcquisitionStart.Execute();
+		for (int i = 0; i<c_countOfImagesToGrab; i++)
+		{
+			// Execute a Trigger Software command to apply a frame start
+			// trigger signal to the camera
+			// Execute the software trigger. Wait up to 1000 ms for the camera to be ready for trigger.		
+			if (camera.WaitForFrameTriggerReady(1000, TimeoutHandling_ThrowException))
+			{
+				camera.ExecuteSoftwareTrigger();
+			}
+
+			
+			// Retrieve acquired frame here
+			camera.RetrieveResult(5000, ptrGrabResult, TimeoutHandling_ThrowException);
+			// Nothing to do here with the grab result, the grab results are handled by the registered event handler.
+		}
+		camera.AcquisitionStop.Execute();
+		// Note: as long as the Trigger Selector is set to FrameStart, executing
+		// a Trigger Software command will apply a software frame start trigger
+		// signal to the camera
 
 
-        // Register an event handler for the Exposure End event. For each event type, there is a "data" node
-        // representing the event. The actual data that is carried by the event is held by child nodes of the
-        // data node. In the case of the Exposure End event, the child nodes are EventExposureEndFrameID and EventExposureEndTimestamp.
-        // The CSampleCameraEventHandler demonstrates how to access the child nodes within
-        // a callback that is fired for the parent data node.
-        // The user-provided ID eMyExposureEndEvent can be used to distinguish between multiple events (not shown).
-        camera.RegisterCameraEventHandler( pHandler1, "EventExposureEndData", eMyExposureEndEvent, RegistrationMode_ReplaceAll, Cleanup_None);
-
-        // The handler is registered for both, the EventExposureEndFrameID and the EventExposureEndTimestamp
-        // node. These nodes represent the data carried by the Exposure End event.
-        // For each Exposure End event received, the handler will be called twice, once for the frame ID, and
-        // once for the time stamp.
-        camera.RegisterCameraEventHandler( pHandler2, "EventExposureEndFrameID", eMyExposureEndEvent, RegistrationMode_Append, Cleanup_None);
-        camera.RegisterCameraEventHandler( pHandler2, "EventExposureEndTimestamp", eMyExposureEndEvent, RegistrationMode_Append, Cleanup_None);
-
-
-        // Open the camera for setting parameters.
-        camera.Open();
-
-        // Check if the device supports events.
-        if ( !GenApi::IsAvailable( camera.EventSelector))
-        {
-            throw RUNTIME_EXCEPTION( "The device doesn't support events.");
-        }
-
-        // Enable sending of Exposure End events.
-        // Select the event to receive.
-        camera.EventSelector.SetValue(EventSelector_ExposureEnd);
-        // Enable it.
-        camera.EventNotification.SetValue(EventNotification_On);
-
-        // Start the grabbing of c_countOfImagesToGrab images.
-        camera.StartGrabbing( c_countOfImagesToGrab);
-
-        // This smart pointer will receive the grab result data.
-        CGrabResultPtr ptrGrabResult;
-
-        // Camera.StopGrabbing() is called automatically by the RetrieveResult() method
-        // when c_countOfImagesToGrab images have been retrieved.
-        while ( camera.IsGrabbing())
-        {
-            // Execute the software trigger. Wait up to 1000 ms for the camera to be ready for trigger.
-            if ( camera.WaitForFrameTriggerReady( 1000, TimeoutHandling_ThrowException))
-            {
-                camera.ExecuteSoftwareTrigger();
-            }
-
-            // Retrieve grab results and notify the camera event and image event handlers.
-            camera.RetrieveResult( 5000, ptrGrabResult, TimeoutHandling_ThrowException);
-            // Nothing to do here with the grab result, the grab results are handled by the registered event handler.
-        }
-
-        // Disable sending Exposure End events.
-        camera.EventSelector.SetValue(EventSelector_ExposureEnd);
-        camera.EventNotification.SetValue(EventNotification_Off);
+    
     }
     catch (const GenericException &e)
     {
@@ -199,9 +188,6 @@ int main(int argc, char* argv[])
         exitCode = 1;
     }
 
-    // Delete the event handlers.
-    delete pHandler1;
-    delete pHandler2;
 
     // Comment the following two lines to disable waiting on exit.
     cerr << endl << "Press Enter to exit." << endl;
