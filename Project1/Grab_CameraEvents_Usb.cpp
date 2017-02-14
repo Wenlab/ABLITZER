@@ -35,6 +35,9 @@
 // Include files used by samples.
 #include "../include/ConfigurationEventPrinter.h"
 #include "../include/CameraEventPrinter.h"
+#ifdef PYLON_WIN_BUILD
+#    include <pylon/PylonGUI.h>
+#endif
 
 // Namespace for using pylon objects.
 using namespace Pylon;
@@ -118,11 +121,14 @@ int main(int argc, char* argv[])
 
         // Create an instant camera object with the first found camera device matching the specified device class.
         Camera_t camera( CTlFactory::GetInstance().CreateFirstDevice(info));
+		// Print the model name of the camera.
+		cout << "Using device " << camera.GetDeviceInfo().GetModelName() << endl;
 
 		// Open the camera for setting parameters.
 		camera.Open();
 
-		// Set the acquisition mode to single frame
+		// Set the acquisition mode to continuoud, in order to be ready for receiving software triggers
+		// If using single frame mode, you must execute a new Acquisition Start command for each frame
 		camera.AcquisitionMode.SetValue(AcquisitionMode_Continuous);
 		// Select the frame burst start trigger
 		camera.TriggerSelector.SetIntValue(TriggerSelector_FrameBurstStart);
@@ -144,12 +150,6 @@ int main(int argc, char* argv[])
 		camera.ExposureTime.SetValue(3000.0);
 		// Execute an acquisition start command to prepare for frame acquisition
 
-
-		
-
-		
-
-		
 		// Start the grabbing of c_countOfImagesToGrab images.
 		camera.StartGrabbing(c_countOfImagesToGrab);
 
@@ -166,10 +166,31 @@ int main(int argc, char* argv[])
 			{
 				camera.ExecuteSoftwareTrigger();
 			}
-
-			
 			// Retrieve acquired frame here
-			camera.RetrieveResult(5000, ptrGrabResult, TimeoutHandling_ThrowException);
+			while (camera.IsGrabbing()) 
+			{
+				// Wait for an image and then retrieve it. A timeout of 5000 ms is used.
+				camera.RetrieveResult(5000, ptrGrabResult, TimeoutHandling_ThrowException);
+				// Image grabbed successfully?
+				if (ptrGrabResult->GrabSucceeded())
+				{
+					// Access the image data.
+					cout << "SizeX: " << ptrGrabResult->GetWidth() << endl;
+					cout << "SizeY: " << ptrGrabResult->GetHeight() << endl;
+					const uint8_t *pImageBuffer = (uint8_t *)ptrGrabResult->GetBuffer();
+					cout << "Gray value of first pixel: " << (uint32_t)pImageBuffer[0] << endl << endl;
+
+#ifdef PYLON_WIN_BUILD
+					// Display the grabbed image.
+					Pylon::DisplayImage(1, ptrGrabResult);
+#endif
+				}
+				else
+				{
+					cout << "Error: " << ptrGrabResult->GetErrorCode() << " " << ptrGrabResult->GetErrorDescription() << endl;
+				}
+			}
+
 			// Nothing to do here with the grab result, the grab results are handled by the registered event handler.
 		}
 		camera.AcquisitionStop.Execute();
@@ -190,7 +211,7 @@ int main(int argc, char* argv[])
 
 
     // Comment the following two lines to disable waiting on exit.
-    cerr << endl << "Press Enter to exit." << endl;
+    cerr << endl << "Success. Press Enter to exit." << endl;
     while( cin.get() != '\n');
 
     // Releases all pylon resources. 
