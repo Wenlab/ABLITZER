@@ -124,6 +124,35 @@ int main(int argc, char* argv[])
 		// Print the model name of the camera.
 		cout << "Using device " << camera.GetDeviceInfo().GetModelName() << endl;
 
+		// Register the standard configuration event handler for enabling software triggering.
+		// The software trigger configuration handler replaces the default configuration
+		// as all currently registered configuration handlers are removed by setting the registration mode to RegistrationMode_ReplaceAll.
+		camera.RegisterConfiguration(new CSoftwareTriggerConfiguration, RegistrationMode_ReplaceAll, Cleanup_Delete);
+
+		// For demonstration purposes only, add sample configuration event handlers to print out information
+		// about camera use and image grabbing.
+		camera.RegisterConfiguration(new CConfigurationEventPrinter, RegistrationMode_Append, Cleanup_Delete); // Camera use.
+																							   // For demonstration purposes only, register another image event handler.
+		camera.RegisterImageEventHandler(new CSampleImageEventHandler, RegistrationMode_Append, Cleanup_Delete);
+
+		// Camera event processing must be activated first, the default is off.
+		camera.GrabCameraEvents = true;
+
+		// Register an event handler for the Exposure End event. For each event type, there is a "data" node
+		// representing the event. The actual data that is carried by the event is held by child nodes of the
+		// data node. In the case of the Exposure End event, the child nodes are EventExposureEndFrameID and EventExposureEndTimestamp.
+		// The CSampleCameraEventHandler demonstrates how to access the child nodes within
+		// a callback that is fired for the parent data node.
+		// The user-provided ID eMyExposureEndEvent can be used to distinguish between multiple events (not shown).
+		camera.RegisterCameraEventHandler(pHandler1, "EventExposureEndData", eMyExposureEndEvent, RegistrationMode_ReplaceAll, Cleanup_None);
+
+		// The handler is registered for both, the EventExposureEndFrameID and the EventExposureEndTimestamp
+		// node. These nodes represent the data carried by the Exposure End event.
+		// For each Exposure End event received, the handler will be called twice, once for the frame ID, and
+		// once for the time stamp.
+		camera.RegisterCameraEventHandler(pHandler2, "EventExposureEndFrameID", eMyExposureEndEvent, RegistrationMode_Append, Cleanup_None);
+		camera.RegisterCameraEventHandler(pHandler2, "EventExposureEndTimestamp", eMyExposureEndEvent, RegistrationMode_Append, Cleanup_None);
+
 		// Open the camera for setting parameters.
 		camera.Open();
 
@@ -146,9 +175,21 @@ int main(int argc, char* argv[])
 		camera.TriggerSource.SetValue(TriggerSource_Software);
 		// Set for the timed exposure mode
 		camera.ExposureMode.SetValue(ExposureMode_Timed);
-		// Set the exposure time
+		// Set the exposure time [us]
 		camera.ExposureTime.SetValue(3000.0);
 		// Execute an acquisition start command to prepare for frame acquisition
+
+		// Check if the device supports events.
+		if (!GenApi::IsAvailable(camera.EventSelector))
+		{
+			throw RUNTIME_EXCEPTION("The device doesn't support events.");
+		}
+
+		// Enable sending of Exposure End events.
+		// Select the event to receive.
+		camera.EventSelector.SetValue(EventSelector_ExposureEnd);
+		// Enable it.
+		camera.EventNotification.SetValue(EventNotification_On);
 
 		// Start the grabbing of c_countOfImagesToGrab images.
 		camera.StartGrabbing(c_countOfImagesToGrab);
@@ -157,7 +198,7 @@ int main(int argc, char* argv[])
 		CGrabResultPtr ptrGrabResult;
 
 		camera.AcquisitionStart.Execute();
-		for (int i = 0; i<c_countOfImagesToGrab; i++)
+		while (camera.IsGrabbing())
 		{
 			// Execute a Trigger Software command to apply a frame start
 			// trigger signal to the camera
@@ -167,39 +208,37 @@ int main(int argc, char* argv[])
 				camera.ExecuteSoftwareTrigger();
 			}
 			// Retrieve acquired frame here
-			while (camera.IsGrabbing()) 
+			
+			// Wait for an image and then retrieve it. A timeout of 5000 ms is used.
+			camera.RetrieveResult(5000, ptrGrabResult, TimeoutHandling_ThrowException);
+			// Image grabbed successfully?
+			if (ptrGrabResult->GrabSucceeded())
 			{
-				// Wait for an image and then retrieve it. A timeout of 5000 ms is used.
-				camera.RetrieveResult(5000, ptrGrabResult, TimeoutHandling_ThrowException);
-				// Image grabbed successfully?
-				if (ptrGrabResult->GrabSucceeded())
-				{
-					// Access the image data.
-					cout << "SizeX: " << ptrGrabResult->GetWidth() << endl;
-					cout << "SizeY: " << ptrGrabResult->GetHeight() << endl;
-					const uint8_t *pImageBuffer = (uint8_t *)ptrGrabResult->GetBuffer();
-					cout << "Gray value of first pixel: " << (uint32_t)pImageBuffer[0] << endl << endl;
+				// Access the image data.
+				cout << "SizeX: " << ptrGrabResult->GetWidth() << endl;
+				cout << "SizeY: " << ptrGrabResult->GetHeight() << endl;
+				const uint8_t *pImageBuffer = (uint8_t *)ptrGrabResult->GetBuffer();
+				cout << "Gray value of first pixel: " << (uint32_t)pImageBuffer[0] << endl << endl;
 
 #ifdef PYLON_WIN_BUILD
 					// Display the grabbed image.
 					Pylon::DisplayImage(1, ptrGrabResult);
 #endif
-				}
-				else
-				{
-					cout << "Error: " << ptrGrabResult->GetErrorCode() << " " << ptrGrabResult->GetErrorDescription() << endl;
-				}
 			}
-
-			// Nothing to do here with the grab result, the grab results are handled by the registered event handler.
+			else
+			{
+				cout << "Error: " << ptrGrabResult->GetErrorCode() << " " << ptrGrabResult->GetErrorDescription() << endl;
+			}
 		}
+		// Disable sending Exposure End events.
+		camera.EventSelector.SetValue(EventSelector_ExposureEnd);
+		camera.EventNotification.SetValue(EventNotification_Off);
+
 		camera.AcquisitionStop.Execute();
 		// Note: as long as the Trigger Selector is set to FrameStart, executing
 		// a Trigger Software command will apply a software frame start trigger
 		// signal to the camera
-
-
-    
+  
     }
     catch (const GenericException &e)
     {
@@ -209,6 +248,9 @@ int main(int argc, char* argv[])
         exitCode = 1;
     }
 
+	// Delete the event handlers.
+	delete pHandler1;
+	delete pHandler2;
 
     // Comment the following two lines to disable waiting on exit.
     cerr << endl << "Success. Press Enter to exit." << endl;
