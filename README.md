@@ -1,4 +1,4 @@
-Welcome to BLITZ (Behavioral Learning In The Zebrafish)
+Welcome to ABLITZER (Analyzer of Behavioral Learning In The ZEbrafish Result)
 ======================
 Introduction
 ------------
