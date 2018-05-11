@@ -2,7 +2,7 @@ Welcome to ABLITZER (Analyzer of [BLITZ][1] Result)
 ======================
 Introduction
 ------------
-ABLITZER (Analyzer of BLITZ Result) is a custom software suite ([MATLAB][2]) to process data produced by BLITZ (Behavioral Learning In The Zebrafish) which is another custom software (c++) that can acquire high-throughtput behavioral data of larval zebrafish in learning tasks.
+ABLITZER (Analyzer of BLITZ Result) is a custom software suite ([MATLAB][2]) to process data produced by BLITZ (Behavioral Learning In The Zebrafish) which is another custom software (c++) that can automatically acquire high-throughtput behavioral data of larval zebrafish in learning tasks.
 
 This software suite can patchly import BLITZ recorded data from yaml files into well-constructed class (ABLITZER). The ABLITZER class has a subclass FISHDATA which stores all behavioral data and experimental context data of a single fish. Also the ABLITZER class provides a classification method to classify data as user like. 
 
