@@ -27,7 +27,7 @@ ABLITZER is written by Wenbin Yang. It is originally a  product of the [Wen Lab]
   
 License
 -------
-With the exception of certain libraries in the `3rdPartyLibs/` folder, all of BLITZ is released under the GNU Public License. This means you are free to copy, modify and redistribute this software. 
+With the exception of certain libraries in the `3rdPartyLibs/` folder, all of ABLITZER is released under the GNU Public License. This means you are free to copy, modify and redistribute this software. 
 
 Contact
 -------
