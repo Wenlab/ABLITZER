@@ -74,8 +74,8 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         yaml2matlab(obj, endFrame, pathName, fileName);
         
         % classify data into different groups by tags. (e.g. Experiment
-        % Type)
-        classifyFishByTags(obj, tag);
+        % Type): To Improve
+        classifyFishByTags(obj, tags);
         
         % import yaml files before BLITZ
         oldYaml2matlab(obj, endFrame, pathName, fileName);

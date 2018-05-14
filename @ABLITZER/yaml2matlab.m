@@ -76,7 +76,7 @@ while (~ifReached && ~feof(fid))
             case 'FishAges'
                 fishAges = str2num(value);
             case 'Task'
-                task = value;
+                task = string(value);
             case 'FishStrains'
                 fishStrains = str2num(value);
             case 'ExpStartTime'
@@ -189,11 +189,11 @@ for i = 1:numFish
     end
     F(i).yDivide = yDivide(i);
     if contains(task,'control','IgnoreCase',true)
-        F(i).ExpType = 'Control Group';
+        F(i).ExpType = "Control Group";
     elseif contains(task,'exp','IgnoreCase',true)
-        F(i).ExpType = 'Exp Group';
+        F(i).ExpType = "Exp Group";
     else
-        F(i).ExpType = 'Unrecognized';
+        F(i).ExpType = "Unrecognized";
     end
     obj.FishStack = cat(1,obj.FishStack,F(i));
 end

@@ -18,28 +18,28 @@ function oldYaml2matlab(obj, endFrame, pathName, fileName)
     % Different infos are separated by "_"
     fName = [pathName, fileName];
     
-    idx = find(fName == '_');
-    fishID1 = fName(idx(1)+1:idx(2)-1);
+    idx = find(fileName == '_');
+    fishID1 = fileName(idx(1)+1:idx(2)-1);
     if (contains(fishID1,'G'))
-        fishStrain1 = 'GCaMP';
+        fishStrain1 = "GCaMP";
     elseif (contains(fishID1,'S'))
-        fishStrain1 = 'WT';
+        fishStrain1 = "WT";
     end
     
-    fishID2 = fName(idx(3)+1:idx(4)-1);
+    fishID2 = fileName(idx(3)+1:idx(4)-1);
     if (contains(fishID2,'G'))
-        fishStrain2 = 'GCaMP';
+        fishStrain2 = "GCaMP";
     elseif (contains(fishID2,'S'))
-        fishStrain2 = 'WT';
+        fishStrain2 = "WT";
     end
     
-    fishAge1 = fName(idx(2)+1:idx(3)-1);
-    fishAge2 = fName(idx(4)+1:idx(5)-1);
+    fishAge1 = fileName(idx(2)+1:idx(3)-1);
+    fishAge2 = fileName(idx(4)+1:idx(5)-1);
     
     fishIDs = [string(fishID1),string(fishID2)];
     fishAges = [string(fishAge1), string(fishAge2)];
     fishStrains = [string(fishStrain1), string(fishStrain2)];
-    task = fName(idx(5)+1:end-5);
+    task = fileName(idx(5)+1:end-5);
     
     
     
@@ -56,7 +56,7 @@ function oldYaml2matlab(obj, endFrame, pathName, fileName)
                 case 'FishAges'
                     fishAges = str2num(value);
                 case 'Task'
-                    task = value;
+                    task = string(value);
                 case 'FishStrains'
                     fishStrains = str2num(value);    
                 case 'ExpStartTime'
@@ -176,11 +176,11 @@ frames(idxFrame:end,:) = []; % remove redundant frames
         end
         
         if contains(task,'control','IgnoreCase',true)
-            F(i).ExpType = 'Control Group';
+            F(i).ExpType = "Control Group";
         elseif contains(task,'exp','IgnoreCase',true)
-            F(i).ExpType = 'Exp Group';
+            F(i).ExpType = "Exp Group";
         else
-            F(i).ExpType = 'Unrecognized';
+            F(i).ExpType = "Unrecognized";
         end
         
         obj.FishStack = cat(1,obj.FishStack,F(i));

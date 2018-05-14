@@ -1,71 +1,85 @@
-% TODO: reconstruct the entire code
+%   Copyright 2018 Wenbin Yang <bysin7@gmail.com>
+%   This file is part of A-BLITZ-ER[1] (Analyzer of Behavioral Learning 
+%   In The ZEbrafish Result.) i.e. the analyzer of BLITZ[2]. 
+%
+%   BLITZ (Behavioral Learning In The Zebrafish) is a software that 
+%   allows researchers to train larval zebrafish to associate 
+%   visual pattern with electric shock in a fully automated way, which 
+%   is adapted from MindControl.[3]
+%   [1]: https://github.com/Wenlab/ABLITZER
+%   [2]: https://github.com/Wenlab/BLITZ
+%   [3]: https://github.com/samuellab/mindcontrol
+%
+%
+%   Filename: classifyFishByTags.m (method of ABLITZER class)
+%   Abstract: 
+%      Classify fishStack into groups of full combinations of tags,
+%   and record indices in fishGroup struct
+%
+%   SYNTAX:
+%       1. classifyFishByTags(obj,tags)
+%       2. obj.classifyFishByTags(tags)
+%   INPUT:
+%       obj: the object of ABLITZER
+%       tags: string array, represents which field user to classify
+%   into different groups based on different values of this field.
+%   the number of tags should no more than 3, otherwise, it may cause
+%   memory failure
+%
+%   OUTPUT: 
+%       Implicit output, saved the classified results in fishGroup struct
+%   in called ABLITZER object 
+% 
+% 
+% 
+% 
+% 
+% 
+%   
+%   Current Version: 1.3
+%   Author: Wenbin Yang <bysin7@gmail.com>
+%   Modified on: May 14, 2018
+% 
+%   Replaced Version: 1.1
+%   Author: Wenbin Yang <bysin7@gmail.com>
+%   Created on: May 3, 2018
+% 
+
 function classifyFishByTags(obj,tags)
 	fishStack = obj.FishStack;
-	% make full combinational groups
-	% numTags should not exceed 3
-	numTags = length(tags);
-	allTags = fieldnames(fishStack(1));
-    dataTags = cell(numTags,1);
-    uniqTagsCell = cell(numTags,1);
-    typesMat = zeros(numTags,1);
-    numGroups = 1; % number of groups in struct
-    for i = 1:numTags
-        idxApplied = find(cellfun(@(x) strcmp(tags(i),x),allTags));
-        dataTags{i,1} = cellStr2Char(get(fishStack,char(allTags(idxApplied))));
-        uniqTagsCell{i,1} = unique(dataTags{i,1});
-        typesMat(i) = length(uniqTagsCell{i,1});
-        numGroups = numGroups * typesMat(i);
+    %numFish = length(fishStack);
+    numTags = length(tags);
+    names = [];
+    for i=1:numTags
+        temp = cat(1,fishStack.get(char(tags(i))));
+        names = cat(2,names,temp);
     end
     
-    % Create groups in struct
-    dividers = ones(numTags,1);
-    indices = zeros(numTags,1);
-    for n = 2:numTags
-        dividers(n) = dividers(n-1) * typesMat(n-1);
-    end
-    %tags2match = cell(numTags,1);
-    for i = 1:numGroups
-        nameStr = '';
-        matchedIdx = 1:length(fishStack); % to eliminate unmatched idx every turn.
-        for n = 1:numTags
-            indices(n) = mod(i/dividers(n),typesMat(n));
-            if (indices(n) == 0)
-                indices(n) = typesMat(n);
+    names = string(names);
+    uniqCombo = unique(names,'rows');
+    numUniq = size(uniqCombo,1);
+    idxCell = cell(numUniq,1);
+    for i=1:size(names,1)
+        for j=1:numUniq
+            if strcmp(names(i,1),uniqCombo(j,1)) && strcmp(names(i,2),uniqCombo(j,2))
+                idxCell{j,1} = cat(2,idxCell{j,1},i);
+                break;
             end
-            strInCell = uniqTagsCell{n,1}(indices(n));
-            tags2match = strInCell{1,1};
-            matchedIdx = cmpStrWithCell(dataTags{n,1},tags2match,matchedIdx);
-            nameStr = cat(2,nameStr,strInCell{1,1},'_');
-        end    
-        nameStr(end) = []; % drop the last '_'
-        obj.FishGroups(i).Name = nameStr;
-        obj.FishGroups(i).Tag = tags;
-        obj.FishGroups(i).Data = matchedIdx;        
+        end 
     end
-    
 
-end
-
-% compare str with every element in the cell
-% mIdx: matched indices
-function mIdx = cmpStrWithCell(C,str,idx)
-    mIdx = [];
-    for i = 1:length(idx)
-        nIdx = idx(i);
-        if strcmp(C{nIdx,1},str)
-            mIdx = [mIdx,nIdx];
+    for i = 1:numUniq
+        groupName = "";
+        for j = 1:numTags
+            groupName = groupName + uniqCombo(i,j);
+            if j ~= numTags % add separator between tags
+                groupName = groupName + "_";
+            end
         end
-    end
-
-
-end
-
-% StringCell: in which all/some elements are string variables
-function charCell = cellStr2Char(stringCell)
-    numElem = length(stringCell);
-    charCell = cell(numElem,1);
-    for i=1:numElem
-        charCell{i,1} = char(stringCell{i,1});    
+        
+        obj.FishGroups(i).Name = groupName;
+        obj.FishGroups(i).Tag = tags;
+        obj.FishGroups(i).Data = idxCell{i,1};
     end
 
 end

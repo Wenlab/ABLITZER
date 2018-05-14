@@ -45,7 +45,8 @@ function plotPIsOfGroup(obj,idxExpGroup,idxCtrlGroup)
         'Baseline','Training','Test'};
     UnivarScatter(PIs,'Label',labels,'MarkerFaceColor',colors,...
         'SEMColor',colors/1.5,'StdColor',colors/2);
-    title('Non-CS Area Time Proportion','FontSize',14);
+    titleStr = sprintf('Non-CS Area Time Proportion (%s)-%s',expData(1).Strain,expData(1).Age);
+    title(titleStr,'FontSize',14);
     ylim([0,1]);
     str = sprintf('N = %d\n',size(PIs,1));
     text(0.1,0.9,str);

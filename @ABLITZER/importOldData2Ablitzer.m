@@ -48,13 +48,13 @@ function importOldData2Ablitzer(obj, pathName, fileName)
         
         
         F(i).ExpStartTime = expData.ExpStartTime;
-        F(i).ExpTask = expData.Task;
-        if contains(F(i).ExpTask,'control','IgnoreCase',true)
-            F(i).ExpType = 'Control Group';
-        elseif contains(F(i).ExpTask,'exp','IgnoreCase',true)
-            F(i).ExpType = 'Exp Group';
+        F(i).ExpTask = string(expData.Task);
+        if contains(task,'control','IgnoreCase',true)
+            F(i).ExpType = "Control Group";
+        elseif contains(task,'exp','IgnoreCase',true)
+            F(i).ExpType = "Exp Group";
         else
-            F(i).ExpType = 'Unrecognized';
+            F(i).ExpType = "Unrecognized";
         end
         F(i).FrameRate = expData.FrameRate;
         F(i).yDivide = expData.DelimY;
@@ -65,9 +65,9 @@ function importOldData2Ablitzer(obj, pathName, fileName)
             
             F(i).ID = expData.FishID1;
             if (contains(F(i).ID,'G'))
-                F(i).Strain = 'GCaMP';
+                F(i).Strain = "GCaMP";
             elseif (contains(F(i).ID,'S'))
-                F(i).Strain = 'WT';
+                F(i).Strain = "WT";
             end
             fishAge = expData.Age1;
             F(i).Age = fishAge(1); % take the 1st char
@@ -76,9 +76,9 @@ function importOldData2Ablitzer(obj, pathName, fileName)
         elseif (i==2) % second fish
             F(i).ID = expData.FishID2;
             if (contains(F(i).ID,'G'))
-                F(i).Strain = 'GCaMP';
+                F(i).Strain = "GCaMP";
             elseif (contains(F(i).ID,'S'))
-                F(i).Strain = 'WT';
+                F(i).Strain = "WT";
             end
             fishAge = expData.Age2;
             F(i).Age = fishAge(1); % take the 1st char

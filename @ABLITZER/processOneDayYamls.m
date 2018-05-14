@@ -44,7 +44,7 @@ function output = processOneDayYamls(obj,pathName,expDate)
         expDate = inputdlg('Enter the experiment date (e.g. 20180206)');
         expDate = expDate{1};
     elseif nargin == 1
-        [~,pathName] = uigetfile('C:\Users\Young\Documents\Operant Learning Exp Data\*.yaml');
+        [~,pathName] = uigetfile('F:\FishExpData\operantLearning\*.yaml');
         expDate = inputdlg('Enter the experiment date (e.g. 20180206)');
         expDate = expDate{1};
     end
