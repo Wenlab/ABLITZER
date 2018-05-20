@@ -72,13 +72,18 @@ while (~ifReached && ~feof(fid))
     if (~isempty(key))
         switch key
             case 'FishIDs'
-                fishIDs = str2num(value);
-            case 'FishAges'
-                fishAges = str2num(value);
+                fishIDs = textscan(value,'%q','Delimiter',',');
+                fishIDs = fishIDs{1,1};
+            case 'FishAge'
+                fishAge = str2num(value);
             case 'Task'
                 task = string(value);
-            case 'FishStrains'
-                fishStrains = str2num(value);
+            case 'CSpattern'
+                csPattern = value;
+            case 'FishStrain'
+                fishStrain = value;
+            case 'Arena'
+                arena = str2num(value);
             case 'ExpStartTime'
                 expStartTime = value;
             case 'FrameRate'
@@ -160,10 +165,12 @@ frames(idxFrame:end,:) = []; % remove redundant frames
 % Assign values to the object of ABLITZER
 for i = 1:numFish
     F(i).Frames = frames(:,i);
-    F(i).ID = fishIDs(i);
-    F(i).Age = fishAges(i);
-    F(i).Strain = fishStrains(i);
+    F(i).ID = string(fishIDs{i,1});
+    F(i).Age = fishAge;
+    F(i).Strain = string(fishStrain);
+    F(i).Arena = arena;
     F(i).ExpTask = task;
+    F(i).CSpattern = string(csPattern);
     
     
     F(i).ExpStartTime = expStartTime;
@@ -197,98 +204,6 @@ for i = 1:numFish
     end
     obj.FishStack = cat(1,obj.FishStack,F(i));
 end
-
-end
-
-
-
-
-
-
-
-
-% Read the general experimental info
-% before frames data by the keyword-"Frames"
-function read_until_frames(obj,fid)
-    
-    ifReached = false; % logical value   
-    while (~ifReached && ~feof(fid))
-        disp('Reading the general experimental info');
-        [key, value] = read_a_line(fid);
-        if (~isempty(key))
-            switch key
-                case 'FishIDs'
-                    fishIDs = str2num(value);
-                case 'FishAges'
-                    fishAges = str2num(value);
-                case 'Task'
-                    task = value;
-                case 'FishStrains'
-                    fishStrains = str2num(value);    
-                case 'ExpStartTime'
-                    expStartTime = value;
-                case 'FrameRate'
-                    frameRate = str2num(value);
-                case 'FrameSize'
-                    frameSize = str2num(value);
-                case 'xCut'
-                    xCut = str2num(value);
-                case 'yCut'
-                    yCut = str2num(value);
-                case 'yDivide'
-                    yDivide = str2num(value);
-                case 'Frames'
-                    ifReached = true;
-                otherwise
-                    disp(['Unrecognized keyword: ', key]);
-            end
-        end
-    end
-   
-    for i = 1:length(fishIDs)
-        F = FISHDATA;
-        F.ID = fishIDs(i);
-        F.Age = fishAges(i);
-        F.Strain = fishStrains(i);
-        F.ExpTask = task;
-        
-        
-        F.ExpStartTime = expStartTime;
-        F.FrameRate = frameRate;
-        
-%         Scheme for fish positions in arena
-%               xCut
-%         |		|		|
-%         |	0	|	1	|
-%         |		|		|
-%         |-------------| yCut
-%         |		|		|
-%         |	2	|	3	|
-%         |		|		|
-        if (i==1)
-            F.ConfinedRect = [0,0,xCut,yCut]; 
-        elseif (i==2)
-            F.ConfinedRect = [xCut,0,frameSize(1) - xCut,yCut];
-        elseif (i==3)
-            F.ConfinedRect = [0,yCut,xCut,frameSize(2) -yCut];
-        elseif (i==4)
-            F.ConfinedRect = [xCut,yCut,frameSize(1) - xCut,frameSize(2) -yCut];
-        end
-        F.yDivide = yDivide(i);
-        
-        % Append the object of FISHDATA to corresponding group.
-        if contains(task,'control','IgnoreCase',true)
-            F.ExpType = 'Control Group';
-            obj.ControlGroup = [obj.ControlGroup, F];
-        elseif contains(task,'exp','IgnoreCase',true)
-            F.ExpType = 'Exp Group';
-            obj.ExpGroup = [obj.ExpGroup, F];
-        else
-            F.ExpType = 'Unrecognized';
-            error('Unrecognized group of this FISHDATA!');
-        end
-    end
-    
 
 end
 

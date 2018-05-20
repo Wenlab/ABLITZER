@@ -1,0 +1,16 @@
+fishStack = obj.FishStack;
+numFish = length(fishStack);
+for i=1:numFish
+    fish = fishStack(i);
+    fish.CSpattern = "redBlackCheckerboard";  
+    num = char(fish.ID);
+    num = num(3);
+    if (num == 1 || 4)
+            
+        fish.Arena = 1;
+    elseif 
+        fish.Arena = 2;
+    elseif (strcmp(fish.ID,"S13")||strcmp(fish.ID,"S16"))
+        fish.Arena = 3;
+    end
+end

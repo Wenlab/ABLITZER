@@ -36,8 +36,11 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
         Strain = ''; % strain of fish
         
         %% General info about the experiment the fish was in
+        Arena = NaN; % which arena the fish was in
         ExpStartTime = ''; % start time of the experiment (ss-mm-hh, dd-mm-yy)
         ExpTask = ''; % the learning task of experiment (e.g. Operant Learning)
+        CSpattern = ''; % the conditioned pattern used in the exp, 
+        % the default non-CS pattern is mid-gray (128,128,128) 
         ExpType = ''; % experiment group or control group?
         ExpNote = ''; % additional detail info about the experiment
         

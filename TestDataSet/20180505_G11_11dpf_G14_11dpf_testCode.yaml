@@ -1,8 +1,8 @@
 %YAML:1.0
 ---
 FishIDs: ["G11","G14"]
-FishAges: [6,6]
-FishStrains: ["GCaMP", "GCaMP"]
+FishAge: 7
+FishStrain: "GCaMP"
 Task: "OLcontrol"
 ExpStartTime: "Sat May  5 15:17:15 2018\n"
 FrameRate: 10

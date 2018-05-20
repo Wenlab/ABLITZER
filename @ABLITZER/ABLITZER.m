@@ -44,8 +44,6 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         % Devide fishStack into different groups based on different tags
         % Put idx of data in 2nd column
         FishGroups = struct('Name',[],'Data',[],'Tag',[],'Note',[]);
-        
-        
         StatRes; % statistical results about the entire experiment
         
         Notes = ''; % additional notes about the dataset
@@ -92,7 +90,10 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         % INPUT:
         %   idxExpGroup: the index of experiment group data in FishGroup struct
         %   idxCtrlGroup: the index of control group data in FishGroup struct
-        plotPIsOfGroup(obj,idxExpGroup,idxCtrlGroup);
+        plotPIsOfGroup(obj,idxExpGroup,idxCtrlGroup,metricType);
+        
+        % statistically plot non-CS area proportion versus time
+        plotPIsInTest(obj);
         
            
     end

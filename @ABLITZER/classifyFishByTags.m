@@ -61,7 +61,7 @@ function classifyFishByTags(obj,tags)
     idxCell = cell(numUniq,1);
     for i=1:size(names,1)
         for j=1:numUniq
-            if strcmp(names(i,1),uniqCombo(j,1)) && strcmp(names(i,2),uniqCombo(j,2))
+            if names(i,:) == uniqCombo(j,:)
                 idxCell{j,1} = cat(2,idxCell{j,1},i);
                 break;
             end

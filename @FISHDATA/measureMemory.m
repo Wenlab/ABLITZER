@@ -5,8 +5,8 @@
 % 2. after the fish learned, put them in normal raising house for a while,
 % then test whether they will show escaping responses to CS pattern.
 % In this experiment, we measured the first kind of memory
-function measureMemory()
-
+function measureMemory(obj)
+    
 
 
 end

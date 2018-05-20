@@ -76,6 +76,8 @@ function calc_PI_by_turn(obj)
             obj.Res.PIturn(n).Phase = 'Training';
         elseif n == 3
             obj.Res.PIturn(n).Phase = 'Blackout';
+            obj.Res.PIturn(n).PIfish = [];
+            continue;
         elseif n == 4
             obj.Res.PIturn(n).Phase = 'Test';
         end

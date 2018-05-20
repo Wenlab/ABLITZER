@@ -44,9 +44,8 @@ function output = processOneDayYamls(obj,pathName,expDate)
         expDate = inputdlg('Enter the experiment date (e.g. 20180206)');
         expDate = expDate{1};
     elseif nargin == 1
-        [~,pathName] = uigetfile('F:\FishExpData\operantLearning\*.yaml');
-        expDate = inputdlg('Enter the experiment date (e.g. 20180206)');
-        expDate = expDate{1};
+        [fileName,pathName] = uigetfile('F:\FishExpData\operantLearning\*.yaml');
+        expDate = fileName(1:8); % get the string of exp date
     end
     
     saveMatName = [pathName,expDate,'.mat'];
@@ -98,13 +97,13 @@ function output = processOneDayYamls(obj,pathName,expDate)
         output(i).PITime_Test = obj.FishStack(i).Res.PItime(4).PIfish;
         
         % PIturn
-%         output(i).PITime_Baseline = obj.FishStack(i).Res.PIturn(1).PIfish;
-%         output(i).PITime_Training = obj.FishStack(i).Res.PIturn(2).PIfish;
-%         output(i).PITime_Test = obj.FishStack(i).Res.PIturn(4).PIfish;
-%         
-%         % PIshock
-%         output(i).NumShock = obj.FishStack(i).Res.PIshock.NumShocks;
-%         output(i).PIshock = obj.FishStack(i).Res.PIshock.PIfish;       
+        output(i).PITurn_Baseline = obj.FishStack(i).Res.PIturn(1).PIfish;
+        output(i).PITurn_Training = obj.FishStack(i).Res.PIturn(2).PIfish;
+        output(i).PITurn_Test = obj.FishStack(i).Res.PIturn(4).PIfish;
+        
+        % PIshock
+        output(i).NumShock = obj.FishStack(i).Res.PIshock.NumShocks;
+        output(i).PIshock = obj.FishStack(i).Res.PIshock.PIfish;       
     end
     
     

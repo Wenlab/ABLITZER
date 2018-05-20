@@ -4,11 +4,16 @@
 % INPUT:
 %   idxExpGroup: the index of experiment group data in FishGroup struct
 %   idxCtrlGroup: the index of control group data in FishGroup struct
+%   metricType: which metric the user wants to plot. (PItime, PIturn or
+%   PIshock?)
 %
 %   TODO: put contrain on pairing experiment data with control data
 %       currently, they are automatically in the same order due to
 %       alphabetic reason.
-function plotPIsOfGroup(obj,idxExpGroup,idxCtrlGroup)
+function plotPIsOfGroup(obj,idxExpGroup,idxCtrlGroup,metricType)
+    if (nargin == 3) % default plot type is based on type
+        metricType = "time";
+    end
     fishStack = obj.FishStack;
     idxExpData = obj.FishGroups(idxExpGroup).Data;
     idxCtrlData = obj.FishGroups(idxCtrlGroup).Data;
@@ -29,7 +34,12 @@ function plotPIsOfGroup(obj,idxExpGroup,idxCtrlGroup)
         if (expData(i).Res.DataQuality < qualThre) || (ctrlData(i).Res.DataQuality < qualThre)
             fprintf('Invalid Data:\n DataQuality is lower than 0.95.\n'); continue;
         end
-        PIdata = cat(2,ctrlData(i).Res.PItime.PIfish,expData(i).Res.PItime.PIfish); 
+        if contains(metricType,"time",'IgnoreCase',true)
+            PIdata = cat(2,ctrlData(i).Res.PItime.PIfish,expData(i).Res.PItime.PIfish); 
+        elseif contains(metricType,"turn",'IgnoreCase',true)
+            PIdata = cat(2,ctrlData(i).Res.PIturn.PIfish,expData(i).Res.PIturn.PIfish); 
+        end
+        
         PIs = cat(1,PIs, PIdata);
     end
     
@@ -45,7 +55,13 @@ function plotPIsOfGroup(obj,idxExpGroup,idxCtrlGroup)
         'Baseline','Training','Test'};
     UnivarScatter(PIs,'Label',labels,'MarkerFaceColor',colors,...
         'SEMColor',colors/1.5,'StdColor',colors/2);
-    titleStr = sprintf('Non-CS Area Time Proportion (%s)-%s',expData(1).Strain,expData(1).Age);
+    
+    if contains(metricType,"time",'IgnoreCase',true)
+        titleStr = sprintf('Non-CS Area Time Proportion (%s)-%s',expData(1).Strain,expData(1).Age);
+    elseif contains(metricType,"turn",'IgnoreCase',true)
+        titleStr = sprintf('Turning performance index (%s)-%s',expData(1).Strain,expData(1).Age);
+    end
+    
     title(titleStr,'FontSize',14);
     ylim([0,1]);
     str = sprintf('N = %d\n',size(PIs,1));
