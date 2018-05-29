@@ -13,6 +13,10 @@ Also, this software is pretty expendable, users can add some properties and meth
 [1]:https://github.com/Wenlab/BLITZ
 [2]:https://www.mathworks.com/products/matlab.html
 
+Future Work
+-------
+1. Add a mind-realization GUI for users to check how good the behavioral algorithms are implemented. Eventually bridge the theory and reality.
+
 
 Authors
 -------
