@@ -49,17 +49,18 @@ function plotPIsOfGroup(obj,idxExpGroup,idxCtrlGroup,metricType)
     end
     
     figure;
-    set(gca,'YGrid','on'); % add yGrid to help compare data
+    
     colors = 0.8*ones(6,3);%[0.5,0,0;0,0.5,0;0,0,0.5;0.5,0.5,0;0.5,0,0.5;0,0.5,0.5];
     labels = {'Baseline(C)','Training(C)','Test(C)',...
         'Baseline','Training','Test'};
-    UnivarScatter(PIs,'Label',labels,'MarkerFaceColor',colors,...
-        'SEMColor',colors/1.5,'StdColor',colors/2);
-    
+    UnivarScatter(PIs,'Label',labels,'Whiskers','lines','PointStyle','.',...
+        'MarkerFaceColor',[1,1,1],'MarkerEdgeColor',[1,1,1],'PointSize',20,...
+        'SEMColor',colors/1.5,'StdColor',[1,1,1]);
+    set(gca,'YGrid','on'); % add yGrid to help compare data
     if contains(metricType,"time",'IgnoreCase',true)
-        titleStr = sprintf('Non-CS Area Time Proportion (%s)-%s',expData(1).Strain,expData(1).Age);
+        titleStr = sprintf('Non-CS Area Time Proportion (%s)-%d dpf',expData(1).Strain,expData(1).Age);
     elseif contains(metricType,"turn",'IgnoreCase',true)
-        titleStr = sprintf('Turning performance index (%s)-%s',expData(1).Strain,expData(1).Age);
+        titleStr = sprintf('Turning performance index (%s)-%d dpf',expData(1).Strain,expData(1).Age);
     end
     
     title(titleStr,'FontSize',14);

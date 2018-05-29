@@ -48,18 +48,18 @@ function output = processOneDayYamls(obj,pathName,expDate)
         expDate = fileName(1:8); % get the string of exp date
     end
     
-    saveMatName = [pathName,expDate,'.mat'];
-    % if file exists, load the file, then return
-    if exist(saveMatName,'file') == 2
-        fprintf('A saved result in .mat available,\n please import the data directly\n');
-%        fprintf('Load the mat file:\n %s\n',[pathName,expDate,'.mat']);
-%         oldData = load(saveMatName);
-%         aObj = oldData.obj;
-%         output = oldData.output;
-%         % attach old fishStack
-%         obj.FishStack = cat(1,obj.FishStack, aObj.FishStack);
-        return
-    end
+   
+%     % if file exists, load the file, then return
+%     if exist(saveMatName,'file') == 2
+%         fprintf('A saved result in .mat available,\n please import the data directly\n');
+% %        fprintf('Load the mat file:\n %s\n',[pathName,expDate,'.mat']);
+% %         oldData = load(saveMatName);
+% %         aObj = oldData.obj;
+% %         output = oldData.output;
+% %         % attach old fishStack
+% %         obj.FishStack = cat(1,obj.FishStack, aObj.FishStack);
+%         return
+%     end
     
     
     d = dir([pathName,'*.yaml']);
@@ -76,7 +76,7 @@ function output = processOneDayYamls(obj,pathName,expDate)
         if (contains(fName,expDate)) 
             n = n + 1;
             fprintf('Read the yaml file:\n %s\n',fName);
-            obj.oldYaml2matlab(-1,pathName,fName);              
+            obj.yaml2matlab(-1,pathName,fName);              
             
         end      
     end
@@ -106,8 +106,15 @@ function output = processOneDayYamls(obj,pathName,expDate)
         output(i).PIshock = obj.FishStack(i).Res.PIshock.PIfish;       
     end
     
-    
-    save(saveMatName,'output','obj');
+%     obj.classifyFishByTags(["Strain","CSpattern"]);
+%     
+%     for i = 1:length(obj.FishGroups)
+%         
+%         
+%     end
+%     
+%     saveMatName = [pathName,expDate,'.mat'];
+%     save(saveMatName,'output','obj');
 
 
 end

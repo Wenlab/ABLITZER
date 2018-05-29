@@ -47,6 +47,7 @@
 
 function classifyFishByTags(obj,tags)
 	fishStack = obj.FishStack;
+    obj.FishGroups = []; % clear former classification
     %numFish = length(fishStack);
     numTags = length(tags);
     names = [];

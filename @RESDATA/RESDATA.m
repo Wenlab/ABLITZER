@@ -30,6 +30,7 @@
 classdef RESDATA
     properties
         DataQuality = NaN; % the percent of valid points
+        BodyLength = NaN; % fish body length from tail tip to head end
         % Task performance elevation based on time
         PItime = struct('Phase','','Scores',[],'PIfish',NaN);
         % Task performance elevation based on turning behaviors

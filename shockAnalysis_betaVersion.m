@@ -13,17 +13,17 @@ shockCell{i,1} = fish.Res.PIshock;
 
 end
 
-figure;
-hold on;
-for i=1:length(shockCell)
-    if (isempty(shockCell{i,1}))
-        continue;
-    end
-    shockTiming = shockCell{i,1}.ShockTiming;
-    scatter(shockTiming,i*ones(size(shockTiming)),'.');
-end
+% figure;
+% hold on;
+% for i=1:length(shockCell)
+%     if (isempty(shockCell{i,1}))
+%         continue;
+%     end
+%     shockTiming = shockCell{i,1}.ShockTiming;
+%     scatter(shockTiming,i*ones(size(shockTiming)),'.');
+% end
 
-nBins = 3; % number of bins to count
+nBins = 2; % number of bins to count
 nShocksArr = [];
 shocksOn = [];
 for i=1:length(shockCell)
@@ -40,9 +40,7 @@ end
 figure;
 set(gca,'YGrid','on'); % add yGrid to help compare data
 labels = {'Beginning','Mid-term','Final'};
-colors = 0.8*ones(6,3);
-UnivarScatter(nShocksArr,'Label',labels,'MarkerFaceColor',colors,...
-'SEMColor',colors/1.5,'StdColor',colors/2);
+colors = 0.8*ones(nBins,3);
 UnivarScatter(nShocksArr,'MarkerFaceColor',colors,...
 'SEMColor',colors/1.5,'StdColor',colors/2);
 

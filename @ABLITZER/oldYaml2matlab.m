@@ -153,7 +153,8 @@ frames(idxFrame:end,:) = []; % remove redundant frames
     for i = 1:numFish
         F(i).Frames = frames(:,i);
         F(i).ID = fishIDs(i);
-        F(i).Age = fishAges(i);
+        age = char(fishAges(i));
+        F(i).Age = str2num(age(1));
         F(i).Strain = fishStrains(i);
         F(i).ExpTask = task;
         

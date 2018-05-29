@@ -13,6 +13,30 @@ function importOldData2Ablitzer(obj, pathName, fileName)
     fName = [pathName, fileName];
     load(fName,'expData','res');
     
+    idx = find(fileName == '_');
+    fishID1 = fileName(idx(1)+1:idx(2)-1);
+    if (contains(fishID1,'G'))
+        fishStrain1 = "GCaMP";
+    elseif (contains(fishID1,'S'))
+        fishStrain1 = "WT";
+    end
+    
+    fishID2 = fileName(idx(3)+1:idx(4)-1);
+    if (contains(fishID2,'G'))
+        fishStrain2 = "GCaMP";
+    elseif (contains(fishID2,'S'))
+        fishStrain2 = "WT";
+    end
+    
+    fishAge1 = fileName(idx(2)+1:idx(3)-1);
+    fishAge2 = fileName(idx(4)+1:idx(5)-1);
+    
+    fishIDs = [string(fishID1),string(fishID2)];
+    fishAges = [string(fishAge1), string(fishAge2)];
+    %fishStrains = [string(fishStrain1), string(fishStrain2)];
+    task = fileName(idx(5)+1:end-4);
+    
+    
     numFrames = length(expData.ShockOnRight); % the max number of frames
     numFish = 2;
     F(numFish) = FISHDATA;
@@ -48,10 +72,10 @@ function importOldData2Ablitzer(obj, pathName, fileName)
         
         
         F(i).ExpStartTime = expData.ExpStartTime;
-        F(i).ExpTask = string(expData.Task);
-        if contains(task,'control','IgnoreCase',true)
+        F(i).ExpTask = string(task);
+        if contains(F(i).ExpTask,'control','IgnoreCase',true)
             F(i).ExpType = "Control Group";
-        elseif contains(task,'exp','IgnoreCase',true)
+        elseif contains(F(i).ExpTask,'exp','IgnoreCase',true)
             F(i).ExpType = "Exp Group";
         else
             F(i).ExpType = "Unrecognized";
@@ -63,25 +87,25 @@ function importOldData2Ablitzer(obj, pathName, fileName)
         if (i == 1) % first fish
             
             
-            F(i).ID = expData.FishID1;
+            F(i).ID = fishIDs(1);
             if (contains(F(i).ID,'G'))
                 F(i).Strain = "GCaMP";
             elseif (contains(F(i).ID,'S'))
                 F(i).Strain = "WT";
             end
-            fishAge = expData.Age1;
-            F(i).Age = fishAge(1); % take the 1st char
+            fishAge = char(fishAges(i));
+            F(i).Age = str2num(fishAge(1)); % take the 1st char
             F(i).ConfinedRect = [0, 0, expData.DelimX, expData.FrameSize(2)];
             F(i).Frames = frames(:,i);
         elseif (i==2) % second fish
-            F(i).ID = expData.FishID2;
+            F(i).ID = fishIDs(1);
             if (contains(F(i).ID,'G'))
                 F(i).Strain = "GCaMP";
             elseif (contains(F(i).ID,'S'))
                 F(i).Strain = "WT";
             end
-            fishAge = expData.Age2;
-            F(i).Age = fishAge(1); % take the 1st char
+            fishAge = char(fishAges(i));
+            F(i).Age = str2num(fishAge(1)); % take the 1st char
             F(i).ConfinedRect = [expData.DelimX, 0, expData.FrameSize(1), expData.FrameSize(2)];
             F(i).Frames = frames(:,i);
         end

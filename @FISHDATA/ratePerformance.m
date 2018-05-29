@@ -7,6 +7,24 @@ function ratePerformance(obj)
     %plot_PI_versus_time(obj);
 end
 
+% Calculate fish body length by measuring average length between fish tail
+% and head
+function bodyLength = calc_fish_bodyLength(obj)
+    head = cat(1,obj.Frames.Head);
+    tail = cat(1,obj.Frames.Tail);
+    T2H = head - tail;
+    bodyLens = sqrt(T2H(:,1).^2+T2H(:,2).^2);
+    bodyLength = mean(bodyLens);
+    if strcmp(obj.Strain,"GCaMP") % since a portion of fish tail is invisible
+        bodyLength = bodyLength * 2;
+    end
+    
+    
+    obj.Res.BodyLength = bodyLength;
+
+end
+
+
 % Calculate performance index by time spent on each side.
 % ExpPhase can indicate which phase the current frame is in
 function calc_PI_by_time(obj)
@@ -63,10 +81,8 @@ function calc_PI_by_turn(obj)
     patternIdx = cat(1,obj.Frames.PatternIdx);
     HA = cat(1,obj.Frames.HeadingAngle);
     AC = calcCirAngleChange(HA);
-    ACthre = 30; % degrees, angle change threshold
-    height = obj.ConfinedRect(4);
-    yTopBound = yDivide - height / 5;
-    yBottomBound = yDivide + height / 5;
+    ACthre = 20; % degrees, angle change threshold
+    bodyLength = calc_fish_bodyLength(obj);
     
     % Baseline - Training - Blackout - Test
     for n = 1:4
@@ -88,8 +104,9 @@ function calc_PI_by_turn(obj)
         tempAC = AC(idx);
         tempHeadY = head(idx,2);
         turnMat = [];
+        imThre = 120; % it is impossible to turn 120 degrees between two frames
         for i = 1:length(idx)
-            if abs(tempAC(i)) > ACthre % it's a turn
+            if (abs(tempAC(i)) > ACthre) && (abs(tempAC(i)) < imThre) % it's a turn         
                 % turnMat: n*7 matrix: each row is consisted of
                 % turnTiming, preAngle, postAngle, angleChange,
                 % headPosition(Y), patternIdx, score
@@ -104,7 +121,7 @@ function calc_PI_by_turn(obj)
             end          
         end
         if ~isempty(turnMat)
-            turnMat = calc_score_for_turn(turnMat,yTopBound,yBottomBound);
+            turnMat = calc_score_for_turn(turnMat,ACthre,yDivide,bodyLength);
             obj.Res.PIturn(n).TurnTiming = turnMat(:,1);
             obj.Res.PIturn(n).PreAngle = turnMat(:,2);
             obj.Res.PIturn(n).PostAngle = turnMat(:,3);
@@ -112,7 +129,8 @@ function calc_PI_by_turn(obj)
             obj.Res.PIturn(n).TurnPos = turnMat(:,5);
             obj.Res.PIturn(n).PatternIdx = turnMat(:,6);
             obj.Res.PIturn(n).Scores = turnMat(:,7);
-            obj.Res.PIturn(n).PIfish = sum(turnMat(:,7))/size(turnMat,1);
+            PIfish = sum(turnMat(:,7))/sum(turnMat(:,7)~=0);
+            obj.Res.PIturn(n).PIfish = (PIfish + 1) / 2; % map to [0,1]
         end    
     end
 
@@ -135,32 +153,49 @@ end
 % if the fish turn back to the CS area (e.g. turn from 90 deg to 0 deg),
 % scores 1, if the fish turn to the CS area, scores -1 (e.g. from 0 deg to
 % 9 deg), other cases (e.g. turn from 90 deg to 120 deg), scores 0
-function turnMat = calc_score_for_turn(turnMat,yTopBound,yBottomBound)
+function turnMat = calc_score_for_turn(turnMat,ACthre,yDivide,fishLen)
 for i=1:size(turnMat,1)
+    
     turnData = turnMat(i,:);
-    if (turnData(5) < yBottomBound)&&(turnData(5) > yTopBound)
-        if turnData(6) == 0 % visual pattern on the top
-            interAnglePre = min(360-abs(turnData(2)+90),abs(turnData(2)+90));
-            interAnglePost = min(360-abs(turnData(3)+90),abs(turnData(3)+90));
-        elseif turnData(6) == 1 % visual pattern on the bottom
-            interAnglePre = min(360-abs(turnData(2)-90),abs(turnData(2)-90));
-            interAnglePost = min(360-abs(turnData(3)-90),abs(turnData(3)-90));
-        else % blackout
-            continue;
-        end
-    else
+    preAngle = turnData(2);
+    postAngle = turnData(3);
+    turnPos = turnData(5);
+    pIdx = turnData(6);
+    if (pIdx == 0) % CS area on the top
+        pSign = 1;
+    elseif (pIdx == 1) % CS area on the bottom
+        pSign = -1;
+    else % blackout
         continue;
     end
-    interAngleChange = interAnglePost - interAnglePre;
-    if interAngleChange > 15
-        turnMat(i,7) = 1;
-    elseif interAngleChange < -15
-        turnMat(i,7) = -1;
-    else
-        turnMat(i,7) = 0;
+    % transform Descartes coordinates into NCS Area oriented coordinates
+    % with center line as x axis
+    y = (turnPos - yDivide) * pSign;
+    aPre = preAngle * pSign;
+    aPost = postAngle * pSign;
+    % +1 case, turn around at the boundary when fish is in non-CS Area
+    if (aPre < 0)
+        if (y > 0) && (y < 1.5 * fishLen) % valid range
+            preInterAngle = abs(aPre + 90); % angle to the normal line
+            postInterAngle = abs(aPost + 90);
+            interAngleChange = postInterAngle - preInterAngle;
+            if interAngleChange > ACthre
+                turnMat(i,7) = 1;
+            end
+        end
+    % -1 case, turn around at the boundary when fish is in CS Area
+    elseif (aPre > 0) 
+        if (y < 0) && (y > -1.5 * fishLen) % valid range
+            preInterAngle = abs(aPre - 90); % angle to the normal line
+            postInterAngle = abs(aPost - 90);
+            interAngleChange = postInterAngle - preInterAngle;
+            if interAngleChange > ACthre
+                turnMat(i,7) = -1;
+            end
+        end
     end
+    
 end
-
 
 
 
@@ -199,4 +234,17 @@ function evaluateDataQuality(obj)
         + length(find(smooth(headChange,10) == 0));
     
     obj.Res.DataQuality = 1 - numBadPts/length(head);
+end
+
+
+function plot_time_proportion_over_time(scores)
+    validCnt = scores ~= 0;
+    idxNeg = find(scores == -1);
+    scores(idxNeg) = 0;
+    cumS = cumsum(scores);
+    cumValidCnt = cumsum(validCnt);
+    p = cumS ./ cumValidCnt;
+    plot(p);
+
+
 end

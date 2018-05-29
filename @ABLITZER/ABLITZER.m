@@ -1,3 +1,4 @@
+
 %   Copyright 2018 Wenbin Yang <bysin7@gmail.com>
 %   This file is part of A-BLITZ-ER[1] (Analyzer of Behavioral Learning 
 %   In The ZEbrafish Result.) i.e. the analyzer of BLITZ[2]. 
@@ -66,6 +67,9 @@ classdef ABLITZER < handle % Make the class a real class not a value class
 %             end
 %         end
         
+        [indices, expType] = findFishByID(obj,fishID);
+
+        quantifyMemoryStat(obj);
         % Reads in a yaml file produced by the BLITZ software
         % and exports a struct of BLITZ experiment data that is
         % easy to manipulate in MATLAB
@@ -75,11 +79,14 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         % Type): To Improve
         classifyFishByTags(obj, tags);
         
+        % incorporate corrected positions yamls with old yamls
+        incorporate_oldYamls(obj,dateStr);
+        
         % import yaml files before BLITZ
         oldYaml2matlab(obj, endFrame, pathName, fileName);
         
         % convert old expData and resData to ABLITZER
-        importOldData2Ablitzer(obj, endFrame, pathName, fileName);
+        importOldData2Ablitzer(obj, pathName, fileName);
         
         % process all yaml files in one day
         processOneDayYamls(obj,pathName,expDate);
@@ -91,6 +98,9 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         %   idxExpGroup: the index of experiment group data in FishGroup struct
         %   idxCtrlGroup: the index of control group data in FishGroup struct
         plotPIsOfGroup(obj,idxExpGroup,idxCtrlGroup,metricType);
+        
+        % plot performance versus fish age
+        plotOntogenyByPI(obj,metricType);
         
         % statistically plot non-CS area proportion versus time
         plotPIsInTest(obj);
