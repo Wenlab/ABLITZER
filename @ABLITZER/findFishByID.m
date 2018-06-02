@@ -1,3 +1,7 @@
+
+% TODO: upgrade this function to findFishByTags.
+% by harnessing the classification info from function classifyFishByTags.
+
 function [indices, expType] = findFishByID(obj,fishID)
 IDs = cat(1,obj.FishStack.ID);
 indices = find(IDs == fishID);

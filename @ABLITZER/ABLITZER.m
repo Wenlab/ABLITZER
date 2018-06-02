@@ -75,6 +75,8 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         % easy to manipulate in MATLAB
         yaml2matlab(obj, endFrame, pathName, fileName);
         
+        % remove fish data whose data quality lower than threshold
+        remove_invalid_data_pair(obj);
         % classify data into different groups by tags. (e.g. Experiment
         % Type): To Improve
         classifyFishByTags(obj, tags);

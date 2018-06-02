@@ -63,7 +63,7 @@ function output = processOneDayYamls(obj,pathName,expDate)
     
     
     d = dir([pathName,'*.yaml']);
-    output = struct('ExpTime',[],'FishID',[],'Age',[],'Task',[],'DataQuality',[],...
+    output = struct('ExpTime',[],'ID',[],'Age',[],'Task',[],'DataQuality',[],...
     'PITime_Baseline',[],'PITime_Training',[],'PITime_Test',[],...
     'PITurn_Baseline',[],'PITurn_Training',[],'PITurn_Test',[],...
     'NumShock',[],'PIShock',[]);
@@ -76,8 +76,7 @@ function output = processOneDayYamls(obj,pathName,expDate)
         if (contains(fName,expDate)) 
             n = n + 1;
             fprintf('Read the yaml file:\n %s\n',fName);
-            obj.yaml2matlab(-1,pathName,fName);              
-            
+            obj.yaml2matlab(-1,pathName,fName);                         
         end      
     end
     
@@ -86,8 +85,8 @@ function output = processOneDayYamls(obj,pathName,expDate)
         obj.FishStack(i).ratePerformance();   
         % Assign values to output
         output(i).ExpTime = obj.FishStack(i).ExpStartTime;
-        output(i).FishID = obj.FishStack(i).ID;
-        output(i).FishAge = obj.FishStack(i).Age;
+        output(i).ID = obj.FishStack(i).ID;
+        output(i).Age = obj.FishStack(i).Age;
         output(i).Task = obj.FishStack(i).ExpTask;
         
         output(i).DataQuality = obj.FishStack(i).Res.DataQuality;

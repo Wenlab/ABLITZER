@@ -5,36 +5,36 @@
 % 2. after the fish learned, put them in normal raising house for a while,
 % then test whether they will show escaping responses to CS pattern.
 % In this experiment, we measured the first kind of memory
-function extTime = measureMemory(obj,CStimeThre)
-    fishLen = obj.Res.BodyLength;
-    distThre = -1.5*fishLen;
-    %CStimeThre = 5;
+function extTime = measureMemory(obj)
+    testInterval = 120; % seconds
     frameRate = obj.FrameRate;
-    height = obj.ConfinedRect(4);
-    yStart = obj.ConfinedRect(2);
-    yDiv = obj.yDivide;
-    pIdx = cat(1,obj.Frames.PatternIdx);
-    expPhase = cat(1,obj.Frames.ExpPhase);
-    heads = cat(1,obj.Frames.Head);
-    numFrames = length(pIdx);
-    y2CL = zeros(numFrames,1);% distance (in y) to center line
-    for i=1:numFrames
-        if pIdx(i) == 0
-            y2CL(i) = heads(i,2) - yDiv;
-        elseif pIdx(i) == 1
-            y2CL(i) = yDiv - heads(i,2);
-        end
-
+    windowWidth = testInterval * frameRate;
+    PIthre = obj.Res.PItime(1).PIfish;
+    pMov = calc_moving_PI(obj,windowWidth);
+    figure;
+    t = (1:length(pMov)) / frameRate;
+    plot(t,pMov);
+    xlabel('Time (s)');
+    ylabel('Non-CS area time proportion');
+    extFrame = find(pMov(windowWidth:end) <= PIthre,1);
+    if isempty(extFrame)
+        extFrame = length(pMov);
+    else
+        extFrame = extFrame + windowWidth;
     end
-    
-    idx = find(expPhase == 3);
-    tempY2CL = y2CL(idx);
-    
-    labelArr = tempY2CL < distThre; 
-    fThre = CStimeThre * frameRate;
-    extFrame = count_consecutive_frames(labelArr, fThre);
     extTime = extFrame / frameRate;
 end
+
+% calculate moving PI over test with 120 s time window.
+function pMov = calc_moving_PI(obj,windowWidth)
+scores = obj.Res.PItime(4).Scores;
+posLabel = scores == 1;
+negLabel = scores == -1;
+posSum = movmean(posLabel,windowWidth);
+negSum = movmean(negLabel,windowWidth);
+pMov = posSum./(posSum + negSum);
+end
+
 
 function extFrame = count_consecutive_frames(labelArr, fThre)
     counter = 0;

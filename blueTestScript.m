@@ -8,7 +8,7 @@ expPhase = cat(1,fish.Frames.ExpPhase);
 head = cat(1,fish.Frames.Head);
 pIdx = cat(1,fish.Frames.PatternIdx);
 
-% check whether there is light preference in training section
+% checheck whether there is light preference in training section
 idx = find(expPhase == 1);
 tempPattern = pIdx(idx);
 tempHead = head(idx,2);

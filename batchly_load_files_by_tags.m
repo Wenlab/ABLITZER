@@ -3,7 +3,7 @@
 
 function obj = batchly_load_files_by_tags(tags)
 %[~,pathName] = uigetfile('*.mat');
-pathName = 'F:\Project-Operant Learning in Larval Zebrafish\ExpDataSet\ABLITZER_DATA\';
+pathName = 'C:\Users\Young\Documents\Visual Modality may Affect Operant Learning Effect\ABLITZER_DATA\';
 % process tags
 numTags = length(tags);
 searchStr = pathName;
