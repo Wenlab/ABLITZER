@@ -31,6 +31,9 @@ classdef RESDATA
     properties
         DataQuality = NaN; % the percent of valid points
         BodyLength = NaN; % fish body length from tail tip to head end
+        Speed = NaN; % averaged swimming speed
+        ExtinctTime = NaN; % memory extinction time
+        IfLearned = NaN; % whether fish learned, nan for control data
         % Task performance elevation based on time
         PItime = struct('Phase','','Scores',[],'PIfish',NaN);
         % Task performance elevation based on turning behaviors
@@ -40,7 +43,6 @@ classdef RESDATA
         % Task performance elevation based on received shocks
         PIshock = struct('Phase',[],'ShockTiming',[],...
             'NumShocks',NaN,'Scores',[],'PIfish',NaN);
-        
-        
+               
     end
 end

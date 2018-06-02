@@ -64,8 +64,31 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
     methods
         % Rate fish performance in the task
         ratePerformance(obj);
-        % Measure the memory of fish to this task
-        extTime = measureMemory(obj);
+        
+        % Evaluate data quality based on bad points percentage
+        evaluateDataQuality(obj);
+        
+        % Rate fish performance based on time spent on non-CS area
+        calcPItime(obj);
+        
+        % Calculate performance indes based on turning events
+        calcPIturn(obj);
+        
+        % Calculate performance indes based on shocks received
+        calcPIshock(obj);
+        
+        % Calculate fish length from head to tail
+        bodyLength = calcFishLen(obj);
+        
+        % Calculate fish swimming speed
+        swimSpeed = calcSwimSpeed(obj,expPhase);
+        
+        % Measure the memory extinction in the task
+        extTime = measureExtinction(obj);
+        
+        % Measure whether fish learned or not 
+        ifLearned = sayIfLearned(obj);
+        
         % plot distance to centerline over time
         plotDist2centerline(obj);
         % Plot PI versus time,
@@ -74,8 +97,7 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
         plotPI(obj,mStr);
         % Annotate raw video with fish's head, tail and CS pattern
         annotateRawVideo(obj,startFrame,videoName);
-        % Calculate fish swimming speed
-        swimSpeed = getSwimSpeed(obj,expPhase);
+       
         
     end
     

@@ -1,5 +1,5 @@
 % Calculate fish swimming speed
-function  swimSpeed = getSwimSpeed(obj,phaseStr)
+function  swimSpeed = calcSwimSpeed(obj,phaseStr)
 
 expPhase = cat(1,obj.Frames.ExpPhase);
 if contains(phaseStr,'baseline','IgnoreCase',true)
@@ -18,5 +18,6 @@ headChanges = diff(heads,1,1);
 distance = sum(sqrt(headChanges(:,1).^2 + headChanges(:,2).^2));
 interval = obj.Frames(idx(end)).TimeElapsed - obj.Frames(idx(1)).TimeElapsed;
 swimSpeed = distance / interval; % pixel per second
+obj.Res.Speed = swimSpeed;
 
 end

@@ -40,8 +40,40 @@ end
 Rsq = calc_Rsquare(extMat(:,1), extMat(:,2));
 
 
+function incorporate_oldYamls(obj,dateStr)
+    pathName = 'F:\FishExpData\operantLearning\';
+    d = dir([pathName,'*',dateStr,'*G*.yaml']);
+    bIdx = 0;
+    for fIdx = 1:2:length(d)
+        fprintf('Processing file pair: %d\n',(fIdx+1)/2);
+        fileName1 =  d(fIdx).name;
+        fileName2 = [pathName,d(fIdx+1).name];
+        obj.oldYaml2matlab(-1,pathName,fileName1);
+        posStruct = read_correct_pos_file(fileName2);
+        overwrite_oldData(obj,posStruct,bIdx);
+        bIdx = bIdx + 2;
+    end
+end
 
+function overwrite_oldData(obj,posStruct,bIdx)
+% replace head, tail, center, headingAngle with new data
+    numFish = 2;
+    for n = 1:numFish
+        idxFish = n + bIdx;
+        fish = obj.FishStack(idxFish);
+        heads = posStruct(n).Head;
+        tails = posStruct(n).Tail;
+        centers = posStruct(n).Center;
+        headingAngles = posStruct(n).HeadingAngle;
+        for i = 1:min(length(fish.Frames),length(headingAngles)) % 1 frame shift
+            fish.Frames(i).Head = heads(i,:);
+            fish.Frames(i).Tail = tails(i,:);
+            fish.Frames(i).Center = centers(i,:);
+            fish.Frames(i).HeadingAngle = headingAngles(i);
+        end     
+    end
 
+end
 
 % read data from correct pos yaml files
 function posStruct = read_correct_pos_file(fileName)
@@ -187,8 +219,6 @@ UnivarScatter(nShocksArr,'MarkerFaceColor',colors,...
 
 
 end
-
-
 
 function batchly_process_data_byTags(tags)
 % Batchly process group of fish data to get performance index figures based

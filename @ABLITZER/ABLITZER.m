@@ -66,33 +66,33 @@ classdef ABLITZER < handle % Make the class a real class not a value class
 %                 error('Wrong initialization for ABLITZER');
 %             end
 %         end
-        
-        [indices, expType] = findFishByID(obj,fishID);
 
-        quantifyMemoryStat(obj);
+        
         % Reads in a yaml file produced by the BLITZ software
         % and exports a struct of BLITZ experiment data that is
         % easy to manipulate in MATLAB
         yaml2matlab(obj, endFrame, pathName, fileName);
         
+        % load mat files which matches tags provided in the same directory
+        importMatsByTags(obj, tags, pathName);
+        
         % remove fish data whose data quality lower than threshold
         remove_invalid_data_pair(obj);
+        
         % classify data into different groups by tags. (e.g. Experiment
         % Type): To Improve
         classifyFishByTags(obj, tags);
         
-        % incorporate corrected positions yamls with old yamls
-        incorporate_oldYamls(obj,dateStr);
-        
-        % import yaml files before BLITZ
-        oldYaml2matlab(obj, endFrame, pathName, fileName);
-        
+        % Find desired fish by providing tag-value pairs
+        indices = findFishByTagValuePairs(obj,varargin);
         % convert old expData and resData to ABLITZER
         importOldData2Ablitzer(obj, pathName, fileName);
         
         % process all yaml files in one day
         processOneDayYamls(obj,pathName,expDate);
         
+        
+        quantifyMemoryStat(obj);
         % plot PIs of an entire group to see whether there's
         % any statistical significance. Normally, use this function
         % after "classifyFishByTags".

@@ -44,47 +44,32 @@ function output = processOneDayYamls(obj,pathName,expDate)
         expDate = inputdlg('Enter the experiment date (e.g. 20180206)');
         expDate = expDate{1};
     elseif nargin == 1
-        [fileName,pathName] = uigetfile('F:\FishExpData\operantLearning\*.yaml');
+        [fileName,pathName] = uigetfile('F:\Project-Operant Learning in Larval Zebrafish\ExpDataSet\*.yaml');
         expDate = fileName(1:8); % get the string of exp date
     end
     
-   
-%     % if file exists, load the file, then return
-%     if exist(saveMatName,'file') == 2
-%         fprintf('A saved result in .mat available,\n please import the data directly\n');
-% %        fprintf('Load the mat file:\n %s\n',[pathName,expDate,'.mat']);
-% %         oldData = load(saveMatName);
-% %         aObj = oldData.obj;
-% %         output = oldData.output;
-% %         % attach old fishStack
-% %         obj.FishStack = cat(1,obj.FishStack, aObj.FishStack);
-%         return
-%     end
-    
-    
     d = dir([pathName,'*.yaml']);
-    output = struct('ExpTime',[],'ID',[],'Age',[],'Task',[],'DataQuality',[],...
-    'PITime_Baseline',[],'PITime_Training',[],'PITime_Test',[],...
-    'PITurn_Baseline',[],'PITurn_Training',[],'PITurn_Test',[],...
-    'NumShock',[],'PIShock',[]);
-    
     numFiles = length(d);
-    
-    n = 0; % index of experiment files to analyze
     for i=1:numFiles
         fName = d(i).name;
         if (contains(fName,expDate)) 
-            n = n + 1;
-            fprintf('Read the yaml file:\n %s\n',fName);
-            obj.yaml2matlab(-1,pathName,fName);                         
+            fprintf('Read yaml file:\n %s\n',fName);
+            obj.yaml2matlab(false,pathName,fName);                         
         end      
     end
     
-    numFish = length(obj.FishStack); % number of fish in the fishStack
-    for i = 1:numFish
+    output = generate_output(obj);
+end
+
+% Generate an output struct for checking all results in the same place
+function output = generate_output(obj)
+    output = struct('ID',[],'Age',[],'Task',[],'DataQuality',[],...
+    'PITime_Baseline',[],'PITime_Training',[],'PITime_Test',[],...
+    'PITurn_Baseline',[],'PITurn_Training',[],'PITurn_Test',[],...
+    'NumShock',[],'PIShock',[]);
+    for i = 1:length(obj.FishStack)% number of fish in the fishStack
         obj.FishStack(i).ratePerformance();   
         % Assign values to output
-        output(i).ExpTime = obj.FishStack(i).ExpStartTime;
         output(i).ID = obj.FishStack(i).ID;
         output(i).Age = obj.FishStack(i).Age;
         output(i).Task = obj.FishStack(i).ExpTask;
@@ -105,15 +90,4 @@ function output = processOneDayYamls(obj,pathName,expDate)
         output(i).PIshock = obj.FishStack(i).Res.PIshock.PIfish;       
     end
     
-%     obj.classifyFishByTags(["Strain","CSpattern"]);
-%     
-%     for i = 1:length(obj.FishGroups)
-%         
-%         
-%     end
-%     
-%     saveMatName = [pathName,expDate,'.mat'];
-%     save(saveMatName,'output','obj');
-
-
 end

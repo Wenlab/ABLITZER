@@ -1,9 +1,11 @@
 %YAML:1.0
 ---
-FishIDs: ["G11","G14"]
+FishIDs: "G11","G14"
 FishAge: 7
 FishStrain: "GCaMP"
+Arena: 1
 Task: "OLcontrol"
+CSpattern: whiteBlackCheckerboard
 ExpStartTime: "Sat May  5 15:17:15 2018\n"
 FrameRate: 10
 FrameSize: [ 784, 784 ]

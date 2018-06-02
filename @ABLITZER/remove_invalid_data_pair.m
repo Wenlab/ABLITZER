@@ -4,6 +4,7 @@
 % TODO: put constrain to make sure the control data and exp data are
 % absolutely from the same fish
 function remove_invalid_data_pair(obj)
+
 qualThre = 0.95;
 obj.classifyFishByTags("ExpType");
 idxCtrl = obj.FishGroups(1).Data;
@@ -19,7 +20,5 @@ for i=1:numPairs
      end
 end
 obj.FishStack(badIndices) = [];
-
-
 
 end
