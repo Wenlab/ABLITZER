@@ -1,4 +1,6 @@
 % Plot PI versus time
+% TODO: update x, y labels to match time and turn cases
+% drop shock case
 function plotPI(obj,mStr)
 if contains(mStr,'time','IgnoreCase',true)
     PI = obj.Res.PItime;
@@ -20,6 +22,8 @@ for i = 1:length(PI)
    end
    ns = ns + 1; % position in the subplot
    s = PI(i).Scores;
+   idx = find(s);
+   s = s(idx);
    c = cumsum(s)./(1:length(s))';
    p = 1-(1-c)/2;
    t = (1:length(c))/obj.FrameRate;

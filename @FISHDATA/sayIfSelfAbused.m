@@ -1,10 +1,9 @@
-% Measure whether fish learned or not 
+% Measure whether fish is self-abused not
 % By dividing the entire process into trials (2 mins as a trial)
 % measure fish performance in each trial, to decide whether fish learned or
 % not and measure the memory extinction  
-% TODO: Modularize code
-function [h, p, extincTime] = sayIfLearned(obj,metric,plotFlag)
-    TrRes = obj.ratePerformanceByTrials(metric, plotFlag);
+function [h, p] = sayIfSelfAbused(obj,metric,plotFlag)
+    TrRes = obj.ratePerformanceByTrials(plotFlag);
     if contains(metric,'time','IgnoreCase',true) % normally used
         idxMetric = 1;
     elseif contains(metric,'turn','IgnoreCase',true)
@@ -20,27 +19,14 @@ function [h, p, extincTime] = sayIfLearned(obj,metric,plotFlag)
     end
     preTrain = TrRes(1:5,idxMetric);
     postTrain = TrRes(end-8:end,idxMetric);
-    
-    idx = find(postTrain < mean(preTrain),1);
-    if isempty(idx)
-        [h,p] = ttest2(preTrain,postTrain);
-    elseif idx <= 2 % at least one switch
-        h = 0; 
-        p = nan;
-    else
-        [h,p] = ttest2(preTrain,postTrain(1:idx-1));
-    end
-    
-    if h
-        if isempty(idx)
-            extincTime = inf;
+    [h,p] = ttest2(preTrain,postTrain);
+    if h == 1
+        if mean(preTrain) > mean(postTrain)
+            h = 1;
         else
-            extincTime = (idx - 1) * 2 * 60; % seconds
-        end       
-    else
-        extincTime = nan;
+            h = 0;
+        end
     end
-    
-    obj.Res.IfLearned = h;
+   
         
 end

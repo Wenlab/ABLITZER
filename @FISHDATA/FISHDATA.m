@@ -18,9 +18,9 @@
 %
 %   
 %   
-%   Current Version: 1.1
+%   Current Version: 1.3
 %   Author: Wenbin Yang <bysin7@gmail.com>
-%   Modified on: May 6, 2018
+%   Modified on: July 12, 2018
 % 
 %   Replaced Version: 1.0
 %   Author: Wenbin Yang <bysin7@gmail.com>
@@ -62,6 +62,7 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
     end
     
     methods
+              
         % Rate fish performance in the task
         ratePerformance(obj);
         
@@ -86,12 +87,31 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
         % Measure the memory extinction in the task
         extTime = measureExtinction(obj);
         
+        % Fish personal analysis
+        TrRes = personalAnalysis(obj,idxPostTr);
+        
         % Measure whether fish learned or not 
-        ifLearned = sayIfLearned(obj);
+        [h, p, extincTime] = sayIfLearned(obj,metric,plotFlag);
+        
+        % Measure self-abusement in fish
+        [h, p] = sayIfSelfAbused(obj,metric,plotFlag);
+        
+        % Rate performance by trials, every 2 mins is counted as a trial
+        TrRes = ratePerformanceByTrials(obj,metric,plotFlag);
+        
+        % Calculate reaction time for each trial
+        reactionTime = calcReactTimeByTrials(obj);
+        
+        % Get start index, end index and expPhase for each trial
+        % Every pattern change is counted as a trial
+        TrMat = getTrIndices(obj);
+        
+        % Plot learning curve by PIs in each trial in training
+        resMat = plotLearningCurveByTrials(obj,metric);
         
         % plot distance to centerline over time
         plotDist2centerline(obj);
-        % Plot PI versus time,
+        % Plot PI (performance index) versus time,
         % mStr: string to represent which metric to plot
         % ('Time','Turn','Shock')
         plotPI(obj,mStr);

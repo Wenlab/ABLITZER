@@ -3,12 +3,20 @@ function calcPIturn(obj)
     yDivide = obj.yDivide;
     expPhase = cat(1,obj.Frames.ExpPhase);
     head = cat(1,obj.Frames.Head);
+    tail = cat(1,obj.Frames.Tail);
+    H2T = head - tail;
+    H2T = sqrt(H2T(:,1).^2+H2T(:,2).^2);
+    
+    centers = cat(1,obj.Frames.Center);
+    idxNan = find(head == -1);
+    head(idxNan) = nan;
     patternIdx = cat(1,obj.Frames.PatternIdx);
     HA = cat(1,obj.Frames.HeadingAngle);
     AC = calcCirAngleChange(HA);
-    ACthre = 20; % degrees, angle change threshold
+    ACthre = 15; % degrees, angle change threshold
     bodyLength = obj.calcFishLen();
-    
+    boundWidth = 30; % to eliminate the influence of boundary effect
+    xLimits = [min(head(:,1))+boundWidth,max(head(:,1))-boundWidth];
     % Baseline - Training - Blackout - Test
     for n = 1:4
         if n == 1
@@ -22,31 +30,39 @@ function calcPIturn(obj)
         elseif n == 4
             obj.Res.PIturn(n).Phase = 'Test';
         end
+        
         idx = find(expPhase == n - 1);
         idx(end) = []; % delete the last frame to avoid inaligned error
         tempPattern = patternIdx(idx);
         tempHA = HA(idx);
         tempAC = AC(idx);
-        tempHeadY = head(idx,2);
-        turnMat = [];
-        imThre = 120; % it is impossible to turn 120 degrees between two frames
-        for i = 1:length(idx)
-            if (abs(tempAC(i)) > ACthre) && (abs(tempAC(i)) < imThre) % it's a turn         
-                % turnMat: n*7 matrix: each row is consisted of
-                % turnTiming, preAngle, postAngle, angleChange,
-                % headPosition(Y), patternIdx, score
-                if i == length(idx)           
-                    postIdx = min(idx(i)+1,length(HA));
-                    postHA = HA(postIdx);    
-                else
-                    postHA = tempHA(i+1);
-                end
-                turnMat = cat(1,turnMat,[idx(i),tempHA(i),postHA,...
-                        tempAC(i),tempHeadY(i),tempPattern(i),0]);
-            end          
-        end
-        if ~isempty(turnMat)
+        tempHead = head(idx,:);
+        tempH2T = H2T(idx);
+        
+        imThre = 155; % it is impossible to turn 120 degrees between two frames
+        
+        L = (abs(tempAC) > ACthre) & (abs(tempAC) < imThre)...
+            & (tempH2T > 0.8 * bodyLength/2);
+        idxT = find(L);
+        if ~isempty(idxT)
+            if (idxT(end) == length(idx))
+                postIdx = min(idxT(end) + 1,length(HA));
+                lastPostAngle = HA(postIdx);
+                postAngles = [tempHA(idxT(1:end-1)+1);lastPostAngle];
+            else
+                postAngles = tempHA(idxT+1);
+            end
+            % turnMat: n*7 matrix: each row is consisted of
+            % turnTiming, preAngle, postAngle, angleChange, headPosition(Y), patternIdx, score
+            turnMat = cat(2,idx(idxT),tempHA(idxT),postAngles,tempAC(idxT),...
+                tempHead(idxT,2),tempPattern(idxT),zeros(size(idxT)));
+            
             turnMat = calc_score_for_turn(turnMat,ACthre,yDivide,bodyLength);
+            % eliminate 0 score turns
+            idx = find(turnMat(:,7));
+            turnMat = turnMat(idx,:);
+            
+            
             obj.Res.PIturn(n).TurnTiming = turnMat(:,1);
             obj.Res.PIturn(n).PreAngle = turnMat(:,2);
             obj.Res.PIturn(n).PostAngle = turnMat(:,3);
@@ -78,6 +94,11 @@ end
 % scores 1, if the fish turn to the CS area, scores -1 (e.g. from 0 deg to
 % 9 deg), other cases (e.g. turn from 90 deg to 120 deg), scores 0
 function turnMat = calc_score_for_turn(turnMat,ACthre,yDivide,fishLen)
+
+
+
+
+
 for i=1:size(turnMat,1)
     
     turnData = turnMat(i,:);
@@ -97,9 +118,9 @@ for i=1:size(turnMat,1)
     y = (turnPos - yDivide) * pSign;
     aPre = preAngle * pSign;
     aPost = postAngle * pSign;
-    % +1 case, turn around at the boundary when fish is in non-CS Area
+    % +1 case, turn around at the mid-line when fish is in non-CS Area
     if (aPre < 0)
-        if (y > 0) && (y < 1.5 * fishLen) % valid range
+        if (y > 0) && (y < 2 * fishLen) % valid range
             preInterAngle = abs(aPre + 90); % angle to the normal line
             postInterAngle = abs(aPost + 90);
             interAngleChange = postInterAngle - preInterAngle;
@@ -107,9 +128,9 @@ for i=1:size(turnMat,1)
                 turnMat(i,7) = 1;
             end
         end
-    % -1 case, turn around at the boundary when fish is in CS Area
+    % -1 case, turn around at the mid-line when fish is in CS Area
     elseif (aPre > 0) 
-        if (y < 0) && (y > -1.5 * fishLen) % valid range
+        if (y < 0) && (y > -2 * fishLen) % valid range
             preInterAngle = abs(aPre - 90); % angle to the normal line
             postInterAngle = abs(aPost - 90);
             interAngleChange = postInterAngle - preInterAngle;

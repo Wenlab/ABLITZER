@@ -13,8 +13,16 @@ function plotDist2centerline(obj)
         elseif pIdx(i) == 1
             y2CL(i) = yDiv - heads(i,2);
         end
-
+        
+        
     end
+    
+    idx = abs(y2CL) > 200;
+    y2CL(idx) = nan;
+   
+    
+    shockTiming = obj.Res.PIshock.ShockTiming / frameRate / 60 + 10;
+    
     figure;
     t = (1:numFrames) / frameRate / 60; % convert it to mins
     scatter(t,y2CL,'.');
@@ -22,6 +30,9 @@ function plotDist2centerline(obj)
     xlim([0,50]);
     xlabel('Time (min)');
     ylabel('Distance to centerline (pixel)');
+    
+    hold on;
+    scatter(shockTiming, 200*ones(size(shockTiming)),'r.');
 
 
 end
