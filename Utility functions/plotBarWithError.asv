@@ -1,0 +1,9 @@
+% plot bar graph with error
+function h = plotBarWithError(y,err)
+
+
+
+
+
+end
+
