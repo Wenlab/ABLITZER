@@ -1,14 +1,14 @@
 % TODO: add a GUI for reading video
 % TODO: add press esc to quit
 function annotateRawVideo_cut(expData)
-% Add a commment
+
     startFrame = 21800;
    [f,p] = uigetfile('*.avi');
     videoName = [p,f];
      newFileName = strcat(p,'new_',f);
     newVObj = VideoWriter(newFileName);
     open(newVObj);
-% add a comment   
+  
 yDiv =209;
 vObj = VideoReader(videoName);
 h = figure;
