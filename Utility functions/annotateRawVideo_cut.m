@@ -42,7 +42,7 @@ for i=21800:24000
         writeVideo(newVObj,img);
     end
 
-
+% aaaa
         pause(0.1);
 end
 end
