@@ -77,7 +77,7 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         importMatsByTags(obj, tags, pathName);
         
         % remove fish data whose data quality lower than threshold
-        remove_invalid_data_pair(obj);
+        remove_invalid_data_pair(obj); 
         
         % classify data into different groups by tags. (e.g. Experiment
         % Type): To Improve

@@ -43,7 +43,8 @@
 %   Replaced Version: 1.1
 %   Author: Wenbin Yang <bysin7@gmail.com>
 %   Created on: May 3, 2018
-% 
+% 用标准的键值对术语来命名，
+% Name -> Value  Tag -> Key
 
 function classifyFishByTags(obj,tags)
 	fishStack = obj.FishStack;
