@@ -6,7 +6,7 @@
 function remove_invalid_data_pair(obj)
 
 qualThre = 0.95;
-obj.classifyFishByTags("ExpType");
+obj.classifyFishByKeys("ExpType");
 idxCtrl = obj.FishGroups(1).Data;
 idxExp = obj.FishGroups(2).Data;
 numPairs = length(idxExp);

@@ -1,6 +1,12 @@
 
-% Find desired fish by providing tag-value pairs
-function indices = findFishByTagValuePairs(obj,varargin)
+% Find desired fish by providing key-value pairs
+
+%SYNTAX:
+%       1.  findFishByKeyValuePairs(obj,key1,value1,...)
+%       2. obj. findFishByKeyValuePairs(key1,value2,...)
+
+
+function indices = findFishByKeyValuePairs(obj,varargin)
 if nargin==0
     error('There\''s no input')
 end
@@ -8,14 +14,14 @@ if mod(length(varargin),2)~=0
     error('The arguments should be in pairs,in which the first one is a string, as in ("ExpType","exp","Age",7)')
 end
 
-tags = string(varargin(1:2:end));
+keys = string(varargin(1:2:end));
 values = varargin(2:2:end);
 
-%% Process tag-value pairs
-obj.classifyFishByTags(tags);
+%% Process key-value pairs
+obj.classifyFishByKeys(keys);
 str = values2str(values);
-names = cat(1,obj.FishGroups.Name);
-IDX = find(names == str);
+Values = cat(1,obj.FishGroups.Value);
+IDX = find(Values == str);
 indices = obj.FishGroups(IDX).Data;
 
 end
