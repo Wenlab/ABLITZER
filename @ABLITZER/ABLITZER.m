@@ -95,11 +95,11 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         quantifyMemoryStat(obj);
         % plot PIs of an entire group to see whether there's
         % any statistical significance. Normally, use this function
-        % after "classifyFishByTags".
+        % after "classifyFishByKeys".
         % INPUT:
         %   idxExpGroup: the index of experiment group data in FishGroup struct
         %   idxCtrlGroup: the index of control group data in FishGroup struct
-        plotPIsOfGroup(obj,idxExpGroup,idxCtrlGroup,metricType);
+        visualizeLearningResponses(obj,idxExpGroup,idxCtrlGroup,metricType);
 
         % plot performance versus fish age
         plotOntogenyByPI(obj,metricType);
