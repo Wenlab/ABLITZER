@@ -6,7 +6,7 @@ function  plotOntogenyByPI(obj,metricType)
 obj = filter_invalid_data(obj);
 
 % correct 10 dpf age error
-obj.classifyFishByTags("Age");
+obj.classifyFishByKeys("Age");
 Names = cat(1,obj.FishGroups.Name);
 
 idxN = find(Names == "1");
@@ -18,7 +18,7 @@ if ~isempty(idxN)
     end
 
     % re-classify groups
-    obj.classifyFishByTags("Age");
+    obj.classifyFishByKeys("Age");
     Names = cat(1,obj.FishGroups.Name);
 end
 
@@ -32,25 +32,25 @@ for i=1:numGroups
     labels{1,i} = num2str(agesSorted(i));
     idx = IDX(i);
     fishIdx = obj.FishGroups(idx).Data;
-    
+
     numFish = length(fishIdx);
     pIdx = [];
     for n = 1:numFish
         if contains(obj.FishStack(fishIdx(n)).ExpType,"control",'IgnoreCase',true)
             continue;
-        end        
+        end
         if contains(metricType,"time",'IgnoreCase',true)
             pIdx = cat(1,pIdx,obj.FishStack(fishIdx(n)).Res.PItime(2).PIfish - ...
                 obj.FishStack(fishIdx(n)).Res.PItime(1).PIfish);
-        elseif contains(metricType,"turn",'IgnoreCase',true)   
+        elseif contains(metricType,"turn",'IgnoreCase',true)
             pIdx = cat(1,pIdx,obj.FishStack(fishIdx(n)).Res.PIturn(2).PIfish - ...
                 obj.FishStack(fishIdx(n)).Res.PIturn(1).PIfish);
         end
-        
-        
+
+
     end
     PIs = nancat(2,PIs,pIdx);
-    
+
 end
 
 figure;
@@ -86,7 +86,7 @@ function obj = filter_invalid_data(obj)
     badIndices = []; % store bad index pairs
     % all prepared dataset would be paired automatically
     % due to the classification algorithm
-    obj.classifyFishByTags("ExpType"); 
+    obj.classifyFishByKeys("ExpType");
     numFish = length(obj.FishGroups(1).Data);
     idxCtrl = obj.FishGroups(1).Data;
     idxExp = obj.FishGroups(2).Data;
@@ -97,11 +97,11 @@ function obj = filter_invalid_data(obj)
               (obj.FishStack(idx2).Res.DataQuality < qualThre)
           badIndices = cat(2,badIndices,[idx1,idx2]);
         end
-        
+
     end
-    
+
     obj.FishStack(badIndices) = [];
-    
-    
-    
+
+
+
 end
