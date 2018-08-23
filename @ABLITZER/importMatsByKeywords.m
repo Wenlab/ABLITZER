@@ -1,9 +1,9 @@
-% load mat files which matches tags provided in the same directory,,
-function importMatsByKeywords(obj, keys, pathName)
+% load mat files which matches keywords provided in the same directory,,
+function importMatsByKeywords(obj, keywords, pathName)
     if nargin == 2
         [~,pathName] = uigetfile('*.mat');
     end
-    fInfo = filterByKeys(keys, pathName);
+    fInfo = filterByKeywords(keywords, pathName);
     numFiles = length(fInfo);
     for i = 1:numFiles
         fprintf('Reading file: %s\n',fInfo(i).name);
@@ -18,13 +18,13 @@ function importMatsByKeywords(obj, keys, pathName)
 end
 % add a new line
 
-% Filter all files in the same directory by tags
-function fInfo = filterByKeys(keys, pathName)
-    % process tags
-    numKeys = length(keys);
+% Filter all files in the same directory by keywords
+function fInfo = filterByKeywords(keywords, pathName)
+    % process keywords
+    numKeys = length(keywords);
     searchStr = pathName;
     for i=1:numKeys
-        searchStr = cat(2,searchStr,'*',char(keys(i)));
+        searchStr = cat(2,searchStr,'*',char(keywords(i)));
     end
     searchStr = cat(2,searchStr,'*.mat');
     fInfo = dir(searchStr);

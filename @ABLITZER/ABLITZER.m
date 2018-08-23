@@ -34,7 +34,7 @@
 %   Orinigal Version: 1.0
 %   Author: Wenbin Yang <bysin7@gmail.com>
 %   Created on: May 3, 2018
-% 
+%
 
 
 
@@ -44,7 +44,7 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         FishStack; % Stack to store all fish data
         % Devide fishStack into different groups based on different tags
         % Put idx of data in 2nd column
-        FishGroups = struct('Value',[],'Data',[],'Key',[],'Note',[]);
+        FishGroups = struct('Value',[],'idxData',[],'Key',[],'Note',[]);
         StatRes; % statistical results about the entire experiment
 
         Notes = ''; % additional notes about the dataset
@@ -73,15 +73,15 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         % easy to manipulate in MATLAB
         yaml2matlab(obj, endFrame, pathName, fileName);
 
-        % load mat files which matches tags provided in the same directory
-        importMatsByTags(obj, tags, pathName);
+        % load mat files which matches keys provided in the same directory
+        importMatsByTags(obj, keys, pathName);
 
         % remove fish data whose data quality lower than threshold
         remove_invalid_data_pair(obj);
 
-        % classify data into different groups by tags. (e.g. Experiment
+        % classify data into different groups by keys. (e.g. Experiment
         % Type): To Improve
-        classifyFishByTags(obj, tags);
+        classifyFishByTags(obj, keys);
 
         % Find desired fish by providing tag-value pairs
         indices = findFishByTagValuePairs(obj,varargin);
