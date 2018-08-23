@@ -5,7 +5,7 @@ function ratePerformance(obj)
     obj.calcPIturn();
     %obj.ratePerformanceByTrials('time',false);
     %obj.ratePerformanceByTrials('turn',false);
-    %obj.calcPIshock();
+    obj.calcPIshock();
     %plot_PI_versus_time(obj);
 end
 

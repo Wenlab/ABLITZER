@@ -7,7 +7,7 @@ if nargin == 1
     [f,p] = uigetfile();
     videoName = [p,f];
 elseif nargin == 2
-   [f,p] = uigetfile();
+   [f,p] = uigetfile('*.avi');
     videoName = [p,f];
 end
 yDiv = obj.yDivide;
@@ -45,13 +45,13 @@ for i=1:length(frames)
         line([cBox(1),cBox(1) + cBox(3)],[yDiv,yDiv],...
             'color','r','lineWidth',1.5);
         
-        line([cBox(1),cBox(1) + cBox(3)],...
-            [yDiv-2*obj.Res.BodyLength,yDiv-2*obj.Res.BodyLength],...
-            'color','b','lineWidth',1,'lineStyle','-.');
-        
-        line([cBox(1),cBox(1) + cBox(3)],...
-            [yDiv+2*obj.Res.BodyLength,yDiv+2*obj.Res.BodyLength],...
-            'color','b','lineWidth',1,'lineStyle','-.');
+%         line([cBox(1),cBox(1) + cBox(3)],...
+%             [yDiv-2*obj.Res.BodyLength,yDiv-2*obj.Res.BodyLength],...
+%             'color','b','lineWidth',1,'lineStyle','-.');
+%         
+%         line([cBox(1),cBox(1) + cBox(3)],...
+%             [yDiv+2*obj.Res.BodyLength,yDiv+2*obj.Res.BodyLength],...
+%             'color','b','lineWidth',1,'lineStyle','-.');
         
 %         line([77,77],[cBox(2),cBox(2) + cBox(4)],...
 %             'color','b','lineWidth',1,'lineStyle','-.');
@@ -70,23 +70,23 @@ for i=1:length(frames)
             text(10, 30, 'Shock on');
         end
         
-        % test turning scores
-        idx = find(turnTiming == i);
-        if ~isempty(idx)
-            if turnScores(idx) == 1
-                text(10,50,'Good turn','color','red','FontSize',14);
-            elseif turnScores(idx) == -1
-                text(10,50,'Bad turn','color','red','FontSize',14);
-            else
-                text(10,50,'Just a turn','color','red','FontSize',14);
-            end
-            pause();
-        end
-        
+%         % test turning scores
+%         idx = find(turnTiming == i);
+%         if ~isempty(idx)
+%             if turnScores(idx) == 1
+%                 text(10,50,'Good turn','color','red','FontSize',14);
+%             elseif turnScores(idx) == -1
+%                 text(10,50,'Bad turn','color','red','FontSize',14);
+%             else
+%                 text(10,50,'Just a turn','color','red','FontSize',14);
+%             end
+%             pause();
+%         end
+%         
         
         str = sprintf('Frame: %d',i);
         text(10,760,str);
-        
+        pause(0.1);
     end
 end
 

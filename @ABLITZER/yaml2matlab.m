@@ -1,10 +1,10 @@
 %   Copyright 2018 Wenbin Yang <bysin7@gmail.com>
-%   This file is part of A-BLITZ-ER[1] (Analyzer of Behavioral Learning 
-%   In The ZEbrafish Result.) i.e. the analyzer of BLITZ[2]. 
+%   This file is part of A-BLITZ-ER[1] (Analyzer of Behavioral Learning
+%   In The ZEbrafish Result.) i.e. the analyzer of BLITZ[2].
 %
-%   BLITZ (Behavioral Learning In The Zebrafish) is a software that 
-%   allows researchers to train larval zebrafish to associate 
-%   visual pattern with electric shock in a fully automated way, which 
+%   BLITZ (Behavioral Learning In The Zebrafish) is a software that
+%   allows researchers to train larval zebrafish to associate
+%   visual pattern with electric shock in a fully automated way, which
 %   is adapted from MindControl.[3]
 %   [1]: https://github.com/Wenlab/ABLITZER
 %   [2]: https://github.com/Wenlab/BLITZ
@@ -12,7 +12,7 @@
 %
 %
 %   Filename: yaml2matlab.m (method of ABLITZER class)
-%   Abstract: 
+%   Abstract:
 %      Read in all recorded experimental data in one yaml file to an object
 %      of ABLIZTER class.
 %
@@ -26,33 +26,35 @@
 %       endFrame: the last frame to read, if -1 entered, read to the end.
 %       pathName: the pathname of the file to read
 %       fileName: the filename of the file to read
-%   OUTPUT: 
+%   OUTPUT:
 %       Implicit output, saved in the object of ABLITZER class.
-% 
-% 
-% 
-% 
-% 
-% 
-%   
+%
+%
+%
+%
+%
+%
+%
 %   Current Version: 1.1
 %   Author: Wenbin Yang <bysin7@gmail.com>
 %   Modified on: May 5, 2018
-% 
+%
 %   Replaced Version: 1.0
 %   Author: Wenbin Yang <bysin7@gmail.com>
 %   Created on: May 3, 2018
-% 
+%
 
 % TODO: make readExpSettings, readFrames compatible with
 % old format by adding oldFlag in argument list.
+
+
 function yaml2matlab(obj,oldFlag,pathName,fileName)
- 
+
 if (nargin == 2)
     [fileName,pathName] = uigetfile('*yaml');
 elseif (nargin == 1)
     oldFlag = false;
-    [fileName,pathName] = uigetfile('*yaml');   
+    [fileName,pathName] = uigetfile('*yaml');
 end
 
 fName = [pathName, fileName];
@@ -76,6 +78,7 @@ end
 
 end
 
+
 % read general experiment settings and fish personal infos
 function F = readExpSettings(fid)
 
@@ -87,7 +90,7 @@ while (~ifReached && ~feof(fid))
         switch key
             case 'FishIDs'
                 fishIDs = textscan(value,'%q','Delimiter',',');
-                fishIDs = fishIDs{1,1};         
+                fishIDs = fishIDs{1,1};
             case 'FishAge'
                 fishAge = str2num(value);
             case 'Task'
@@ -127,11 +130,11 @@ for i=1:numFish
     F(i).Arena = arena;
     F(i).ExpTask = task;
     F(i).CSpattern = string(csPattern);
-    
-    
+
+
     F(i).ExpStartTime = expStartTime;
     F(i).FrameRate = frameRate;
-    
+
     %         Scheme for fish positions in arena
     %               xCut
     %         |		|		|
@@ -173,22 +176,22 @@ function F = readExpSettings_old(fid,fileName)
     elseif (contains(fishID1,'S'))
         fishStrain1 = "WT";
     end
-    
+
     fishID2 = fileName(idx(3)+1:idx(4)-1);
     if (contains(fishID2,'G'))
         fishStrain2 = "GCaMP";
     elseif (contains(fishID2,'S'))
         fishStrain2 = "WT";
     end
-    
+
     fishAge1 = str2num(fileName(idx(2)+1));
     fishAge2 = str2num(fileName(idx(4)+1));
-    
+
     fishIDs = {fishID1;fishID2};
     fishAges = [fishAge1, fishAge2];
     fishStrains = [string(fishStrain1), string(fishStrain2)];
     task = fileName(idx(5)+1:end-5);
-    
+
     ifReached = false; % logical value
     while (~ifReached && ~feof(fid))
         disp('Reading the general experimental info');
@@ -212,14 +215,14 @@ function F = readExpSettings_old(fid,fileName)
             end
         end
     end
-    
+
     numFish = length(fishIDs);
     F(numFish) = FISHDATA;
     for i=1:numFish
         F(i).ID = string(fishIDs{i,1});
         F(i).Age = fishAges(i);
         F(i).Strain = fishStrains(i);
-        
+
         switch str2double(fishIDs{i,1}(3))
             case 1 || 4
                 arena = 1;
@@ -251,14 +254,14 @@ function F = readExpSettings_old(fid,fileName)
         %         |	2	|	3	|
         %         |		|		|
         if (i==1) % topLeft_x, topLeft_y, width, height
-            F(i).ConfinedRect = [0,0,delimX,frameSize(2)]; 
+            F(i).ConfinedRect = [0,0,delimX,frameSize(2)];
         elseif (i==2)
-            F(i).ConfinedRect = [delimX,0,frameSize(1)-delimX,frameSize(2)]; 
+            F(i).ConfinedRect = [delimX,0,frameSize(1)-delimX,frameSize(2)];
         end
         F(i).yDivide = yDivide;
-        
+
     end
-    
+
 
 end
 
@@ -411,7 +414,7 @@ function newLine = remove_brackets(tline)
         endIdx = strfind(tline,"}");
         newLine = tline(startIdx+1:endIdx-1);
     end
-    
+
 
 end
 

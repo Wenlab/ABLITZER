@@ -7,14 +7,14 @@ yDivide = fish.yDivide;
 expPhase = cat(1,fish.Frames.ExpPhase);
 head = cat(1,fish.Frames.Head);
 pIdx = cat(1,fish.Frames.PatternIdx);
-
+% add a new line
 % checheck whether there is light preference in training section
 idx = find(expPhase == 1);
 tempPattern = pIdx(idx);
 tempHead = head(idx,2);
 idxNaN = find(tempHead == -1);
 scores = zeros(length(idx),1);
-
+% add a new line 
 % when the fish is in CS area, give him a credit, otherwise no point
 for i = 1:length(idx)
     if tempPattern(i) == 0 % CS on the top
