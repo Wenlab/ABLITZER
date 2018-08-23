@@ -74,17 +74,17 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         yaml2matlab(obj, endFrame, pathName, fileName);
 
         % load mat files which matches keys provided in the same directory
-        importMatsByTags(obj, keys, pathName);
+        importMatsByKeys(obj, keys, pathName);
 
         % remove fish data whose data quality lower than threshold
         remove_invalid_data_pair(obj);
 
         % classify data into different groups by keys. (e.g. Experiment
         % Type): To Improve
-        classifyFishByTags(obj, keys);
+        classifyFishByKeys(obj, keys);
 
-        % Find desired fish by providing tag-value pairs
-        indices = findFishByTagValuePairs(obj,varargin);
+        % Find desired fish by providing key-value pairs
+        indices = findFishByKeyValuePairs(obj,varargin);
         % convert old expData and resData to ABLITZER
         importOldData2Ablitzer(obj, pathName, fileName);
 
