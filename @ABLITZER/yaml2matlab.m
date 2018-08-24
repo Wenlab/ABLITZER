@@ -154,7 +154,7 @@ for i=1:numFish
         F(i).ConfinedRect = [xCut,yCut,frameSize(1) - xCut,frameSize(2) -yCut];
     end
     F(i).yDivide = yDivide(i);
-   [F(i)]=judge_ExpType(task,F(i));
+    F=judge_ExpType(task,F,i);
 end
 
 end
@@ -227,7 +227,7 @@ function F = readExpSettings_old(fid,fileName)
         end
         F(i).Arena = arena;
         F(i).ExpTask = task;
-        [F(i)]=judge_ExpType(task,F(i));
+        F=judge_ExpType(task,F,i);
 
         F(i).ExpStartTime = expStartTime;
         F(i).FrameRate = frameRate;
@@ -416,12 +416,13 @@ function [fieldName,value] = readKeyValuePair(str)
     end
 end
 
-function [F(i)]=judge_ExpType(task,F(i))
-  {  if contains(task,'control','IgnoreCase',true)
+function F =judge_ExpType(task,F,i)
+    if contains(task,'control','IgnoreCase',true)
         F(i).ExpType = "Control Group";
     elseif contains(task,'exp','IgnoreCase',true)
         F(i).ExpType = "Exp Group";
     else
         F(i).ExpType = "Unrecognized";
     end
-    }
+
+  end

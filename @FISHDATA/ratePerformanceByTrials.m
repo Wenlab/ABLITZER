@@ -6,24 +6,24 @@ function  TrRes = ratePerformanceByTrials(obj,metric,plotFlag)
 if strcmpi(metric,"time") % TODO: replace magic number
     idxMetric = 1;
     titleStr = "Non-CS Area Time Proportion";
-    
+
 elseif strcmpi(metric,"turn")
     idxMetric = 2;
     titleStr = "Turning Performance Index";
-    
-elseif strcmpi(metric,'maxCSstayTime')
+
+elseif strcmpi(metric,"maxCSstayTime")
     idxMetric = 3;
     titleStr = "Longest stay time in CS area";
-elseif strcmpi(metric,'dist2centerline')
+elseif strcmpi(metric,"dist2centerline")
     idxMetric = 4;
     titleStr = "Mean Distance to Centerline";
-    
-elseif strcmpi(metric,'crossMidline')
+
+elseif strcmpi(metric,"crossMidline")
     idxMetric = 5;
     titleStr = "Number of crossing mid-line";
 else
-    fprintf('Unrecognized metric, please choose one metric from the following:\n'); 
-    fprintf('"time", "turn", "maxCSstayTime", "dist2centerline"');
+    fprintf('Unrecognized metric, please choose one metric from the following:\n');
+    fprintf('"time", "turn", "maxCSstayTime", "dist2centerline","crossMidline"');
     return;
 end
 
@@ -45,8 +45,8 @@ switch idxMetric % calculate performance index for different metrics
     case 1 % non-CS area time proportion
         obj.calcPItime();
         scores = cat(1,obj.Res.PItime(1).Scores,obj.Res.PItime(2).Scores,...
-            zeros(601,1),obj.Res.PItime(4).Scores); % TODO replace magic number 
-        for i = 1:numTrials
+            zeros(601,1),obj.Res.PItime(4).Scores); % TODO replace magic number
+    o78    for i = 1:numTrials
             idxBegin = TrMat(i,1);
             idxEnd = TrMat(i,2);
             tempScores = scores(idxBegin:idxEnd);
@@ -72,7 +72,7 @@ switch idxMetric % calculate performance index for different metrics
                 numTurns(i) = length(tempTurns);
                 turnRes = length(find(tempTurns==1))/numTurns(i);
             end
-            TrRes(i) = turnRes;     
+            TrRes(i) = turnRes;
         end
     case 3
         scores = cat(1,obj.Res.PItime(1).Scores,obj.Res.PItime(2).Scores,...
@@ -91,8 +91,8 @@ switch idxMetric % calculate performance index for different metrics
                 TrRes(i) = max(areas);
             end
         end
-        
-        
+
+
     case 4
         for i = 1:numTrials
             idxBegin = TrMat(i,1);
@@ -100,23 +100,23 @@ switch idxMetric % calculate performance index for different metrics
             trIndices = idxBegin:idxEnd;
             pIdx = cat(1,obj.Frames(trIndices).PatternIdx);
             heads = cat(1,obj.Frames(trIndices).Head);
-            
+
             pSign = pIdx * 2 - 1;
             y2CL = pSign .* (yDiv - heads(:,2));
-            TrRes(i) = mean(y2CL);      
+            TrRes(i) = mean(y2CL);
         end
     case 5
         heads = cat(1,obj.Frames.Head);
         y = heads(:,2);
-        L = y > yDiv; 
+        L = y > yDiv;
         idx = find(diff(L));
         for i = 1:numTrials
             idxBegin = TrMat(i,1);
             idxEnd = TrMat(i,2);
             TrRes(i) = length(find((idx >= idxBegin) &...
                 (idx <= idxEnd)));
-            
-            
+
+
         end
 end
 
@@ -142,7 +142,7 @@ if plotFlag
     colors = 0.8*ones(2,3);
     labels = {'pre-train','post-train'};
     figure(1);
-    
+
     preTrain = TrRes(1:5);
     postTrain = TrRes(end-8:end);
     PIs = nancat(2,preTrain,postTrain);
@@ -187,10 +187,7 @@ function p = significanceTest(preTrain,postTrain)
         elseif p < 0.05 % "*"
            text(textPos(1),textPos(2),'*','FontSize',20);
         end
-    
+
 
 
 end
-
-
-
