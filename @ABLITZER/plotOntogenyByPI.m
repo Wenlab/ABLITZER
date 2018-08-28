@@ -7,9 +7,9 @@ obj = filter_invalid_data(obj);
 
 % correct 10 dpf age error
 obj.classifyFishByKeys("Age");
-Names = cat(1,obj.FishGroups.Name);
+Values = cat(1,obj.FishGroups.Value);
 
-idxN = find(Names == "1");
+idxN = find(Values == "1");
 if ~isempty(idxN)
     idx1 = obj.FishGroups(idxN).Data;
     for i = 1:length(idx1)
@@ -19,10 +19,10 @@ if ~isempty(idxN)
 
     % re-classify groups
     obj.classifyFishByKeys("Age");
-    Names = cat(1,obj.FishGroups.Name);
+    Names = cat(1,obj.FishGroups.Value);
 end
 
-ages = str2double(Names);
+ages = str2double(Values);
 [agesSorted,IDX] = sort(ages);
 
 PIs = [];

@@ -1,7 +1,7 @@
 % Rate performance by trials, every 2 mins is counted as a trial
 % TODO: decouple metrics from TrRes
 function  TrRes = ratePerformanceByTrials(obj,metric,plotFlag)
-
+% obj is the Data of one fish
 % Metric input inspection
 if strcmpi(metric,"time") % TODO: replace magic number
     idxMetric = 1;
@@ -46,7 +46,7 @@ switch idxMetric % calculate performance index for different metrics
         obj.calcPItime();
         scores = cat(1,obj.Res.PItime(1).Scores,obj.Res.PItime(2).Scores,...
             zeros(601,1),obj.Res.PItime(4).Scores); % TODO replace magic number
-    o78    for i = 1:numTrials
+        for i = 1:numTrials
             idxBegin = TrMat(i,1);
             idxEnd = TrMat(i,2);
             tempScores = scores(idxBegin:idxEnd);
