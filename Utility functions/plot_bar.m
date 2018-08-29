@@ -149,24 +149,48 @@ end
   end
   aver(2).PITurn_Test = sum / num;
 
-y1=[aver(1).PITime_Baseline,aver(1).PITime_Baseline;aver(2).PITime_Baseline,aver(2).PITime_Baseline;]
-y2=[aver(1).PITurn_Baseline,aver(1).PITurn_Baseline;aver(2).PITurn_Baseline,aver(2).PITurn_Baseline;]
+x=[1,2,3,4,5];
+A=[cat(1,output_OLcontrol.PITime_Baseline),cat(1,output_OLcontrol.PITime_Test)];
+B=[cat(1,output_OLexp.PITime_Baseline),cat(1,output_OLexp.PITime_Test)];
+C=[cat(1,output_OLcontrol.PITurn_Baseline),cat(1,output_OLcontrol.PITurn_Test)];
+D=[cat(1,output_OLexp.PITurn_Baseline),cat(1,output_OLexp.PITurn_Test)];
+std_A=[std(A),0,std(B)];
+std_C=[std(C),0,std(D)];
+
+y1=[aver(1).PITime_Baseline,aver(1).PITime_Test,0,aver(2).PITime_Baseline,aver(2).PITime_Test];
+y11=diag(y1);
+y2=[aver(1).PITurn_Baseline,aver(1).PITurn_Test,0,aver(2).PITurn_Baseline,aver(2).PITurn_Test];
+y22=diag(y2);
 figure;
-b=bar(y1);
+b=bar(y11,'stack');
+hold on;
+e=errorbar(x,y1,std_A,'.');
+e.Color=[0.5 0.5 0.5];
 
 b(1).FaceColor = [0.9,0.9,0.9];
 b(2).FaceColor = [0,0,0];
-axis([0 3 0 1])
+b(4).FaceColor = [0.9,0.9,0.9];
+b(5).FaceColor = [0,0,0];
+
+ylim([0,1]);
 set(gca,'xtick',-inf:inf:inf);
 ylabel('Poisitional Index');
-xlabel('Self-Control                 Experiment');
+xlabel('Self-Control                                    Experiment');
+legend([b(1) b(2)],'Before training','After training');
 
 figure;
-b=bar(y1);
+b=bar(y22,'stack');
+hold on;
+e=errorbar(x,y2,std_C,'.');
+e.Color=[0.5 0.5 0.5];
+
 b(1).FaceColor = [0.9,0.9,0.9];
 b(2).FaceColor = [0,0,0];
-axis([0 3 0 1])
+b(4).FaceColor = [0.9,0.9,0.9];
+b(5).FaceColor = [0,0,0];
+ylim([0,1]);
 set(gca,'xtick',-inf:inf:inf);
 ylabel('Turning Index');
-xlabel('Self-Control                 Experiment');
+xlabel('Self-Control                                    Experiment');
+legend([b(1) b(2)],'Before training','After training');
 end
