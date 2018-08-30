@@ -1,6 +1,6 @@
 
 
-function [output,output_OLcontrol,output_OLexp,aver] = plot_bar(a)
+function [output,output_OLcontrol,output_OLexp,aver] = plot_bar_SE(a)
 
   output = struct('ID',[],'Age',[],'Task',[],'DataQuality',[],...
   'PITime_Baseline',[],'PITime_Training',[],'PITime_Test',[],...
@@ -14,7 +14,7 @@ function [output,output_OLcontrol,output_OLexp,aver] = plot_bar(a)
   for j = 1:num
 
   t = 0;
-  begin_idx = begin_idx + end_idx;
+  begin_idx = end_idx+1;
   end_idx = end_idx + length(a(j).FishStack);
   for i = begin_idx:end_idx% number of fish in the fishStack
        t = t+1;
@@ -150,6 +150,11 @@ end
   aver(2).PITurn_Test = sum / num;
 
 x=[1,2,3,4,5];
+sigSyms = ["n.s.",... % P > 0.05
+            "*",...   % P < 0.05
+            "**",...  % P < 0.01
+            "***",... % P < 0.001
+            "****"];  % P < 0.0001 % occassionally use
 A=[cat(1,output_OLcontrol.PITime_Baseline),cat(1,output_OLcontrol.PITime_Test)];
 B=[cat(1,output_OLexp.PITime_Baseline),cat(1,output_OLexp.PITime_Test)];
 C=[cat(1,output_OLcontrol.PITurn_Baseline),cat(1,output_OLcontrol.PITurn_Test)];
@@ -176,7 +181,46 @@ ylim([0,1]);
 set(gca,'xtick',-inf:inf:inf);
 ylabel('Poisitional Index');
 xlabel('Self-Control                                    Experiment');
+
+for i=1:num
+    P(i)=output_OLcontrol(i).PITime_Baseline;
+    Q(i)=output_OLcontrol(i).PITime_Test;
+end
+[~,p] = ttest(P,Q);
+line([1,2],[0.8,0.8],'Color',[0,0,0]);
+if p > 0.05 % n.s.
+   text(1.3,0.83,'n.s.','FontSize',14);
+elseif p < 0.05 % "*"
+   text(1.4,0.81,'*','FontSize',20);
+elseif p < 0.01 % "**"
+   text(1.3,0.81,'**','FontSize',20);
+elseif p < 0.001 % "***"
+   text(1.2,0.81,'***','FontSize',20);
+elseif p < 0.0001 % "****"
+   text(1.1,0.81,'****','FontSize',20);
+end
+
+
+% experiment group: compare mean of PIs between Baseline and Test
+for i=1:num
+    P(i)=output_OLexp(i).PITime_Baseline;
+    Q(i)=output_OLexp(i).PITime_Test;
+end
+[~,p] = ttest(P,Q);
+line([4,5],[0.8,0.8],'Color',[0,0,0]);
+if p > 0.05 % n.s.
+   text(4.3,0.83,'n.s.','FontSize',14);
+elseif p < 0.05 % "*"
+   text(4.4,0.81,'*','FontSize',20);
+elseif p < 0.01 % "**"
+   text(4.3,0.81,'**','FontSize',20);
+elseif p < 0.001 % "***"
+   text(4.2,0.81,'***','FontSize',20);
+elseif p < 0.0001 % "****"
+   text(4.1,0.81,'****','FontSize',20);
+end
 legend([b(1) b(2)],'Before training','After training');
+
 
 figure;
 b=bar(y22,'stack');
@@ -192,5 +236,50 @@ ylim([0,1]);
 set(gca,'xtick',-inf:inf:inf);
 ylabel('Turning Index');
 xlabel('Self-Control                                    Experiment');
+
+for i=1:num
+    P(i)=output_OLcontrol(i).PITurn_Baseline;
+    Q(i)=output_OLcontrol(i).PITurn_Test;
+end
+[~,p] = ttest(P,Q);
+line([1,2],[0.8,0.8],'Color',[0,0,0]);
+if p > 0.05 % n.s.
+    text(1.3,0.83,'n.s.','FontSize',14);
+elseif p < 0.05 % "*"
+   text(1.4,0.81,'*','FontSize',20);
+elseif p < 0.01 % "**"
+   text(1.3,0.81,'**','FontSize',20);
+elseif p < 0.001 % "***"
+   text(1.2,0.81,'***','FontSize',20);
+elseif p < 0.0001 % "****"
+   text(1.1,0.81,'****','FontSize',20);
+end
+
+% experiment group: compare mean of PIs between Baseline and Test
+for i=1:num
+    P(i)=output_OLexp(i).PITurn_Baseline;
+    Q(i)=output_OLexp(i).PITurn_Test;
+end
+[~,p] = ttest(P,Q);
+line([4,5],[0.8,0.8],'Color',[0,0,0]);
+if p > 0.05 % n.s.
+    text(4.2,0.83,'n.s.','FontSize',14);
+elseif p < 0.05 % "*"
+   text(4.4,0.81,'*','FontSize',20);
+elseif p < 0.01 % "**"
+   text(4.3,0.81,'**','FontSize',20);
+elseif p < 0.001 % "***"
+   text(4.2,0.81,'***','FontSize',20);
+elseif p < 0.0001 % "****"
+   text(4.1,0.81,'****','FontSize',20);
+end
 legend([b(1) b(2)],'Before training','After training');
+
+
+
+
+% control group: compare mean of PIs between Baseline(C) and Test(C)
+
+
+
 end
