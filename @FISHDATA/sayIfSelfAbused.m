@@ -1,7 +1,9 @@
 % Measure whether fish is self-abused not
 % By dividing the entire process into trials (2 mins as a trial)
 % measure fish performance in each trial, to decide whether fish learned or
-% not and measure the memory extinction  
+% not and measure the memory extinction
+
+% Caution: not correct, do not use
 function [h, p] = sayIfSelfAbused(obj,metric,plotFlag)
     TrRes = obj.ratePerformanceByTrials(plotFlag);
     if contains(metric,'time','IgnoreCase',true) % normally used
@@ -13,7 +15,7 @@ function [h, p] = sayIfSelfAbused(obj,metric,plotFlag)
     elseif contains(metric,'dist2centerline','IgnoreCase',true)
         idxMetric = 4;
     else
-        fprintf('Unrecognized metric, please choose one metric from the following:\n'); 
+        fprintf('Unrecognized metric, please choose one metric from the following:\n');
         fprintf('"time", "turn", "maxCSstayTime", "dist2centerline"');
         return;
     end
@@ -27,6 +29,6 @@ function [h, p] = sayIfSelfAbused(obj,metric,plotFlag)
             h = 0;
         end
     end
-   
-        
+
+
 end

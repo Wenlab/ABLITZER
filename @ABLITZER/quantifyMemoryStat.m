@@ -1,3 +1,4 @@
+
 function quantifyMemoryStat(obj)
     numFish = length(obj.FishStack);
     lenTest = 10740;
