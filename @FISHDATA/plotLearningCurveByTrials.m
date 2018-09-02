@@ -2,6 +2,8 @@
 % It would update the pattern, it is called a trial
 % based on this, we can measure the accuracy of fish performed by time or
 % by turn in each trial to see how learning process developed in the fish
+
+% Caution: check before using this function
 function resMat = plotLearningCurveByTrials(obj,metric)
 
 scores = obj.Res.PItime(2).Scores;
@@ -25,7 +27,7 @@ elseif contains(metric,'turn','IgnoreCase',true)
     idx = find(scores);
     scores = scores(idx);
     turnTiming = obj.Res.PIturn(2).TurnTiming(idx);
-    
+
     for i=1:numTrials
         idxBegin = trIdx(i);
         idxEnd = trIdx(i+1);
@@ -37,8 +39,8 @@ elseif contains(metric,'turn','IgnoreCase',true)
         end
         resMat(i) = (tempRes + 1) / 2;
     end
-    
-    
+
+
 end
 
 

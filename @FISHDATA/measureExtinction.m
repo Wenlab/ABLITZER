@@ -5,17 +5,22 @@
 % 2. after the fish learned, put them in normal raising house for a while,
 % then test whether they will show escaping responses to CS pattern.
 % In this experiment, we measured the first kind of memory
-function extTime = measureExtinction(obj)
+
+% TODO: rewrite this function to find the extinction point
+function extTime = measureExtinction(obj,plotFlag)
     testInterval = 120; % seconds
     frameRate = obj.FrameRate;
     windowWidth = testInterval * frameRate;
     PIthre = obj.Res.PItime(1).PIfish;
     pMov = calc_moving_PI(obj,windowWidth);
-    figure;
+
     t = (1:length(pMov)) / frameRate;
+    if plotFlag
+    figure;
     plot(t,pMov);
     xlabel('Time (s)');
     ylabel('Non-CS area time proportion');
+   end
     extFrame = find(pMov(windowWidth:end) <= PIthre,1);
     if isempty(extFrame)
         extFrame = length(pMov);

@@ -1,7 +1,8 @@
 % obj personal analysis to see whether obj
-% learned the task and to measure performance 
+% learned the task and to measure performance
 % from several perspectives
 % idxPostTr: indices of post trials for test
+% TODO: rewrite this function to fit the current trial definition
 function TrRes = personalAnalysis(obj,idxPostTr)
 
 TrRes = zeros(24,5);
@@ -40,7 +41,7 @@ for j = 1:2
             titleStr = "Number of crossing mid-line";
     end
     title(titleStr);
-    
+
     [~,p] = ttest2(preTrain,postTrain);
     line([1,2],[0.2,0.2],'Color',[0,0,0]);
     textPos = [1.5,0.25];
@@ -55,11 +56,11 @@ for j = 1:2
     elseif p < 0.05 % "*"
         text(textPos(1),textPos(2),'*','FontSize',20);
     end
-    
+
 end
 
 
-    
+
 
 for j = 1:2
     % Progress plot

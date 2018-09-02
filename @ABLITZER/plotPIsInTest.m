@@ -1,5 +1,7 @@
 % statistically plot non-CS area proportion versus time
 % Currently, it only plots PItime scores
+% CAUTION: NOT CORRECT
+% TODO: consider to remove it
 function plotPIsInTest(obj)
     fishStack = obj.FishStack;
     numFish = length(fishStack);
@@ -20,10 +22,10 @@ function plotPIsInTest(obj)
     end
     Pmean = mean(P,2);
     Psem = mean((P - Pmean).^2,2);
-    
+
     % 3rd-party library: Shaded-Error Plot
     shadedErrorBar([],Pmean,Psem);
     ylim([0.0,1.0]);
-    
+
 
 end

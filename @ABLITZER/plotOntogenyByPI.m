@@ -1,6 +1,7 @@
 % plot performance versus fish age
 % Here, we use the substraction of PI in training with PI in baseline as
 % the characteristic PI for fish at the same age
+% CAUTION: NOT CORRECT
 function  plotOntogenyByPI(obj,metricType)
 % filter invalid data
 obj = filter_invalid_data(obj);
