@@ -1,7 +1,11 @@
 % statistically plot non-CS area proportion versus time
 % Currently, it only plots PItime scores
 % CAUTION: NOT CORRECT
+<<<<<<< HEAD
 % TODO: consider to remove it
+=======
+% TODO: 
+>>>>>>> 850eab9a93378e9610381f511732d13c006d2b1f
 function plotPIsInTest(obj)
     fishStack = obj.FishStack;
     numFish = length(fishStack);

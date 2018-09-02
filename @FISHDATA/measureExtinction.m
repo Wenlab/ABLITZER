@@ -5,8 +5,11 @@
 % 2. after the fish learned, put them in normal raising house for a while,
 % then test whether they will show escaping responses to CS pattern.
 % In this experiment, we measured the first kind of memory
+<<<<<<< HEAD
 
 % TODO: rewrite this function to find the extinction point
+=======
+>>>>>>> 850eab9a93378e9610381f511732d13c006d2b1f
 function extTime = measureExtinction(obj,plotFlag)
     testInterval = 120; % seconds
     frameRate = obj.FrameRate;
