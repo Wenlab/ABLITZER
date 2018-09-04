@@ -1,285 +1,36 @@
-
-
-function [output,output_OLcontrol,output_OLexp,aver] = plot_bar_SE(a)
-
-  output = struct('ID',[],'Age',[],'Task',[],'DataQuality',[],...
-  'PITime_Baseline',[],'PITime_Training',[],'PITime_Test',[],...
-  'PITurn_Baseline',[],'PITurn_Training',[],'PITurn_Test',[],...
-  'NumShock',[],'PIShock',[]);
-
-   begin_idx = 1;
-   end_idx = 0;
-   num = length(a);
-
-  for j = 1:num
-
-  t = 0;
-  begin_idx = end_idx+1;
-  end_idx = end_idx + length(a(j).FishStack);
-  for i = begin_idx:end_idx% number of fish in the fishStack
-       t = t+1;
-        a(j).FishStack(t).ratePerformance();
-      % Assign values to output
-      output(i).ID = a(j).FishStack(t).ID;
-      output(i).Age = a(j).FishStack(t).Age;
-      output(i).Task = a(j).FishStack(t).ExpTask;
-
-      output(i).DataQuality = a(j).FishStack(t).Res.DataQuality;
-      % PItime
-      output(i).PITime_Baseline = a(j).FishStack(t).Res.PItime(1).PIfish;
-      output(i).PITime_Training = a(j).FishStack(t).Res.PItime(2).PIfish;
-      output(i).PITime_Test = a(j).FishStack(t).Res.PItime(4).PIfish;
-
-      % PIturn
-      output(i).PITurn_Baseline = a(j).FishStack(t).Res.PIturn(1).PIfish;
-      output(i).PITurn_Training = a(j).FishStack(t).Res.PIturn(2).PIfish;
-      output(i).PITurn_Test = a(j).FishStack(t).Res.PIturn(4).PIfish;
-
-      % PIshock
-      output(i).NumShock = a(j).FishStack(t).Res.PIshock.NumShocks;
-      output(i).PIshock = a(j).FishStack(t).Res.PIshock.PIfish;
-      disp(i);
-
+function [output_OLcontrol,output_OLexp,p] = plot_bar_SE(a)
+  % a is a matrix: "n*1 ABLITZER";
+  for i=1:length(a)
+      remove_invalid_data_pair(a(i));
   end
-  end
-
- C=zeros();
-  a=1;
-  for i=1:length(output)
-    if output(i).Task=="OLcontrol";
-      C(a)=i;
-      a=a+1;
-     end
- end
-  E=zeros();
- a=1;
- for i=1:length(output)
-   if output(i).Task=="OLexp";
-     E(a)=i;
-     a=a+1;
-    end
-end
-  output_OLcontrol=output;
-  output_OLexp=output;
-  t=0;
-  for i=1:length(C)
-   q=C(i)-t;
-   t=t+1;
-   output_OLexp(q)=[];
-  end
-  t=0;
-  for i=1:length(E)
-   q=E(i)-t;
-   t=t+1;
-   output_OLcontrol(q)=[];
-  end
+  output_OLcontrol = output_task(a,"OLcontrol");
+  output_OLexp = output_task(a,"OLexp");
 
 
-  Bad=zeros();
-  a=1;
+% plot the bar chart of PITime
+y11=[mean(output_OLcontrol.PITime_Baseline),mean(output_OLexp.PITime_Baseline)];
+y12=[mean(output_OLcontrol.PITime_Test),mean(output_OLexp.PITime_Test)];
 
- numPairs=length(output_OLexp);
-  for i=1:numPairs
+y1_std=[std(output_OLcontrol.PITime_Baseline),std(output_OLcontrol.PITime_Test),...
+      std(output_OLexp.PITime_Baseline),std(output_OLexp.PITime_Test)];
+XTickLabel = ["Self-control","Experiment"];
+plotpairbar(y11,y12,y1_std,XTickLabel,"Poisitional Index")
 
-       if (output_OLexp(i).DataQuality < 0.95) || (output_OLcontrol(i).DataQuality < 0.95)
-           Bad(a)=i;
-           a=a+1;
-       end
-  end
+p.time(1) = significanceTest(output_OLcontrol.PITime_Baseline,output_OLcontrol.PITime_Test,1);
+p.time(2) = significanceTest(output_OLexp.PITime_Baseline,output_OLexp.PITime_Test,4);
+legend('Before training','After training');
 
-  t=0;
-  for i=1:length(Bad)
-   q=Bad(i)-t;
-   t=t+1;
-   output_OLcontrol(q)=[];
-   output_OLexp(q)=[];
-  end
+% plot the bar chart of PITurn
+y21=[mean(output_OLcontrol.PITurn_Baseline),mean(output_OLexp.PITurn_Baseline)];
+y22=[mean(output_OLcontrol.PITurn_Test),mean(output_OLexp.PITurn_Test)];
 
-  aver = struct('Task',[],'PITime_Baseline',[],'PITime_Test',[],'PITurn_Baseline',[],'PITurn_Test',[]);
-  aver(1).Task="OLcontrol";
-  aver(2).Task="OLexp";
-
-  num = length(output_OLcontrol);
-  sum = 0;
-  for i = 1:num
-    sum = sum + output_OLcontrol(i).PITime_Baseline;
-  end
-  aver(1).PITime_Baseline = sum / num;
-
-  sum = 0;
-  for  i = 1:num
-    sum = sum + output_OLcontrol(i).PITime_Test;
-  end
-  aver(1).PITime_Test = sum / num;
-
-  sum = 0;
-  for  i = 1:num
-    sum = sum + output_OLcontrol(i).PITurn_Baseline;
-  end
-  aver(1).PITurn_Baseline = sum / num;
-
-  sum = 0;
-  for  i = 1:num
-    sum = sum + output_OLcontrol(i).PITurn_Test;
-  end
-  aver(1).PITurn_Test = sum / num;
+y2_std=[std(output_OLcontrol.PITurn_Baseline),std(output_OLcontrol.PITurn_Test),...
+      std(output_OLexp.PITurn_Baseline),std(output_OLexp.PITurn_Test)];
 
 
-  sum = 0;
-  for  i = 1:num
-    sum = sum + output_OLexp(i).PITime_Baseline;
-  end
-  aver(2).PITime_Baseline = sum / num;
+plotpairbar(y21,y22,y2_std,XTickLabel,"Turning Index");
 
-  sum = 0;
-  for  i = 1:num
-    sum = sum + output_OLexp(i).PITime_Test;
-  end
-  aver(2).PITime_Test = sum / num;
-
-  sum = 0;
-  for i = 1:num
-    sum = sum + output_OLexp(i).PITurn_Baseline;
-  end
-  aver(2).PITurn_Baseline = sum / num;
-
-  sum = 0;
-  for  i = 1:num
-    sum = sum + output_OLexp(i).PITurn_Test;
-  end
-  aver(2).PITurn_Test = sum / num;
-
-x=[1,2,3,4,5];
-sigSyms = ["n.s.",... % P > 0.05
-            "*",...   % P < 0.05
-            "**",...  % P < 0.01
-            "***",... % P < 0.001
-            "****"];  % P < 0.0001 % occassionally use
-A=[cat(1,output_OLcontrol.PITime_Baseline),cat(1,output_OLcontrol.PITime_Test)];
-B=[cat(1,output_OLexp.PITime_Baseline),cat(1,output_OLexp.PITime_Test)];
-C=[cat(1,output_OLcontrol.PITurn_Baseline),cat(1,output_OLcontrol.PITurn_Test)];
-D=[cat(1,output_OLexp.PITurn_Baseline),cat(1,output_OLexp.PITurn_Test)];
-std_A=[std(A),0,std(B)];
-std_C=[std(C),0,std(D)];
-
-y1=[aver(1).PITime_Baseline,aver(1).PITime_Test,0,aver(2).PITime_Baseline,aver(2).PITime_Test];
-y11=diag(y1);
-y2=[aver(1).PITurn_Baseline,aver(1).PITurn_Test,0,aver(2).PITurn_Baseline,aver(2).PITurn_Test];
-y22=diag(y2);
-figure;
-b=bar(y11,'stack');
-hold on;
-e=errorbar(x,y1,std_A,'.');
-e.Color=[0.5 0.5 0.5];
-
-b(1).FaceColor = [0.9,0.9,0.9];
-b(2).FaceColor = [0,0,0];
-b(4).FaceColor = [0.9,0.9,0.9];
-b(5).FaceColor = [0,0,0];
-
-ylim([0,1]);
-set(gca,'xtick',-inf:inf:inf);
-ylabel('Poisitional Index');
-xlabel('Self-Control                                    Experiment');
-
-for i=1:num
-    P(i)=output_OLcontrol(i).PITime_Baseline;
-    Q(i)=output_OLcontrol(i).PITime_Test;
-end
-[~,p] = ttest(P,Q);
-line([1,2],[0.8,0.8],'Color',[0,0,0]);
-if p > 0.05 % n.s.
-   text(1.3,0.83,'n.s.','FontSize',14);
-elseif p < 0.05 % "*"
-   text(1.4,0.81,'*','FontSize',20);
-elseif p < 0.01 % "**"
-   text(1.3,0.81,'**','FontSize',20);
-elseif p < 0.001 % "***"
-   text(1.2,0.81,'***','FontSize',20);
-elseif p < 0.0001 % "****"
-   text(1.1,0.81,'****','FontSize',20);
-end
-
-
-% experiment group: compare mean of PIs between Baseline and Test
-for i=1:num
-    P(i)=output_OLexp(i).PITime_Baseline;
-    Q(i)=output_OLexp(i).PITime_Test;
-end
-[~,p] = ttest(P,Q);
-line([4,5],[0.8,0.8],'Color',[0,0,0]);
-if p > 0.05 % n.s.
-   text(4.3,0.83,'n.s.','FontSize',14);
-elseif p < 0.05 % "*"
-   text(4.4,0.81,'*','FontSize',20);
-elseif p < 0.01 % "**"
-   text(4.3,0.81,'**','FontSize',20);
-elseif p < 0.001 % "***"
-   text(4.2,0.81,'***','FontSize',20);
-elseif p < 0.0001 % "****"
-   text(4.1,0.81,'****','FontSize',20);
-end
-legend([b(1) b(2)],'Before training','After training');
-
-
-figure;
-b=bar(y22,'stack');
-hold on;
-e=errorbar(x,y2,std_C,'.');
-e.Color=[0.5 0.5 0.5];
-
-b(1).FaceColor = [0.9,0.9,0.9];
-b(2).FaceColor = [0,0,0];
-b(4).FaceColor = [0.9,0.9,0.9];
-b(5).FaceColor = [0,0,0];
-ylim([0,1]);
-set(gca,'xtick',-inf:inf:inf);
-ylabel('Turning Index');
-xlabel('Self-Control                                    Experiment');
-
-for i=1:num
-    P(i)=output_OLcontrol(i).PITurn_Baseline;
-    Q(i)=output_OLcontrol(i).PITurn_Test;
-end
-[~,p] = ttest(P,Q);
-line([1,2],[0.8,0.8],'Color',[0,0,0]);
-if p > 0.05 % n.s.
-    text(1.3,0.83,'n.s.','FontSize',14);
-elseif p < 0.05 % "*"
-   text(1.4,0.81,'*','FontSize',20);
-elseif p < 0.01 % "**"
-   text(1.3,0.81,'**','FontSize',20);
-elseif p < 0.001 % "***"
-   text(1.2,0.81,'***','FontSize',20);
-elseif p < 0.0001 % "****"
-   text(1.1,0.81,'****','FontSize',20);
-end
-
-% experiment group: compare mean of PIs between Baseline and Test
-for i=1:num
-    P(i)=output_OLexp(i).PITurn_Baseline;
-    Q(i)=output_OLexp(i).PITurn_Test;
-end
-[~,p] = ttest(P,Q);
-line([4,5],[0.8,0.8],'Color',[0,0,0]);
-if p > 0.05 % n.s.
-    text(4.2,0.83,'n.s.','FontSize',14);
-elseif p < 0.05 % "*"
-   text(4.4,0.81,'*','FontSize',20);
-elseif p < 0.01 % "**"
-   text(4.3,0.81,'**','FontSize',20);
-elseif p < 0.001 % "***"
-   text(4.2,0.81,'***','FontSize',20);
-elseif p < 0.0001 % "****"
-   text(4.1,0.81,'****','FontSize',20);
-end
-legend([b(1) b(2)],'Before training','After training');
-
-
-
-
-% control group: compare mean of PIs between Baseline(C) and Test(C)
-
-
-
+p.turn(1) = significanceTest(output_OLcontrol.PITurn_Baseline,output_OLcontrol.PITurn_Test,1);
+p.turn(2) = significanceTest(output_OLexp.PITurn_Baseline,output_OLexp.PITurn_Test,4);
+legend('Before training','After training');
 end
