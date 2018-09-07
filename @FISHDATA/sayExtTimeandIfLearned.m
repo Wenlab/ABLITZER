@@ -9,14 +9,18 @@
 % TODO: rewrite this function to find the extinction point
 
 function [extTime,num_trail,Test_trail,meanBT] = sayExtTimeandIfLearned(obj)
+  obj.ratePerformance();
   Baseline_trail=measure_trail(obj,1);
   Test_trail=measure_trail(obj,4);
   meanBT=mean(Baseline_trail);
-   num_trail = 1;
-   while Test_trail(num_trail)>meanBT
-       num_trail = num_trail + 1;
-   end
-     num_trail=num_trail-1;
+  idx=find(Test_trail<meanBT);
+ if isempty(idx)
+    num_trail=0;
+  elseif length(idx)<5
+    num_trail=min(idx);
+  else
+    num_trail=5;
+  end
   if num_trail<3
        extTime=[];
        h = 0;
@@ -27,25 +31,4 @@ function [extTime,num_trail,Test_trail,meanBT] = sayExtTimeandIfLearned(obj)
    end
     obj.Res.ExtinctTime = extTime;
      obj.Res.IfLearned = h;
-end
-
-function Trail=measure_trail(obj,m)
-  % m means we want to get PITime(m)'s trails
-  if m==1
-    trail_num=5;
-  elseif m==4
-    trail_num=9;
-  end
-  Interval = 120; % seconds
-  frameRate = obj.FrameRate;
-  windowWidth = Interval * frameRate;
-  begin_idx=1;
-  end_idx=windowWidth;
-for i=1:trail_num-1
-   Trail(i)=mean(obj.Res.PItime(m).Scores(begin_idx:end_idx));
-   begin_idx= end_idx+1;
-   end_idx= end_idx+ windowWidth;
-end
-  Trail(trail_num)=mean(obj.Res.PItime(m).Scores(begin_idx:end));
-  % PITime sometimes lacks of one or two frames
 end
