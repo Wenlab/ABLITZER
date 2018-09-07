@@ -119,6 +119,8 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
         annotateRawVideo(obj,startFrame,videoName);
 
         [extTime,num_trail,Test_trail,meanBT] = sayExtTimeandIfLearned(obj);
+
+        Trail=measure_trail(obj,m)
     end
 
 
