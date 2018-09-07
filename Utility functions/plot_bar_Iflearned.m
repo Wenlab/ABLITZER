@@ -1,14 +1,5 @@
 function p = plot_bar_Iflearned(a)
-for i=1:length(a)
-     a(i).remove_invalid_data_pair;
-     for j=1:length(a(i).FishStack)
-       sayExtTimeandIfLearned(a(i).FishStack(j));
-    end
-end
-Ls=a;
-nLs=a;
-Ls = divideByIflearned(a,1);
-nLs = divideByIflearned(a,0);
+[Ls,nLs] = divideByIflearned(a)
 
 output_OLexp_All = output_task(a,"OLexp");
 output_OLexp_Ls = output_task(Ls,"OLexp");
@@ -48,17 +39,5 @@ p.turn(1) = significanceTest(output_OLexp_Ls.PITurn_Baseline,output_OLexp_Ls.PIT
 p.turn(2) = significanceTest(output_OLexp_nLs.PITurn_Baseline,output_OLexp_nLs.PITurn_Test,4);
 p.turn(3) = significanceTest(output_OLexp_All.PITurn_Baseline,output_OLexp_All.PITurn_Test,7);
 legend('Before training','After training');
-end
 
-function b=divideByIflearned(a,m)
-   for j = 1:length(a)
-        q=1;
-    for t =1:length(a(j).FishStack) % number of fish in the fishStack
-        if a(j).FishStack(t).Res.IfLearned ==m
-           b.FishStack(q)= a(j).FishStack(t);
-           q=q+1;
-        end
-    end
-          disp(t);
-   end
- end
+end
