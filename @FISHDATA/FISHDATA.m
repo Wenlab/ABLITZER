@@ -118,7 +118,7 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
         % Annotate raw video with fish's head, tail and CS pattern
         annotateRawVideo(obj,startFrame,videoName);
 
-        [extTime,num_trail,Baseline_trail,Test_trail] = sayExtTimeandIfLearned(obj)
+        [extTime,num_trail,Test_trail,meanBT] = sayExtTimeandIfLearned(obj);
     end
 
 

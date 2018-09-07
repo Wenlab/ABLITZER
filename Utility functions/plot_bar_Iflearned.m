@@ -2,7 +2,7 @@ function p = plot_bar_Iflearned(a)
 for i=1:length(a)
      a(i).remove_invalid_data_pair;
      for j=1:length(a(i).FishStack)
-       sayIfLearned(a(i).FishStack(j),"time",0);
+       sayExtTimeandIfLearned(a(i).FishStack(j));
     end
 end
 Ls=a;
