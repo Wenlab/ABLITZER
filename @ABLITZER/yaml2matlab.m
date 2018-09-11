@@ -306,7 +306,7 @@ while (~feof(fid))
     end
 end
 
-frames(idxFrame:end,:) = []; % remove redundant frames
+frames(idxFrame+1:end,:) = []; % remove redundant frames
 
 
 end
@@ -376,7 +376,7 @@ while (~feof(fid))
     end
 end
 
-frames(idxFrame:end,:) = []; % remove redundant frames
+frames(idxFrame+1:end,:) = []; % remove redundant frames
 end
 
 function [key, value] = read_a_line(fid)
