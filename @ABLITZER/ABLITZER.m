@@ -107,7 +107,7 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         % statistically plot non-CS area proportion versus time
         plotPIsInTest(obj);
 
-        output = generate_output(a);
+        output = generate_output(obj);
 
     end
 
