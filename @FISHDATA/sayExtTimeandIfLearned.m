@@ -13,13 +13,24 @@ function [extTime,num_trail,Test_trail,meanBT] = sayExtTimeandIfLearned(obj)
   Baseline_trail=measure_trail(obj,1);
   Test_trail=measure_trail(obj,4);
   meanBT=mean(Baseline_trail);
-  idx=find(Test_trail<meanBT);
- if isempty(idx)
-    num_trail=0;
-  elseif length(idx)<5
-    num_trail=min(idx);
+  idx=find(Test_trail>meanBT);
+  a1=isempty(find(idx==1));
+  a2=isempty(find(idx==2));
+  a3=isempty(find(idx==3));
+  a4=isempty(find(idx==4));
+  a5=isempty(find(idx==5));
+  if a1==1
+     num_trail=0 ;
+  elseif a2==1
+      num_trail=1;
+      elseif a3==1
+      num_trail=2;
+      elseif a4==1
+      num_trail=3;
+      elseif a5==1
+      num_trail=4;
   else
-    num_trail=5;
+      num_trail=5;
   end
   if num_trail<3
        extTime=[];
