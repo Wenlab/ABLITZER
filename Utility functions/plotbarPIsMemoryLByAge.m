@@ -3,7 +3,7 @@ function plotbarPIsMemoryLByAge(a)
   p = 1;
   for i = 1:length(a)
     for j = 1:length(a(i).FishStack)
-     [~,num_trail,~,~] = sayExtTimeandIfLearned(a(i).FishStack(j));
+     [~,num_trail,~,~] = sayExtTimeandIfLearned(a(i).FishStack(j))
        if num_trail~=0
          MemoryL(t) = num_trail*60;
          Age(t)= a(i).FishStack(j).Age;
@@ -18,8 +18,7 @@ function plotbarPIsMemoryLByAge(a)
            PIturnTest(p)=(mean(a(i).FishStack(j).Res.PIturn(4).Scores(length(PIturnidx))+1))/2;
           PIturnBaseline(p)= (mean(a(i).FishStack(j).Res.PIturn(1).Scores+1))/2;
           AgeTurn(p)= a(i).FishStack(j).Age;
-      %   PIturnTest(t)= (mean(a(i).FishStack(j).Res.PIturn(4).Scores(1:ExtFrame)+1))/2;
-        
+     
          PITurn_D(p)=PIturnTest(p)-PIturnBaseline(p);
          p=p+1;
          end
