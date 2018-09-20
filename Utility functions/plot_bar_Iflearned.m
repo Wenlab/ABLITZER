@@ -19,7 +19,7 @@ y1_std=[std(output_OLexp_Ls.PITime_Baseline),std(output_OLexp_Ls.PITime_Test),..
       std(output_OLexp_All.PITime_Baseline),std(output_OLexp_All.PITime_Test)];
 
 XTickLabel = ["Learners","non-Learners","All"];
-plotpairbar(y11,y12,y1_std,XTickLabel,"Poisitional Index");
+plotpairbar(y11,y12,y1_std,XTickLabel,"Positional Index");
 
 p.time(1) = significanceTest(output_OLexp_Ls.PITime_Baseline,output_OLexp_Ls.PITime_Test,1);
 p.time(2) = significanceTest(output_OLexp_nLs.PITime_Baseline,output_OLexp_nLs.PITime_Test,4);

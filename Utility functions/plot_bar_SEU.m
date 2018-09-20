@@ -15,7 +15,7 @@ y1_std=[std(output_OLcontrol.PITime_Baseline,1),std(output_OLcontrol.PITime_Test
       std(output_OLexp.PITime_Baseline,1),std(output_OLexp.PITime_Test,1),...
       std(output_Unpaired.PITime_Baseline,1),std(output_Unpaired.PITime_Test,1)];
 XTickLabel = ["Self-control","Experiment","Unpaired control"];
-plotpairbar(y11,y12,y1_std,XTickLabel,"Poisitional Index");
+plotpairbar(y11,y12,y1_std,XTickLabel,"Positional Index");
 
 p.time(1) = significanceTest(output_OLcontrol.PITime_Baseline,output_OLcontrol.PITime_Test,1);
 p.time(2) = significanceTest(output_OLexp.PITime_Baseline,output_OLexp.PITime_Test,4);
