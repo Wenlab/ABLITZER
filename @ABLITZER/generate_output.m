@@ -1,6 +1,6 @@
 % Generate an output struct for checking all results in the same place
 function output = generate_output(obj)
-  % a is a matrix: "n*1 ABLITZER";
+
 output=[];
 
 output = struct('ID',[],'Age',[],'Task',[],'DataQuality',[],...
