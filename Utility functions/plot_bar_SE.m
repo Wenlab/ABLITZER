@@ -11,8 +11,8 @@ function [output_OLcontrol,output_OLexp,p] = plot_bar_SE(a)
 y11=[mean(output_OLcontrol.PITime_Baseline),mean(output_OLexp.PITime_Baseline)];
 y12=[mean(output_OLcontrol.PITime_Test),mean(output_OLexp.PITime_Test)];
 
-y1_std=[std(output_OLcontrol.PITime_Baseline,1),std(output_OLcontrol.PITime_Test,1),...
-      std(output_OLexp.PITime_Baseline,1),std(output_OLexp.PITime_Test,1)];
+y1_std=[std(output_OLcontrol.PITime_Baseline,1)/sqrt(length(output_OLcontrol.PITime_Baseline)),std(output_OLcontrol.PITime_Test,1)/sqrt(length(output_OLcontrol.PITime_Test)),...
+      std(output_OLexp.PITime_Baseline,1)/sqrt(length(output_OLexp.PITime_Baseline)),std(output_OLexp.PITime_Test,1)/sqrt(length(output_OLexp.PITime_Test))];
 XTickLabel = ["Self-control","Experiment"];
 plotpairbar(y11,y12,y1_std,XTickLabel,"Positional Index")
 
@@ -24,8 +24,8 @@ legend('Before training','After training');
 y21=[mean(output_OLcontrol.PITurn_Baseline),mean(output_OLexp.PITurn_Baseline)];
 y22=[mean(output_OLcontrol.PITurn_Test),mean(output_OLexp.PITurn_Test)];
 
-y2_std=[std(output_OLcontrol.PITurn_Baseline,1),std(output_OLcontrol.PITurn_Test,1),...
-      std(output_OLexp.PITurn_Baseline,1),std(output_OLexp.PITurn_Test,1)];
+y2_std=[std(output_OLcontrol.PITurn_Baseline,1)/sqrt(length(output_OLcontrol.PITurn_Baseline)),std(output_OLcontrol.PITurn_Test,1)/sqrt(length(output_OLcontrol.PITurn_Test)),...
+      std(output_OLexp.PITurn_Baseline,1)/sqrt(length(output_OLexp.PITurn_Baseline)),std(output_OLexp.PITurn_Test,1)/sqrt(length(output_OLexp.PITurn_Test))];
 
 
 plotpairbar(y21,y22,y2_std,XTickLabel,"Turning Index");

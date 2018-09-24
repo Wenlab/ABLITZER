@@ -24,8 +24,9 @@ for i=1:length(obj.FishStack)
 BaselineTrail(i,:)=measure_trail(obj.FishStack(i),1);
 TrainingTrail(i,:)=measure_trail(obj.FishStack(i),2);
 TestTrail(i,:)=measure_trail(obj.FishStack(i),4);
+obj.FishStack(i).Res.Trials=[BaselineTrail(i,:),TrainingTrail(i,:),TestTrail(i,:)];
 end
 Trail=[BaselineTrail,TrainingTrail,TestTrail];
 TrailMean=mean(Trail);
-TrailSem=std(Trail,1,1);
+TrailSem=std(Trail,1,1)/sqrt(length(Trail));
 end

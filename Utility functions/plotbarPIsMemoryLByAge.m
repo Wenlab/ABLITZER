@@ -6,7 +6,7 @@ function plotbarPIsMemoryLByAge(a)
      [~,num_trail,~,~] = sayExtTimeandIfLearned(a(i).FishStack(j))
        if num_trail~=0
          MemoryL(t) = num_trail*60;
-         Age(t)= a(i).FishStack(j).Age;
+         Age(t)= a(i).FishStack(j).Age;  %Age(t)= str2num(a(i).FishStack(j).Age);
          ExtFrame=MemoryL(t)*10;
          PItimeBaseline(t)= (mean(a(i).FishStack(j).Res.PItime(1).Scores+1))/2;
          PItimeTest(t)= (mean(a(i).FishStack(j).Res.PItime(4).Scores(1:ExtFrame)+1))/2;
@@ -17,8 +17,8 @@ function plotbarPIsMemoryLByAge(a)
          if J==0
            PIturnTest(p)=(mean(a(i).FishStack(j).Res.PIturn(4).Scores(length(PIturnidx))+1))/2;
           PIturnBaseline(p)= (mean(a(i).FishStack(j).Res.PIturn(1).Scores+1))/2;
-          AgeTurn(p)= a(i).FishStack(j).Age;
-     
+          AgeTurn(p)= a(i).FishStack(j).Age;  %AgeTurn(p)= str2num(a(i).FishStack(j).Age);
+
          PITurn_D(p)=PIturnTest(p)-PIturnBaseline(p);
          p=p+1;
          end
@@ -49,7 +49,7 @@ function [Result7,Result8,Result9,Result10]=dividedifferentAge(Age,task)
 
 function plotbar(data1,data2,data3,data4,YLabel)
   y=[mean(data1,2),mean(data2,2),mean(data3,2),mean(data4,2)];
-  err=[std(data1,1,2),std(data2,1,2),std(data3,1,2),std(data4,1,2)];
+  err=[std(data1,1,2)/sqrt(length(data1)),std(data2,1,2)/sqrt(length(data2)),std(data3,1,2)/sqrt(length(data3)),std(data4,1,2)/sqrt(length(data4))];
 
   x=[7 8 9 10];
   figure;
