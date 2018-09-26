@@ -11,15 +11,15 @@ end
 Learners = divideBylearning(a,1);
 non_Learners = divideBylearning(a,0);
 end
-function IfLearners = divideBylearning(a,m)
-    IfLearners=[];
+function members = divideBylearning(a,m)
+    members=[];
     q=1;
    for k = 1:length(a)
 
     for t =1:length(a(k).FishStack) % number of fish in the fishStack
         if a(k).FishStack(t).Res.IfLearned ==m & a(k).FishStack(t).ExpTask=="OLexp"
 
-           IfLearners(1).FishStack(q)= a(k).FishStack(t);
+           members.FishStack(q)= a(k).FishStack(t);
            q=q+1;
         end
     end
