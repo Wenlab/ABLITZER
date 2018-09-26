@@ -48,7 +48,12 @@ function visualizeLearningResponses(obj,idxExpGroup,idxCtrlGroup,metricType)
         return
     end
 
-    figure;
+ plotfigure(PIs,metricType,expData);
+end
+
+   
+function plotfigure(PIs,metricType,expData)
+  figure;
 
     colors = 0.8*ones(6,3);%[0.5,0,0;0,0.5,0;0,0,0.5;0.5,0.5,0;0.5,0,0.5;0,0.5,0.5];
     labels = {'Baseline(C)','Training(C)','Test(C)',...
@@ -69,42 +74,10 @@ function visualizeLearningResponses(obj,idxExpGroup,idxCtrlGroup,metricType)
     text(0.1,0.9,str);
 
     % Add formatted T-test and significance bar, minimum principle
-    sigSyms = ["n.s.",... % P > 0.05
-                "*",...   % P < 0.05
-                "**",...  % P < 0.01
-                "***",... % P < 0.001
-                "****"];  % P < 0.0001 % occassionally use
-
-   % control group: compare mean of PIs between Baseline(C) and Test(C)
-   [~,p] = ttest(PIs(:,1),PIs(:,3));
-   line([1,3],[0.3,0.3],'Color',[0,0,0]);
-   if p > 0.05 % n.s.
-       text(2,0.25,'n.s.','FontSize',14);
-   elseif p < 0.05 % "*"
-       text(2,0.25,'*','FontSize',20);
-   elseif p < 0.01 % "**"
-       text(2,0.25,'**','FontSize',20);
-   elseif p < 0.001 % "***"
-       text(2,0.25,'***','FontSize',20);
-   elseif p < 0.0001 % "****"
-       text(2,0.25,'****','FontSize',20);
-   end
-
+    % control group: compare mean of PIs between Baseline(C) and Test(C)
+significanceTest(PIs(:,1),PIs(:,3),1,3,0.3);
+significanceTest(PIs(:,4),PIs(:,6),4,6,0.3);
    % experiment group: compare mean of PIs between Baseline and Test
-   [~,p] = ttest(PIs(:,4),PIs(:,6));
-   line([4,6],[0.3,0.3],'Color',[0,0,0]);
-   if p > 0.05 % n.s.
-       text(5,0.25,'n.s.','FontSize',14);
-   elseif p < 0.05 % "*"
-       text(5,0.25,'*','FontSize',20);
-   elseif p < 0.01 % "**"
-       text(5,0.25,'**','FontSize',20);
-   elseif p < 0.001 % "***"
-       text(5,0.25,'***','FontSize',20);
-   elseif p < 0.0001 % "****"
-       text(5,0.25,'****','FontSize',20);
-   end
-
 
 
 end

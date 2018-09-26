@@ -13,6 +13,10 @@ TrRes(:,4) = obj.ratePerformanceByTrials('dist2centerline',false);
 TrRes(:,5) = obj.ratePerformanceByTrials('crossMidline',false);
 
 % Plot results
+plotfigure(TrRes,idxPostTr);
+end
+
+function plotfigure(TrRes,idxPostTr)
 
 colors = 0.8*ones(2,3);
 labels = {'pre-train','post-train'};
@@ -41,22 +45,9 @@ for j = 1:2
             titleStr = "Number of crossing mid-line";
     end
     title(titleStr);
-
-    [~,p] = ttest2(preTrain,postTrain);
-    line([1,2],[0.2,0.2],'Color',[0,0,0]);
-    textPos = [1.5,0.25];
-    if p > 0.05 % n.s.
-        text(textPos(1),textPos(2),'n.s.','FontSize',14);
-    elseif p < 0.0001 % "****"
-        text(textPos(1),textPos(2),'****','FontSize',20);
-    elseif p < 0.001 % "***"
-        text(textPos(1),textPos(2),'***','FontSize',20);
-    elseif p < 0.01 % "**"
-        text(textPos(1),textPos(2),'**','FontSize',20);
-    elseif p < 0.05 % "*"
-        text(textPos(1),textPos(2),'*','FontSize',20);
-    end
-
+  
+    significanceTest(preTrain,postTrain,1,2,0.2)
+   
 end
 
 
@@ -74,7 +65,6 @@ for j = 1:2
     title(titleStr);
 
 end
-
 
 
 end

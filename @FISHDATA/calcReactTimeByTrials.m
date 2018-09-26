@@ -23,34 +23,19 @@ TrMat = [];
 expPhase = cat(1,obj.Frames.ExpPhase);
 pIdx = cat(1,obj.Frames.PatternIdx);
 
-% for baseline
-idxPhase = find(expPhase == 0);
-tempPIdx = pIdx(idxPhase);
-idx = find(diff(tempPIdx));
-idxBegin = [1;idx+1];
-idxEnd = [idx;length(idxPhase)];
-TrMat = cat(1,TrMat,cat(2,idxBegin,idxEnd, 0 * ones(size(idxBegin))));
-
-% for training
-idxPhase = find(expPhase == 1);
-tempPIdx = pIdx(idxPhase);
-idx = find(tempPIdx == 2);
-IDX = find(diff(idx) > 1);
-idxBegin = [1;idx(IDX)+1];
-idxEnd = [idx(IDX+1)-1;length(idxPhase)];
-TrMat = cat(1,TrMat,cat(2,idxBegin,idxEnd, 1 * ones(size(idxBegin))));
-
-
-% for test
-idxPhase = find(expPhase == 3);
-tempPIdx = pIdx(idxPhase);
-idx = find(diff(tempPIdx));
-idxBegin = [1;idx+1];
-idxEnd = [idx;length(idxPhase)];
-TrMat = cat(1,TrMat,cat(2,idxBegin,idxEnd, 3 * ones(size(idxBegin))));
-
-
-
-
-
+for i = 1;4
+    idxPhase = find(expPhase == i-1);
+    tempPIdx = pIdx(idxPhase);
+    if i==1||i==4
+        idx = find(diff(tempPIdx));
+        idxBegin = [1;idx+1];
+        idxEnd = [idx;length(idxPhase)];
+    elseif i==2
+        idx = find(tempPIdx == 2);
+        IDX = find(diff(idx) > 1);
+        idxBegin = [1;idx(IDX)+1];
+        idxEnd = [idx(IDX+1)-1;length(idxPhase)];
+    end
+    TrMat = cat(1,TrMat,cat(2,idxBegin,idxEnd, (i-1) * ones(size(idxBegin))));
+end
 end
