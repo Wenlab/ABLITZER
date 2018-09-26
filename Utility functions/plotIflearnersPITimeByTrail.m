@@ -1,5 +1,5 @@
-function [num_Ls,num_nLs]=plotIflearnersPITimeByTrail(a)
-[Ls,nLs] = divideByIflearned(a);
+function [num_Ls,num_nLs]=plotIflearnersPITimeByTrail(Ls,nLs)
+%get [Ls,nLs] by function divideByIflearned(a);
 All.FishStack=[Ls.FishStack,nLs.FishStack];
 [LsTrailMean,LsTrailSem]=calcMeanSemByTrail(Ls);
 [nLsTrailMean,nLsTrailSem]=calcMeanSemByTrail(nLs);
@@ -7,7 +7,7 @@ All.FishStack=[Ls.FishStack,nLs.FishStack];
 num_Ls=length(Ls.FishStack);
 num_nLs=length(nLs.FishStack);
 figure;
-x=[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24];
+x=1:1:24;
 errorbar(x,LsTrailMean,LsTrailSem,'Color',[0.7 0.7 0.7],'Marker','^');
 hold on;
 errorbar(x,nLsTrailMean,nLsTrailSem,'Color',[0.7 0.7 0.7],'LineStyle','--','Marker','v');
