@@ -1,4 +1,4 @@
-function [OLcontrol,OLexp,p] = plot_bar_SE(a)
+function [OLcontrol,OLexp,p] = plotBarSE(a)
   % a is a matrix: "n*1 ABLITZER";
   for i=1:length(a)
       remove_invalid_data_pair(a(i));
@@ -14,15 +14,15 @@ PIs=[OLcontrol.PITime_Baseline;OLcontrol.PITime_Test;...
 [Mean,Sem] = calcMeanSem(PIs);
 
 XTickLabel = ["Self-control","Experiment"];
-plotpairbar(Mean(1,:),Mean(2,:),Sem(1:4),XTickLabel,"Positional Index");
-p.time(1) = significanceTest(PIs(1,:),PIs(2,:),1);
-p.time(2) = significanceTest(PIs(3,:),PIs(4,:),4);
+plotPairBar(Mean(1,:),Mean(2,:),Sem(1:4),XTickLabel,"Positional Index");
+p.time(1) = significanceTest(PIs(1,:),PIs(2,:),1,2,0.8);
+p.time(2) = significanceTest(PIs(3,:),PIs(4,:),4,5,0.8);
 legend('Before training','After training');
 
 
-plotpairbar(Mean(3,:),Mean(4,:),Sem(5:8),XTickLabel,"Turning Index");
-p.turn(1) = significanceTest(PIs(5,:),PIs(6,:),1);
-p.turn(2) = significanceTest(PIs(7,:),PIs(8,:),4);
+plotPairBar(Mean(3,:),Mean(4,:),Sem(5:8),XTickLabel,"Turning Index");
+p.turn(1) = significanceTest(PIs(5,:),PIs(6,:),1,2,0.8);
+p.turn(2) = significanceTest(PIs(7,:),PIs(8,:),4,5,0.8);
 legend('Before training','After training');
 end
 

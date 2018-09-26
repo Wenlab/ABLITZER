@@ -1,4 +1,4 @@
-function [p,Ls,nLs,All] = plot_bar_Iflearned(Ls,nLs)
+function [p,Ls,nLs,All] = plotBarIflearned(Ls,nLs)
 %get [Ls,nLs] by function divideByIflearned(a);
 
 alls.FishStack = cat(2,Ls.FishStack,nLs.FishStack);
@@ -13,19 +13,19 @@ PIs.All=[All.PITime_Baseline;All.PITime_Test;All.PITurn_Baseline;All.PITurn_Test
 [Mean,Sem] = calcMeanSem(PIs);
 
 XTickLabel = ["Learners","non-Learners","All"];
-plotpairbar(Mean(1,:),Mean(2,:),Sem(1:6),XTickLabel,"Positional Index");
+plotPairBar(Mean(1,:),Mean(2,:),Sem(1:6),XTickLabel,"Positional Index");
 
 
-p.time(1) = significanceTest(PIs.Ls(1,:),PIs.Ls(2,:),1);
-p.time(2) = significanceTest(PIs.nLs(1,:),PIs.nLs(2,:),4);
-p.time(3) = significanceTest(PIs.All(1,:),PIs.All(2,:),7);
+p.time(1) = significanceTest(PIs.Ls(1,:),PIs.Ls(2,:),1,2,0.8);
+p.time(2) = significanceTest(PIs.nLs(1,:),PIs.nLs(2,:),4,5,0.8);
+p.time(3) = significanceTest(PIs.All(1,:),PIs.All(2,:),7,8,0.8);
 
 legend('Before training','After training');
 
-plotpairbar(Mean(3,:),Mean(4,:),Sem(7:12),XTickLabel,"Turning Index");
-p.turn(1) = significanceTest(PIs.Ls(3,:),PIs.Ls(4,:),1);
-p.turn(2) = significanceTest(PIs.nLs(3,:),PIs.nLs(4,:),4);
-p.turn(3) = significanceTest(PIs.All(3,:),PIs.All(4,:),7);
+plotPairBar(Mean(3,:),Mean(4,:),Sem(7:12),XTickLabel,"Turning Index");
+p.turn(1) = significanceTest(PIs.Ls(3,:),PIs.Ls(4,:),1,2,0.8);
+p.turn(2) = significanceTest(PIs.nLs(3,:),PIs.nLs(4,:),4,5,0.8);
+p.turn(3) = significanceTest(PIs.All(3,:),PIs.All(4,:),7,8,0.8);
 
 legend('Before training','After training');
 
