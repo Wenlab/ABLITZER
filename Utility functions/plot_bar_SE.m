@@ -1,36 +1,36 @@
-function [output_OLcontrol,output_OLexp,p] = plot_bar_SE(a)
+function [OLcontrol,OLexp,p] = plot_bar_SE(a)
   % a is a matrix: "n*1 ABLITZER";
   for i=1:length(a)
       remove_invalid_data_pair(a(i));
   end
-  output_OLcontrol = output_task(a,"OLcontrol");
-  output_OLexp = output_task(a,"OLexp");
+OLcontrol = output_task(a,"OLcontrol");
+OLexp = output_task(a,"OLexp");
 
+PIs=[OLcontrol.PITime_Baseline;OLcontrol.PITime_Test;...
+      OLexp.PITime_Baseline;OLexp.PITime_Test;...
+      OLcontrol.PITurn_Baseline;OLcontrol.PITurn_Test;...
+      OLexp.PITurn_Baseline;OLexp.PITurn_Test];
 
-% plot the bar chart of PITime
-y11=[mean(output_OLcontrol.PITime_Baseline),mean(output_OLexp.PITime_Baseline)];
-y12=[mean(output_OLcontrol.PITime_Test),mean(output_OLexp.PITime_Test)];
+[Mean,Sem] = calcMeanSem(PIs);
 
-y1_std=[std(output_OLcontrol.PITime_Baseline,1)/sqrt(length(output_OLcontrol.PITime_Baseline)),std(output_OLcontrol.PITime_Test,1)/sqrt(length(output_OLcontrol.PITime_Test)),...
-      std(output_OLexp.PITime_Baseline,1)/sqrt(length(output_OLexp.PITime_Baseline)),std(output_OLexp.PITime_Test,1)/sqrt(length(output_OLexp.PITime_Test))];
 XTickLabel = ["Self-control","Experiment"];
-plotpairbar(y11,y12,y1_std,XTickLabel,"Positional Index")
-
-p.time(1) = significanceTest(output_OLcontrol.PITime_Baseline,output_OLcontrol.PITime_Test,1);
-p.time(2) = significanceTest(output_OLexp.PITime_Baseline,output_OLexp.PITime_Test,4);
+plotpairbar(Mean(1,:),Mean(2,:),Sem(1:4),XTickLabel,"Positional Index");
+p.time(1) = significanceTest(PIs(1,:),PIs(2,:),1);
+p.time(2) = significanceTest(PIs(3,:),PIs(4,:),4);
 legend('Before training','After training');
 
-% plot the bar chart of PITurn
-y21=[mean(output_OLcontrol.PITurn_Baseline),mean(output_OLexp.PITurn_Baseline)];
-y22=[mean(output_OLcontrol.PITurn_Test),mean(output_OLexp.PITurn_Test)];
 
-y2_std=[std(output_OLcontrol.PITurn_Baseline,1)/sqrt(length(output_OLcontrol.PITurn_Baseline)),std(output_OLcontrol.PITurn_Test,1)/sqrt(length(output_OLcontrol.PITurn_Test)),...
-      std(output_OLexp.PITurn_Baseline,1)/sqrt(length(output_OLexp.PITurn_Baseline)),std(output_OLexp.PITurn_Test,1)/sqrt(length(output_OLexp.PITurn_Test))];
-
-
-plotpairbar(y21,y22,y2_std,XTickLabel,"Turning Index");
-
-p.turn(1) = significanceTest(output_OLcontrol.PITurn_Baseline,output_OLcontrol.PITurn_Test,1);
-p.turn(2) = significanceTest(output_OLexp.PITurn_Baseline,output_OLexp.PITurn_Test,4);
+plotpairbar(Mean(3,:),Mean(4,:),Sem(5:8),XTickLabel,"Turning Index");
+p.turn(1) = significanceTest(PIs(5,:),PIs(6,:),1);
+p.turn(2) = significanceTest(PIs(7,:),PIs(8,:),4);
 legend('Before training','After training');
+end
+
+
+function [Mean2,Sem] = calcMeanSem(PIs)
+Mean = mean(PIs,2);
+Mean2 = [Mean(1),Mean(3);Mean(2),Mean(4);...        %PITimeBaselineMean;PITimeTestMean;
+         Mean(5),Mean(7);Mean(6),Mean(8)];        %PITurnBaselineMean;PITurnTestMean;
+[~,num] = size(PIs)
+Sem = std(PIs,1,2)/sqrt(num);
 end
