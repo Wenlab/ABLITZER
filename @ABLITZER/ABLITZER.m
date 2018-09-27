@@ -69,12 +69,6 @@ classdef ABLITZER < handle % Make the class a real class not a value class
 
         % Find desired fish by providing key-value pairs
         indices = findFishByKeyValuePairs(obj,varargin);
-        
-        % convert old expData and resData to ABLITZER
-        importOldData2Ablitzer(obj, pathName, fileName);
-
-        % process all yaml files in one day
-        processOneDayYamls(obj,pathName,expDate);
 
         % plot PIs of an entire group to see whether there's
         % any statistical significance. Normally, use this function
