@@ -55,7 +55,7 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         % Reads in a yaml file produced by the BLITZ software
         % and exports a struct of BLITZ experiment data that is
         % easy to manipulate in MATLAB
-        yaml2matlab(obj, endFrame, pathName, fileName);
+        loadYamls(obj, fileNames, pathName, keywords, loadMethod, oldFlag);
 
         % load mat files which matches keys provided in the same directory
         loadMats(obj, fileNames, pathName, keywords, loadMethod);
