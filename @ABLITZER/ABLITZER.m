@@ -48,25 +48,9 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         StatRes; % statistical results about the entire experiment
 
         Notes = ''; % additional notes about the dataset
-
-
     end
 
     methods
-%         function obj = ABLITZER(numFish) % Constructor
-%             tempExpData(obj.MaxFrames) = EXPDATA;
-%             obj.ExpData = tempExpData;
-%             if (nargin == 0)
-%                 resArray(obj.MaxFish) = RESDATA;
-%                 obj.ResAll = resArray;
-%             elseif (nargin == 1)
-%                 resArray(numFish) = RESDATA;
-%                 obj.ResAll = resArray;
-%             else
-%                 error('Wrong initialization for ABLITZER');
-%             end
-%         end
-
 
         % Reads in a yaml file produced by the BLITZ software
         % and exports a struct of BLITZ experiment data that is
@@ -85,14 +69,13 @@ classdef ABLITZER < handle % Make the class a real class not a value class
 
         % Find desired fish by providing key-value pairs
         indices = findFishByKeyValuePairs(obj,varargin);
+        
         % convert old expData and resData to ABLITZER
         importOldData2Ablitzer(obj, pathName, fileName);
 
         % process all yaml files in one day
         processOneDayYamls(obj,pathName,expDate);
 
-
-        quantifyMemoryStat(obj);
         % plot PIs of an entire group to see whether there's
         % any statistical significance. Normally, use this function
         % after "classifyFishByKeys".
@@ -101,12 +84,7 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         %   idxCtrlGroup: the index of control group data in FishGroup struct
         visualizeLearningResponses(obj,idxExpGroup,idxCtrlGroup,metricType);
 
-        % plot performance versus fish age
-        plotOntogenyByPI(obj,metricType);
-
-        % statistically plot non-CS area proportion versus time
-        plotPIsInTest(obj);
-
+        % list all KPIs in a struct
         output = generate_output(obj);
 
     end
