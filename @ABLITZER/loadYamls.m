@@ -4,59 +4,193 @@
 %      of ABLIZTER class.
 %
 %   SYNTAX:
-%       1. 
-%       2. 
-%       3. 
+%       1.
+%       2.
+%       3.
 %   INPUT:
-%       
+%
 %   OUTPUT:
 %       Implicit output, saved in the object of ABLITZER class.
 
-% - loadYamls(byKeywords): 
+% - loadYamls(byKeywords):
 %   - ABLITZER method
 %   - arg1: keywords to filter files
 %   - arg2: append data / rewrite Data
 %   - arg3: old-flag to deal with old yaml files
-% TODO: convert all old yaml files into new formats, then remove the old
-% flag
+% TODO: convert all old yaml files into new formats, then remove the old-flag
+% TODO: merge two loading functions to one function?
+
 % import yaml files to the ABLITZER object
 function loadYamls(obj,... ABLITZER object
     fileNames, ... % files to load, if absent, let the user to choose one file to load; if empty, load all files with filters;
     pathName, ... % directory to process files, if empty, choose the dir by the UI
     keywords, ... % keywords in filenames to choose files to process; such as strainName, age, etc.
-    oldFlag, ... % if the files to load are in old yaml formats
-    loadMethod) % 'append' or 'rewrite' to the existing fishStack
-    
-%% Deal with different input cases (classified by the number of input arguments)
-    if nargin == 1 % append all FISHDATA objs to the existing FishStack; 
-            % and select the directory by the UI, all files are in new yaml formats
-        [fileName,pathName] = uigetfile('*yaml');
-        oldFlag = true;
-        fName = [pathName, fileName];
-        fid = fopen(fName);
-        F = readExpSettings(fid);
-        numFish = length(F);
-        frames = readFrames(fid, numFish);
-        % Assign values to the object of ABLITZER
-        % append new data to the existing fishStack
-        for i = 1:numFish
-            F(i).Frames = frames(:,i);
-            obj.FishStack = cat(1,obj.FishStack,F(i));
-        end
-    elseif nargin == 2
-        
-    elseif nargin == 3
-    elseif nargin == 4
-    elseif nargin == 5
+    loadMethod,... % 'append' or 'rewrite' to the existing fishStack
+    oldFlag) % if the files to load are in old yaml formats
 
+postfix = '.yaml';
+%% Deal with different input cases (classified by the number of input arguments)
+if nargin == 1
+    [fileName, pathName] = uigetfile(['*',postfix]);
+    readOneFile(obj,fileName,pathName);
+elseif nargin == 2
+    % select the directory by the UI
+    [~,pathName] = uigetfile(['*',postfix]);
+    loadFiles(obj, fileNames, pathName, postfix);
+elseif nargin == 3
+    if isempty(pathName)
+        [~,pathName] = uigetfile(['*',postfix]);
+    end
+    loadFiles(obj, fileNames, pathName, postfix);    
+elseif nargin == 4
+    if isempty(pathName)
+        [~,pathName] = uigetfile(['*',postfix]);
+    end
+    loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords);
+elseif nargin == 5
+    if strcmpi(loadMethod,'append')
+        %doing nothing
+    elseif strcmpi(loadMethod,'rewrite')
+        obj.FishStack = []; %erase all existing FISHDATA
+    else
+        error('Wrong loadMethod!\nPlease enter "append" or "write"');
     end
     
+    if isempty(pathName)
+        [~,pathName] = uigetfile('*',postfix);
+    end
     
+    loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords);
+elseif nargin == 6
+    if strcmpi(loadMethod,'append')
+        %doing nothing
+    elseif strcmpi(loadMethod,'rewrite')
+        obj.FishStack = []; %erase all existing FISHDATA
+    else
+        error('Wrong loadMethod!\nPlease enter "append" or "write"');
+    end
+    
+    if isempty(pathName)
+        [~,pathName] = uigetfile('*.yaml');
+    end
+    
+    if oldFlag
+        loadFilesWithFilters_old(obj, fileNames, pathName, postfix, keywords);
+    else
+        loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords);
+    end
+end
+
+
 
 
 
 end
 
+% load files without filters
+function obj = loadFiles(obj, fileNames, pathName, postfix)
+if isempty(fileNames)
+    fInfo = dir([pathName,'*',postfix]);
+    numFiles = length(fInfo);
+    for i = 1:numFiles
+        obj = readOneFile(obj,fInfo(i).name,pathName);
+    end
+else
+    numFiles = length(fileNames);
+    for i = 1:numFiles
+        obj = readOneFile(obj,fileNames(i),pathName);
+    end
+end
+end
+
+% load files in a directory with filters
+function obj = loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords)
+    if isempty(fileNames)
+        fInfo = filterByKeywords(pathName, keywords, postfix);
+        numFiles = length(fInfo);
+        for i = 1:numFiles
+            obj = readOneFile(obj,fInfo(i).name,pathName);
+        end
+        
+    else
+        strPattern = getStrPattern(keywords,postfix);
+        idxMatch = contains(fileNames,strPattern);
+        numFiles = length(idxMatch);
+        for i = 1:numFiles
+            if (idxMatch(i))
+                obj = readOneFile(obj,fileNames(i),pathName);
+            end
+        end    
+    end
+end
+
+% read one file by the specific filename and pathname
+function obj = readOneFile(obj,fileName,pathName)
+fprintf('Reading file: %s\n',fileName);
+fName = [pathName, fileName];
+fid = fopen(fName);
+F = readExpSettings(fid);
+numFish = length(F);
+frames = readFrames(fid, numFish);
+% Assign values to the object of ABLITZER
+% append new data to the existing fishStack
+for i = 1:numFish
+    F(i).Frames = frames(:,i);
+    obj.FishStack = cat(1,obj.FishStack,F(i));
+end
+
+end
+
+% load files in a directory with filters
+function obj = loadFilesWithFilters_old(obj, fileNames, pathName, postfix, keywords)
+    if isempty(fileNames)
+        fInfo = filterByKeywords(pathName, keywords, postfix);
+        numFiles = length(fInfo);
+        for i = 1:numFiles
+            obj = readOneFile(obj,fInfo(i).name,pathName);
+        end
+        
+    else
+        strPattern = getStrPattern(keywords,postfix);
+        idxMatch = contains(fileNames,strPattern);
+        numFiles = length(idxMatch);
+        for i = 1:numFiles
+            if (idxMatch(i))
+                obj = readOneFile_old(obj,fileNames(i),pathName);
+            end
+        end    
+    end
+end
+
+% read one file by the specific filename and pathname
+function obj = readOneFile_old(obj,fileName,pathName)
+fprintf('Reading file: %s\n',fileName);
+fName = [pathName, fileName];
+fid = fopen(fName);
+F = readExpSettings_old(fid);
+numFish = length(F);
+frames = readFrames_old(fid, numFish);
+% Assign values to the object of ABLITZER
+% append new data to the existing fishStack
+for i = 1:numFish
+    F(i).Frames = frames(:,i);
+    obj.FishStack = cat(1,obj.FishStack,F(i));
+end
+
+end
+
+% Filter all files in the same directory by keywords
+function fInfo = filterByKeywords(keywords, pathName)
+% process keywords
+numKeys = length(keywords);
+searchStr = pathName;
+for i=1:numKeys
+    searchStr = cat(2,searchStr,'*',char(keywords(i)));
+end
+searchStr = cat(2,searchStr,'*.yaml');
+fInfo = dir(searchStr);
+
+end
 
 % read general experiment settings and fish personal infos
 function F = readExpSettings(fid)
@@ -109,11 +243,11 @@ for i=1:numFish
     F(i).Arena = arena;
     F(i).ExpTask = task;
     F(i).CSpattern = string(csPattern);
-
-
+    
+    
     F(i).ExpStartTime = expStartTime;
     F(i).FrameRate = frameRate;
-
+    
     %         Scheme for fish positions in arena
     %               xCut
     %         |		|		|
@@ -141,93 +275,93 @@ end
 % Extract fish's IDs, ages, strains and task from fileName
 % Different infos are separated by "_"
 function F = readExpSettings_old(fid,fileName)
-    % extract infos from filename
-    idx = find(fileName == '_');
-    fishID1 = fileName(idx(1)+1:idx(2)-1);
-    if (contains(fishID1,'G'))
-        fishStrain1 = "GCaMP";
-    elseif (contains(fishID1,'S'))
-        fishStrain1 = "WT";
-    end
+% extract infos from filename
+idx = find(fileName == '_');
+fishID1 = fileName(idx(1)+1:idx(2)-1);
+if (contains(fishID1,'G'))
+    fishStrain1 = "GCaMP";
+elseif (contains(fishID1,'S'))
+    fishStrain1 = "WT";
+end
 
-    fishID2 = fileName(idx(3)+1:idx(4)-1);
-    if (contains(fishID2,'G'))
-        fishStrain2 = "GCaMP";
-    elseif (contains(fishID2,'S'))
-        fishStrain2 = "WT";
-    end
+fishID2 = fileName(idx(3)+1:idx(4)-1);
+if (contains(fishID2,'G'))
+    fishStrain2 = "GCaMP";
+elseif (contains(fishID2,'S'))
+    fishStrain2 = "WT";
+end
 
-    fishAge1 = str2num(fileName(idx(2)+1));
-    fishAge2 = str2num(fileName(idx(4)+1));
+fishAge1 = str2num(fileName(idx(2)+1));
+fishAge2 = str2num(fileName(idx(4)+1));
 
-    fishIDs = {fishID1;fishID2};
-    fishAges = [fishAge1, fishAge2];
-    fishStrains = [string(fishStrain1), string(fishStrain2)];
-    task = fileName(idx(5)+1:end-5);
+fishIDs = {fishID1;fishID2};
+fishAges = [fishAge1, fishAge2];
+fishStrains = [string(fishStrain1), string(fishStrain2)];
+task = fileName(idx(5)+1:end-5);
 
-    ifReached = false; % logical value
-    while (~ifReached && ~feof(fid))
-        disp('Reading the general experimental info');
-        [key, value] = read_a_line(fid);
-        if (~isempty(key))
-            switch key
-                case 'ExpStartTime'
-                    expStartTime = value;
-                case 'FrameRate'
-                    frameRate = str2num(value);
-                case 'FrameSize'
-                    frameSize = str2num(value);
-                case 'DelimX'
-                    delimX = str2num(value);
-                case 'DelimY'
-                    yDivide = str2num(value);
-                case 'Frames'
-                    ifReached = true;
-                otherwise
-                    disp(['Unrecognized keyword: ', key]);
-            end
+ifReached = false; % logical value
+while (~ifReached && ~feof(fid))
+    disp('Reading the general experimental info');
+    [key, value] = read_a_line(fid);
+    if (~isempty(key))
+        switch key
+            case 'ExpStartTime'
+                expStartTime = value;
+            case 'FrameRate'
+                frameRate = str2num(value);
+            case 'FrameSize'
+                frameSize = str2num(value);
+            case 'DelimX'
+                delimX = str2num(value);
+            case 'DelimY'
+                yDivide = str2num(value);
+            case 'Frames'
+                ifReached = true;
+            otherwise
+                disp(['Unrecognized keyword: ', key]);
         end
     end
+end
 
-    numFish = length(fishIDs);
-    F(numFish) = FISHDATA;
-    for i=1:numFish
-        F(i).ID = string(fishIDs{i,1});
-        F(i).Age = fishAges(i);
-        F(i).Strain = fishStrains(i);
-
-        switch str2double(fishIDs{i,1}(3))
-            case 1 || 4
-                arena = 1;
-            case 2 || 5
-                arena = 2;
-            case 3 || 6
-                arena = 3;
-        end
-        F(i).Arena = arena;
-        F(i).ExpTask = task;
-        F=judge_ExpType(task,F,i);
-
-        F(i).ExpStartTime = expStartTime;
-        F(i).FrameRate = frameRate;
-
-        %         Scheme for fish positions in arena
-        %               xCut
-        %         |		|		|
-        %         |	0	|	1	|
-        %         |		|		|
-        %         |-------------| yCut
-        %         |		|		|
-        %         |	2	|	3	|
-        %         |		|		|
-        if (i==1) % topLeft_x, topLeft_y, width, height
-            F(i).ConfinedRect = [0,0,delimX,frameSize(2)];
-        elseif (i==2)
-            F(i).ConfinedRect = [delimX,0,frameSize(1)-delimX,frameSize(2)];
-        end
-        F(i).yDivide = yDivide;
-
+numFish = length(fishIDs);
+F(numFish) = FISHDATA;
+for i=1:numFish
+    F(i).ID = string(fishIDs{i,1});
+    F(i).Age = fishAges(i);
+    F(i).Strain = fishStrains(i);
+    
+    switch str2double(fishIDs{i,1}(3))
+        case 1 || 4
+            arena = 1;
+        case 2 || 5
+            arena = 2;
+        case 3 || 6
+            arena = 3;
     end
+    F(i).Arena = arena;
+    F(i).ExpTask = task;
+    F=judge_ExpType(task,F,i);
+    
+    F(i).ExpStartTime = expStartTime;
+    F(i).FrameRate = frameRate;
+    
+    %         Scheme for fish positions in arena
+    %               xCut
+    %         |		|		|
+    %         |	0	|	1	|
+    %         |		|		|
+    %         |-------------| yCut
+    %         |		|		|
+    %         |	2	|	3	|
+    %         |		|		|
+    if (i==1) % topLeft_x, topLeft_y, width, height
+        F(i).ConfinedRect = [0,0,delimX,frameSize(2)];
+    elseif (i==2)
+        F(i).ConfinedRect = [delimX,0,frameSize(1)-delimX,frameSize(2)];
+    end
+    F(i).yDivide = yDivide;
+    
+end
 
 
 end
@@ -349,7 +483,7 @@ while (~feof(fid))
                 frames(idxFrame,2).ShockOn = str2num(value);
             case 'PatternIdx2'
                 frames(idxFrame,2).PatternIdx = str2num(value);
-         otherwise
+            otherwise
                 disp(['Unrecognized keyword: ', key]);
         end
     end
@@ -373,36 +507,36 @@ end
 end
 
 function newLine = remove_brackets(tline)
-    startIdx = strfind(tline,"{");
-    if isempty(startIdx)
-        newLine = tline;
-        return
-    else
-        endIdx = strfind(tline,"}");
-        newLine = tline(startIdx+1:endIdx-1);
-    end
+startIdx = strfind(tline,"{");
+if isempty(startIdx)
+    newLine = tline;
+    return
+else
+    endIdx = strfind(tline,"}");
+    newLine = tline(startIdx+1:endIdx-1);
+end
 
 
 end
 
 function [fieldName,value] = readKeyValuePair(str)
-    q=textscan(str,'%q','Delimiter',':');
-    fieldName = q{1}{1};
-    if (length(q{1}) >= 2)
-        value = q{1}{2};
-    else
-        value = [];
-    end
+q=textscan(str,'%q','Delimiter',':');
+fieldName = q{1}{1};
+if (length(q{1}) >= 2)
+    value = q{1}{2};
+else
+    value = [];
+end
 end
 
 function F =judge_ExpType(task,F,i)
-    if contains(task,'control','IgnoreCase',true)
-        F(i).ExpType = "Control Group";
-    elseif contains(task,'exp','IgnoreCase',true)
-        F(i).ExpType = "Exp Group";
-    else
-        F(i).ExpType = "Unrecognized";
-    end
+if contains(task,'control','IgnoreCase',true)
+    F(i).ExpType = "Control Group";
+elseif contains(task,'exp','IgnoreCase',true)
+    F(i).ExpType = "Exp Group";
+else
+    F(i).ExpType = "Unrecognized";
+end
 
-  end
+end
 

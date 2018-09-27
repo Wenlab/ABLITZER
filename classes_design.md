@@ -5,12 +5,12 @@
 
 
 ## Loading/Saving functions
-- loadMats(byKeywords): append fishStack to an existing ABLITZER obj
+- [x] loadMats(byKeywords): append fishStack to an existing ABLITZER obj
   - ABLITZER method
   - arg1: keywords to filter files
   - arg2: append data / rewrite Data
 
-- loadYamls(byKeywords): import yaml files to matlab
+- [x] loadYamls(byKeywords): import yaml files to matlab
   - ABLITZER method
   - arg1: keywords to filter files
   - arg2: append data / rewrite Data

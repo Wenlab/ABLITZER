@@ -1,116 +1,45 @@
-% - loadMats(byKeywords): append fishStack to an existing ABLITZER obj
-%   - ABLITZER method
-%   - arg1: keywords to filter files
-%   - arg2: append data / rewrite Data
-%TODO: reduce redundant lines
+%   Abstract:
+%      Load FISHDATA objects from mat files to fishStack of an existing ABLITZER obj
+%
+%   SYNTAX:
+%       1. obj.loadMats(); load a single file by selecting the file in the UI
+%       2. obj.loadMats(fileNames);
+%       3. obj.loadMats(fileNames,pathName);
+%       4.
+%       5.
+
+%TODO: fill out all syntaxs to use
+
+
 function loadMats(obj, ... % ABLITZER object
     fileNames, ... % files to load, if absent, let the user to choose one file to load; if empty, load all files with filters;
     pathName,... % directory to process files, if empty, choose the dir by the UI
     keywords, ... % keywords in filenames to choose files to process; such as strainName, age, etc.
     loadMethod) % 'append' or 'rewrite' to the existing fishStack
 
+postfix = '.mat';
 %% Deal with different input cases (classified by the number of input arguments)
-if nargin == 1 % append all FISHDATA objs to the existing FishStack;
-    [fileName,pathName] = uigetfile('*.mat');
-    fprintf('Reading file: %s\n',fileName);
-    tempData = load([pathName,fileName]);
-    dName = fieldnames(tempData);
-    tempObj = getfield(tempData,dName{1,1});
-    fprintf('%d valid FISHDATA imported.n',length(tempObj.FishStack));
-    obj.FishStack = cat(1,obj.FishStack,tempObj.FishStack);
+if nargin == 1 
+    [fileName,pathName] = uigetfile(['*',postfix]);
+    %TODO: whether the output variable needed
+    loadOneFile(obj,fileName,pathName);
+    
 elseif nargin == 2
     % and select the directory by the UI
-    [~,pathName] = uigetfile('*.mat');
-    if isempty(fileNames)
-        fInfo = dir([pathName,'*.mat']);
-        numFiles = length(fInfo);
-        for i = 1:numFiles
-            fprintf('Reading file: %s\n',fInfo(i).name);
-            tempData = load([pathName,fInfo(i).name]);
-            dName = fieldnames(tempData);
-            tempObj = getfield(tempData,dName{1,1});
-            fprintf('%d valid FISHDATA imported.n',length(tempObj.FishStack));
-            obj.FishStack = cat(1,obj.FishStack,tempObj.FishStack);
-        end
-    else
-        numFiles = length(fileNames);
-        for i = 1:numFiles
-            fprintf('Reading file: %s\n',fileNames(i));
-            fName = [pathName,fileNames(i)];
-            tempData = load(pathName,fName);
-            dName = fieldnames(tempData); % name of saved ABLITZER obj
-            tempObj = getfield(tempData,dName{1,1});
-            fprintf('%d valid FISHDATA imported.n',length(tempObj.FishStack));
-            obj.FishStack = cat(1,obj.FishStack,tempObj.FishStack);
-        end
-    end
+    [~,pathName] = uigetfile(['*',postfix]);
+    loadFiles(obj, fileNames, pathName, postfix);
 elseif nargin == 3
     if isempty(pathName)
-        [~,pathName] = uigetfile('*.mat');
+        [~,pathName] = uigetfile(['*',postfix]);
     end
     
-    if isempty(fileNames)
-        fInfo = dir([pathName,'*.mat']);
-        numFiles = length(fInfo);
-        for i = 1:numFiles
-            fprintf('Reading file: %s\n',fInfo(i).name);
-            tempData = load([pathName,fInfo(i).name]);
-            dName = fieldnames(tempData);
-            tempObj = getfield(tempData,dName{1,1});
-            fprintf('%d valid FISHDATA imported.n',length(tempObj.FishStack));
-            obj.FishStack = cat(1,obj.FishStack,tempObj.FishStack);
-        end
-    else
-        numFiles = length(fileNames);
-        for i = 1:numFiles
-            fprintf('Reading file: %s\n',fileNames(i));
-            fName = [pathName,fileNames(i)];
-            tempData = load(pathName,fName);
-            dName = fieldnames(tempData); % name of saved ABLITZER obj
-            tempObj = getfield(tempData,dName{1,1});
-            fprintf('%d valid FISHDATA imported.n',length(tempObj.FishStack));
-            obj.FishStack = cat(1,obj.FishStack,tempObj.FishStack);
-        end
-    end
+    loadFiles(obj, fileNames, pathName, postfix);
 elseif nargin == 4
     if isempty(pathName)
-        [~,pathName] = uigetfile('*.mat');
-    end
-    
-    if isempty(fileNames)
-        fInfo = filterByKeywords(keywords, pathName);
-        numFiles = length(fInfo);
-        for i = 1:numFiles
-            fprintf('Reading file: %s\n',fInfo(i).name);
-            tempData = load([pathName,fInfo(i).name]);
-            dName = fieldnames(tempData);
-            tempObj = getfield(tempData,dName{1,1});
-            fprintf('%d valid FISHDATA imported.n',length(tempObj.FishStack));
-            obj.FishStack = cat(1,obj.FishStack,tempObj.FishStack);
-        end
-        
-    else
-        numKeys = length(keywords);
-        searchStr = pathName;
-        for i=1:numKeys
-            searchStr = cat(2,searchStr,'*',char(keywords(i)));
-        end
-        searchStr = cat(2,searchStr,'*.mat');
-        idxMatch = contains(fileNames,searchStr);
-        numFiles = length(idxMatch);
-        for i = 1:numFiles
-            if (idxMatch(i))
-                fprintf('Reading file: %s\n',fileNames(i));
-                fName = [pathName,fileNames(i)];
-                tempData = load(pathName,fName);
-                dName = fieldnames(tempData); % name of saved ABLITZER obj
-                tempObj = getfield(tempData,dName{1,1});
-                fprintf('%d valid FISHDATA imported.n',length(tempObj.FishStack));
-                obj.FishStack = cat(1,obj.FishStack,tempObj.FishStack);
-            end
-        end
-        
-    end
+        [~,pathName] = uigetfile(['*',postfix]);
+    end  
+    %TODO: check whether the function would work if keywords is empty
+    loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords);
     
 elseif nargin == 5
     if strcmpi(loadMethod,'append')
@@ -123,56 +52,77 @@ elseif nargin == 5
     
     if isempty(pathName)
         [~,pathName] = uigetfile('*.mat');
-    end
+    end  
+    loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords);
     
+end
+
+end
+
+% load files without filters
+function obj = loadFiles(obj, fileNames, pathName, postfix)
+if isempty(fileNames)
+    fInfo = dir([pathName,'*',postfix]);
+    numFiles = length(fInfo);
+    for i = 1:numFiles
+        obj = loadOneFile(obj,fInfo(i).name,pathName);
+    end
+else
+    numFiles = length(fileNames);
+    for i = 1:numFiles
+        obj = loadOneFile(obj,fileNames(i),pathName);
+    end
+end
+end
+
+% load files in a directory with filters
+function obj = loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords)
     if isempty(fileNames)
-        fInfo = filterByKeywords(keywords, pathName);
+        fInfo = filterByKeywords(pathName, keywords, postfix);
         numFiles = length(fInfo);
         for i = 1:numFiles
-            fprintf('Reading file: %s\n',fInfo(i).name);
-            tempData = load([pathName,fInfo(i).name]);
-            dName = fieldnames(tempData);
-            tempObj = getfield(tempData,dName{1,1});
-            fprintf('%d valid FISHDATA imported.n',length(tempObj.FishStack));
-            obj.FishStack = cat(1,obj.FishStack,tempObj.FishStack);
+            obj = loadOneFile(obj,fInfo(i).name,pathName);
         end
         
     else
-        numKeys = length(keywords);
-        searchStr = pathName;
-        for i=1:numKeys
-            searchStr = cat(2,searchStr,'*',char(keywords(i)));
-        end
-        searchStr = cat(2,searchStr,'*.mat');
-        idxMatch = contains(fileNames,searchStr);
+        strPattern = getStrPattern(keywords,postfix);
+        idxMatch = contains(fileNames,strPattern);
         numFiles = length(idxMatch);
         for i = 1:numFiles
             if (idxMatch(i))
-                fprintf('Reading file: %s\n',fileNames(i));
-                fName = [pathName,fileNames(i)];
-                tempData = load(pathName,fName);
-                dName = fieldnames(tempData); % name of saved ABLITZER obj
-                tempObj = getfield(tempData,dName{1,1});
-                fprintf('%d valid FISHDATA imported.n',length(tempObj.FishStack));
-                obj.FishStack = cat(1,obj.FishStack,tempObj.FishStack);
+                obj = loadOneFile(obj,fileNames(i),pathName);
             end
-        end
-        
+        end    
     end
-    
 end
+
+% load one file by the specific filename and pathname
+function obj = loadOneFile(obj,fileName,pathName)
+    fprintf('Reading file: %s\n',fileName);
+    % load one file
+    tempData = load([pathName,fileName]);
+    dName = fieldnames(tempData);
+    tempObj = getfield(tempData,dName{1,1});   
+    obj.FishStack = cat(1,obj.FishStack,tempObj.FishStack);
+    fprintf('%d valid FISHDATA imported.\n',length(tempObj.FishStack));
+end
+
+function strPattern = getStrPattern(keywords,postfix)
+% process keywords
+numKeys = length(keywords);
+strPattern = '';
+for i=1:numKeys
+    strPattern = cat(2,strPattern,'*',char(keywords(i)));
+end
+strPattern = cat(2,strPattern,'*',postfix);
+
 
 end
 
 % Filter all files in the same directory by keywords
-function fInfo = filterByKeywords(keywords, pathName)
-% process keywords
-numKeys = length(keywords);
-searchStr = pathName;
-for i=1:numKeys
-    searchStr = cat(2,searchStr,'*',char(keywords(i)));
-end
-searchStr = cat(2,searchStr,'*.mat');
-fInfo = dir(searchStr);
+function fInfo = filterByKeywords(pathName, keywords, postfix)
+strPattern = getStrPattern(keywords,postfix);
+strPattern = cat(2,pathName,strPattern);
+fInfo = dir(strPattern);
 
 end
