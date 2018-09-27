@@ -66,6 +66,10 @@ close(newVobj);
 
 
 
+
+
+
+
 % process exp-only data
 % after imported data to ABLITZER obj
 
@@ -132,7 +136,7 @@ function overwrite_oldData(obj,posStruct,bIdx)
             fish.Frames(i).Tail = tails(i,:);
             fish.Frames(i).Center = centers(i,:);
             fish.Frames(i).HeadingAngle = headingAngles(i);
-        end     
+        end
     end
 
 end
@@ -217,7 +221,7 @@ function newLine = remove_brackets(tline)
         endIdx = strfind(tline,"}");
         newLine = tline(startIdx+1:endIdx-1);
     end
-    
+
 
 end
 
@@ -316,7 +320,7 @@ for n = 1:numFish
     if (edges(end) ~= framesInTr)
         edges = [edges,framesInTr];
     end
-    sTime = zeros(nBins,1); % scores of each period in training  
+    sTime = zeros(nBins,1); % scores of each period in training
     for i=1:nBins
         idxBegin = edges(i);
         idxEnd = edges(i+1);
@@ -325,7 +329,7 @@ for n = 1:numFish
             sTime(i) = 1;
         else
             sTime(i) = sum(scores(idx));
-        end  
+        end
     end
     shockPIMat(n,:) = sTime;
 end
@@ -364,8 +368,8 @@ for i = 1:length(idxExp)
 
     % PIshock
     output(i).NumShock = fish.Res.PIshock.NumShocks;
-    output(i).PIshock = fish.Res.PIshock.PIfish;     
-      
+    output(i).PIshock = fish.Res.PIshock.PIfish;
+
 end
 
 end
@@ -407,16 +411,16 @@ function obj = filter_invalid_data(obj)
         idx1 = idxPairs(i,1);
         idx2 = idxPairs(i,2);
         if (obj.FishStack(idx1).Res.DataQuality < qualThre) || ...
-              (obj.FishStack(idx2).Res.DataQuality < qualThre)  
+              (obj.FishStack(idx2).Res.DataQuality < qualThre)
             badIndices = cat(2,badIndices,idxPairs(i,:));
         end
-      
+
     end
-    
+
     obj.FishStack(badIndices) = [];
-    
-    
-    
+
+
+
 end
 
 
@@ -428,17 +432,8 @@ function PIs = get_all_PIs(obj)
         fish = fishStack(i);
         tempPI = cat(2,fish.Res.PItime.PIfish);
         PIs = cat(1,PIs,tempPI);
-        
-        
-        
+
+
+
     end
 end
-
-
-
-
-
-
-
-
-

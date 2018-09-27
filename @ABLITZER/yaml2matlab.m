@@ -154,13 +154,7 @@ for i=1:numFish
         F(i).ConfinedRect = [xCut,yCut,frameSize(1) - xCut,frameSize(2) -yCut];
     end
     F(i).yDivide = yDivide(i);
-    if contains(task,'control','IgnoreCase',true)
-        F(i).ExpType = "Control Group";
-    elseif contains(task,'exp','IgnoreCase',true)
-        F(i).ExpType = "Exp Group";
-    else
-        F(i).ExpType = "Unrecognized";
-    end
+    F=judge_ExpType(task,F,i);
 end
 
 end
@@ -233,13 +227,7 @@ function F = readExpSettings_old(fid,fileName)
         end
         F(i).Arena = arena;
         F(i).ExpTask = task;
-        if contains(task,'control','IgnoreCase',true)
-            F(i).ExpType = "Control Group";
-        elseif contains(task,'exp','IgnoreCase',true)
-            F(i).ExpType = "Exp Group";
-        else
-            F(i).ExpType = "Unrecognized";
-        end
+        F=judge_ExpType(task,F,i);
 
         F(i).ExpStartTime = expStartTime;
         F(i).FrameRate = frameRate;
@@ -318,7 +306,7 @@ while (~feof(fid))
     end
 end
 
-frames(idxFrame:end,:) = []; % remove redundant frames
+frames(idxFrame+1:end,:) = []; % remove redundant frames
 
 
 end
@@ -388,7 +376,7 @@ while (~feof(fid))
     end
 end
 
-frames(idxFrame:end,:) = []; % remove redundant frames
+frames(idxFrame+1:end,:) = []; % remove redundant frames
 end
 
 function [key, value] = read_a_line(fid)
@@ -427,3 +415,14 @@ function [fieldName,value] = readKeyValuePair(str)
         value = [];
     end
 end
+
+function F =judge_ExpType(task,F,i)
+    if contains(task,'control','IgnoreCase',true)
+        F(i).ExpType = "Control Group";
+    elseif contains(task,'exp','IgnoreCase',true)
+        F(i).ExpType = "Exp Group";
+    else
+        F(i).ExpType = "Unrecognized";
+    end
+
+  end
