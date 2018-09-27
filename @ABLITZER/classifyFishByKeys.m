@@ -43,7 +43,6 @@
 %   Replaced Version: 1.1
 %   Author: Wenbin Yang <bysin7@gmail.com>
 %   Created on: May 3, 2018
-% �ñ�׼�ļ�ֵ��������������
 
 
 function classifyFishByKeys(obj,keys)

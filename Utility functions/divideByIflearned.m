@@ -1,5 +1,6 @@
 % Remove the bad points, divide into "Learners" and "non-Learners"
 function [Learners,non_Learners] = divideByIflearned(a)
+%% rename this function as "classifyLearners"
 
 for i=1:length(a)
      a(i).remove_invalid_data_pair;

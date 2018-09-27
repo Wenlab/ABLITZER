@@ -1,4 +1,5 @@
 function [OLcontrol,OLexp,Unpaired,p] = plotBarSEU(a)
+% S: self-control; E: experiment group; U: unpaired-control group
   % a is a matrix: "n*1 ABLITZER";
   for i=1:length(a)
       remove_invalid_data_pair(a(i));
