@@ -1,6 +1,5 @@
-function p = significanceTest(preTrain,postTrain,x1,x2,y)
-
-        [~,p] = ttest(preTrain,postTrain);
+function p = pairedSignificanceTest(group1,group2,x1,x2,y)
+        [~,p] = ttest(group1,group2);
         line([x1,x2],[y,y],'Color',[0,0,0]);
 
         if p > 0.05 % n.s.

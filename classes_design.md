@@ -10,8 +10,53 @@
   - arg1: keywords to filter files
   - arg2: append data / rewrite Data
 
+- loadYamls(byKeywords): import yaml files to matlab
+  - ABLITZER method
+  - arg1: keywords to filter files
+  - arg2: append data / rewrite Data
+  - arg3: old-flag to deal with old yaml files
+
+- saveData(by keywords/size): save fishStack in ABLITZER obj into multiples files
+  - ABLITZER method
+  - arg0: savingPath
+  - arg1: which keywords to be classified
+  - arg2: size to be divided
+
+- saveTrialsMat: save trial-by-trial mat in files
+  - global function
+  - structure needs to be defined
+
+## Utility functions (classification/finding/search for)
+- classifyFishByKeys
+  - ABLITZER method
+
+- findFish: find specific fish by key-value pair or keywords
+  - ABLITZER method
+
+- outputFeatures: output as print-out message/variable (struct)
+  - ABLITZER method
+  - arg1: indices to output (all/selective)
 
 ## Analysis functions
+- evaluateDataQuality:
+- calcPItime(PositionalIndex):
+  - FISHDATA method
+  - phaseByPhase
+    - add trials' values for each phase
+    - add increments in RESDATA
+- calcPIturn(TurningIndex):
+  - FISHDATA method
+  - phaseByPhase
+    - add trials' values for each phase
+    - add increments in RESDATA
+- calcPIshock(ShockIndex):
+  - FISHDATA method
+  - phaseByPhase
+    - add trials' values for each phase
+- [ifLearned, MemLen] = sayIfLearned
+  - FISHDATA method
+  - add "MemoryLength" in seconds
+  - "ExtinctTime" should be converted to the idxFrame / seconds from the experiment beginning.
 
 ## Plotting functions
 - plotPIs: plot performance index (positional/turning/shock) of different groups (1. exp only; 2. with self-control; 3. with unpaired control)
@@ -31,6 +76,7 @@
   - ABLITZER method
   - arg1: metric type (positional/turning/shock)
   - arg2: which classes to plot (1. learners only; 2. with non-learners; 3. with all)
+  - we can also design a global function to deal with saved trialBytrialPImat.
 
 - histPlotMemLen: plot the histograms of memory lengths of different cases
   - ABLITZER method

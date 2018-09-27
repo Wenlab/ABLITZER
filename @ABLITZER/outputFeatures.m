@@ -1,7 +1,5 @@
-% Generate an output struct for checking all results in the same place
-function output = generate_output(obj)
-
-output=[];
+% Generate an output struct for checking all features/results in a single
+function output = outputFeatures(obj)
 
 output = struct('ID',[],'Age',[],'Task',[],'DataQuality',[],...
 'PITime_Baseline',[],'PITime_Training',[],'PITime_Test',[],...
