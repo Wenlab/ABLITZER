@@ -1,4 +1,68 @@
+[f,p] = uigetfile('*.avi');
+fileName = [p,f];
+vObj = VideoReader(fileName);
 
+width = 360;
+x = 1:5:width;
+
+clr = [1,1,1]; % white
+startFrame = 25200;
+endFrame = 28000;
+xShift = 400;
+yShift = 182;
+yDiv = 383 - yShift; % the divided line
+
+heads = expData.Head1(startFrame:endFrame,:);
+heads(:,1) = heads(:,1) - xShift;
+heads(:,2) = heads(:,2) - yShift;
+
+centers = expData.Center1(startFrame:endFrame,:);
+centers(:,1) = centers(:,1) - xShift;
+centers(:,2) = centers(:,2) - yShift;
+
+pIdx = expData.PatternIdx1(startFrame:endFrame,:);
+
+newVobj = VideoWriter(['Working/','Masked-',f]);
+newVobj.Quality = 100;
+%newVobj.VideoCompressionMethod = 'None';
+%newVobj.VideoFormat = 'RGB24';
+open(newVobj);
+i = 0;
+while hasFrame(vObj)
+    i = i + 1;
+    I = readFrame(vObj);
+
+    I(yDiv,x,1) = 255;
+    I(yDiv,x,2) = 0;
+    I(yDiv,x,3) = 0;
+    
+    h = figure(1);
+    cla reset; % clear prior image
+    imshow(I,[]);
+    hold on;
+    
+    % Annotate the frame
+    if pIdx(i) == 0
+        text(20,10,'CS Top','color',clr,'FontSize',15);
+    elseif pIdx(i) == 1
+        text(20,10,'CS Bottom','color',clr,'FontSize',15);
+    end
+    text(190,10,'Playing speed x3','color',clr,'FontSize',15);
+    if i < 2200
+        text(20,30,'Not extinct','color',clr,'FontSize',15);
+    else
+        text(20,30,'Memory extinct','color',clr,'FontSize',15);
+    end
+    
+    % Annotate the fish positions
+    scatter(heads(i,1),heads(i,2),20,'bo');
+    %scatter(centers(i,1),centers(i,2),10,'b*');
+    
+    F = getframe(h);
+    writeVideo(newVobj,F.cdata);
+end
+
+close(newVobj);
 
 
 
@@ -9,39 +73,37 @@
 % process exp-only data
 % after imported data to ABLITZER obj
 
-
-
-PImat = zeros(6,4);
-for i=1:6
-fish = obj.FishStack(i);
-fish.ratePerformance;
-PImat(i,1) = fish.Res.PItime(1).PIfish;
-PImat(i,2) = fish.Res.PItime(2).PIfish;
-PImat(i,3) = fish.Res.PIturn(1).PIfish;
-PImat(i,4) = fish.Res.PIturn(2).PIfish;
-end
-
-
-% test new momory extinction measurement
-
-numFish = length(idxExp);
-extMat = zeros(numFish,2);
-winWidth = 1200;
-for i = 1:numFish
-    idx = idxExp(i);
-    fish = redObj.FishStack(idx);
-    PIthre = fish.Res.PItime(1).PIfish;
-    pMov = calc_moving_PI(fish);
-    extFrame = find(pMov(winWidth:end) <= PIthre,1);
-    if isempty(extFrame)
-        extFrame = length(pMov);
-    else
-        extFrame = extFrame + winWidth;
-    end
-    extMat(i,1) = extFrame;
-    extMat(i,2) = fish.Res.PItime(4).PIfish - fish.Res.PItime(1).PIfish;
-end
-Rsq = calc_Rsquare(extMat(:,1), extMat(:,2));
+% PImat = zeros(6,4);
+% for i=1:6
+% fish = obj.FishStack(i);
+% fish.ratePerformance;
+% PImat(i,1) = fish.Res.PItime(1).PIfish;
+% PImat(i,2) = fish.Res.PItime(2).PIfish;
+% PImat(i,3) = fish.Res.PIturn(1).PIfish;
+% PImat(i,4) = fish.Res.PIturn(2).PIfish;
+% end
+% 
+% 
+% % test new momory extinction measurement
+% 
+% numFish = length(idxExp);
+% extMat = zeros(numFish,2);
+% winWidth = 1200;
+% for i = 1:numFish
+%     idx = idxExp(i);
+%     fish = redObj.FishStack(idx);
+%     PIthre = fish.Res.PItime(1).PIfish;
+%     pMov = calc_moving_PI(fish);
+%     extFrame = find(pMov(winWidth:end) <= PIthre,1);
+%     if isempty(extFrame)
+%         extFrame = length(pMov);
+%     else
+%         extFrame = extFrame + winWidth;
+%     end
+%     extMat(i,1) = extFrame;
+%     extMat(i,2) = fish.Res.PItime(4).PIfish - fish.Res.PItime(1).PIfish;
+% end
+% Rsq = calc_Rsquare(extMat(:,1), extMat(:,2));
 
 
 function incorporate_oldYamls(obj,dateStr)

@@ -23,6 +23,8 @@ Authors
 
 ABLITZER is written by Wenbin Yang. It is originally a  product of the [Wen Lab][3] in the [Department of Life Science](http://biox.ustc.edu.cn/) and the [HEFEI NATIONAL LABORATORY FOR PHYSICAL SCIENCES AT THE MICROSCALE](http://en.hfnl.ustc.edu.cn/) at [University of Science and Technology of China](http://en.ustc.edu.cn/). 
 
+Danyang Li is now helping to improve the readability and the code quality.
+
   [3]:http://www.wenlab.org/
   
   
