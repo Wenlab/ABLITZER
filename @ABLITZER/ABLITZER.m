@@ -27,9 +27,9 @@
 %
 %
 %
-%   Current Version: 1.2
+%   Current Version: 2.0
 %   Author: Wenbin Yang <bysin7@gmail.com>
-%   Modified on: May 6, 2018
+%   Modified on: Sep. 27, 2018
 %
 %   Orinigal Version: 1.0
 %   Author: Wenbin Yang <bysin7@gmail.com>
@@ -58,7 +58,7 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         yaml2matlab(obj, endFrame, pathName, fileName);
 
         % load mat files which matches keys provided in the same directory
-        importMatsByKeys(obj, keys, pathName);
+        loadMats(obj, fileNames, pathName, keywords, loadMethod);
 
         % remove fish data whose data quality lower than threshold
         remove_invalid_data_pair(obj);
