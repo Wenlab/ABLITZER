@@ -4,11 +4,16 @@
 %   SYNTAX:
 %       1. obj.loadMats(); load a single file by selecting the file in the UI
 %       2. obj.loadMats(fileNames);
+%             2.1 load multiple files;
+%             2.2 if fileNames is empty, load all mat files in the directory selected in the UI
 %       3. obj.loadMats(fileNames,pathName);
-%       4.
-%       5.
-
-%TODO: fill out all syntaxs to use
+%             3.1 load files specified by fileNames and pathName
+%             3.2 if fileNames is empty, load all mat files in the directory of pathName
+%             3.3 if pathName is empty, load files in fileNames in the directory selected in the UI
+%       4. obj.loadMats(fileNames,pathName,keywords) load files matched the str pattern of keywords;
+%           keywords have to be a string array, and order is required. It also inherits these empty options from case 3
+%       5. obj.loadMats(fileNames,pathName,keywords,loadMethod)
+%           if 'rewrite' is supplied for loadMethod, the existing fishStack would be erased.
 
 
 function loadMats(obj, ... % ABLITZER object
@@ -19,11 +24,11 @@ function loadMats(obj, ... % ABLITZER object
 
 postfix = '.mat';
 %% Deal with different input cases (classified by the number of input arguments)
-if nargin == 1 
+if nargin == 1
     [fileName,pathName] = uigetfile(['*',postfix]);
     %TODO: whether the output variable needed
     loadOneFile(obj,fileName,pathName);
-    
+
 elseif nargin == 2
     % and select the directory by the UI
     [~,pathName] = uigetfile(['*',postfix]);
@@ -32,15 +37,15 @@ elseif nargin == 3
     if isempty(pathName)
         [~,pathName] = uigetfile(['*',postfix]);
     end
-    
+
     loadFiles(obj, fileNames, pathName, postfix);
 elseif nargin == 4
     if isempty(pathName)
         [~,pathName] = uigetfile(['*',postfix]);
-    end  
+    end
     %TODO: check whether the function would work if keywords is empty
     loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords);
-    
+
 elseif nargin == 5
     if strcmpi(loadMethod,'append')
         %doing nothing
@@ -49,12 +54,12 @@ elseif nargin == 5
     else
         error('Wrong loadMethod!\nPlease enter "append" or "write"');
     end
-    
+
     if isempty(pathName)
         [~,pathName] = uigetfile('*.mat');
-    end  
+    end
     loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords);
-    
+
 end
 
 end
@@ -83,7 +88,7 @@ function obj = loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords)
         for i = 1:numFiles
             obj = loadOneFile(obj,fInfo(i).name,pathName);
         end
-        
+
     else
         strPattern = getStrPattern(keywords,postfix);
         idxMatch = contains(fileNames,strPattern);
@@ -92,7 +97,7 @@ function obj = loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords)
             if (idxMatch(i))
                 obj = loadOneFile(obj,fileNames(i),pathName);
             end
-        end    
+        end
     end
 end
 
@@ -102,7 +107,7 @@ function obj = loadOneFile(obj,fileName,pathName)
     % load one file
     tempData = load([pathName,fileName]);
     dName = fieldnames(tempData);
-    tempObj = getfield(tempData,dName{1,1});   
+    tempObj = getfield(tempData,dName{1,1});
     obj.FishStack = cat(1,obj.FishStack,tempObj.FishStack);
     fprintf('%d valid FISHDATA imported.\n',length(tempObj.FishStack));
 end

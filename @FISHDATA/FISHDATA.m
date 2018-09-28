@@ -37,6 +37,8 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
 
         %% General info about the experiment the fish was in
         Arena = NaN; % which arena the fish was in
+        ExpDate = NaN; % numeric coding (yyddmm), e.g., 180928
+        ExpTime = NaN; % numeric coding (hhmmss), e.g., 152507
         ExpStartTime = ''; % start time of the experiment (ss-mm-hh, dd-mm-yy)
         ExpTask = ''; % the learning task of experiment (e.g. Operant Learning)
         CSpattern = ''; % the conditioned pattern used in the exp,

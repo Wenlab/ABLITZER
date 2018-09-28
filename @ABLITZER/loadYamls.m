@@ -1,22 +1,24 @@
 %   Filename: loadYamls.m (method of ABLITZER class)
 %   Abstract:
-%      Read in all recorded experimental data in one yaml file to an object
+%      Read in all recorded experimental data from yaml file(s) to an object
 %      of ABLIZTER class.
 %
 %   SYNTAX:
-%       1.
-%       2.
-%       3.
-%   INPUT:
-%
-%   OUTPUT:
-%       Implicit output, saved in the object of ABLITZER class.
+%       1. obj.loadYamls(); load a single file by selecting the file in the UI
+%       2. obj.loadYamls(fileNames);
+%             2.1 load multiple files;
+%             2.2 if fileNames is empty, load all yaml files in the directory selected in the UI
+%       3. obj.loadYamls(fileNames,pathName);
+%             3.1 load files specified by fileNames and pathName
+%             3.2 if fileNames is empty, load all mat files in the directory of pathName
+%             3.3 if pathName is empty, load files in fileNames in the directory selected in the UI
+%       4. obj.loadYamls(fileNames,pathName,keywords) load files matched the str pattern of keywords;
+%           keywords have to be a string array, and order is required. It also inherits these empty options from case 3
+%       5. obj.loadYamls(fileNames,pathName,keywords,loadMethod)
+%           if 'rewrite' is supplied for loadMethod, the existing fishStack would be erased.
+%       6. obj.loadYamls(fileNames,pathName,keywords,loadMethod,oldFlag)
+%           if oldFlag is true, read yamls in old fashion.
 
-% - loadYamls(byKeywords):
-%   - ABLITZER method
-%   - arg1: keywords to filter files
-%   - arg2: append data / rewrite Data
-%   - arg3: old-flag to deal with old yaml files
 % TODO: convert all old yaml files into new formats, then remove the old-flag
 % TODO: merge two loading functions to one function?
 
@@ -41,7 +43,7 @@ elseif nargin == 3
     if isempty(pathName)
         [~,pathName] = uigetfile(['*',postfix]);
     end
-    loadFiles(obj, fileNames, pathName, postfix);    
+    loadFiles(obj, fileNames, pathName, postfix);
 elseif nargin == 4
     if isempty(pathName)
         [~,pathName] = uigetfile(['*',postfix]);
@@ -55,11 +57,11 @@ elseif nargin == 5
     else
         error('Wrong loadMethod!\nPlease enter "append" or "write"');
     end
-    
+
     if isempty(pathName)
         [~,pathName] = uigetfile('*',postfix);
     end
-    
+
     loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords);
 elseif nargin == 6
     if strcmpi(loadMethod,'append')
@@ -69,11 +71,11 @@ elseif nargin == 6
     else
         error('Wrong loadMethod!\nPlease enter "append" or "write"');
     end
-    
+
     if isempty(pathName)
         [~,pathName] = uigetfile('*.yaml');
     end
-    
+
     if oldFlag
         loadFilesWithFilters_old(obj, fileNames, pathName, postfix, keywords);
     else
@@ -111,7 +113,7 @@ function obj = loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords)
         for i = 1:numFiles
             obj = readOneFile(obj,fInfo(i).name,pathName);
         end
-        
+
     else
         strPattern = getStrPattern(keywords,postfix);
         idxMatch = contains(fileNames,strPattern);
@@ -120,7 +122,7 @@ function obj = loadFilesWithFilters(obj, fileNames, pathName, postfix, keywords)
             if (idxMatch(i))
                 obj = readOneFile(obj,fileNames(i),pathName);
             end
-        end    
+        end
     end
 end
 
@@ -149,7 +151,7 @@ function obj = loadFilesWithFilters_old(obj, fileNames, pathName, postfix, keywo
         for i = 1:numFiles
             obj = readOneFile(obj,fInfo(i).name,pathName);
         end
-        
+
     else
         strPattern = getStrPattern(keywords,postfix);
         idxMatch = contains(fileNames,strPattern);
@@ -158,7 +160,7 @@ function obj = loadFilesWithFilters_old(obj, fileNames, pathName, postfix, keywo
             if (idxMatch(i))
                 obj = readOneFile_old(obj,fileNames(i),pathName);
             end
-        end    
+        end
     end
 end
 
@@ -243,11 +245,11 @@ for i=1:numFish
     F(i).Arena = arena;
     F(i).ExpTask = task;
     F(i).CSpattern = string(csPattern);
-    
-    
+
+
     F(i).ExpStartTime = expStartTime;
     F(i).FrameRate = frameRate;
-    
+
     %         Scheme for fish positions in arena
     %               xCut
     %         |		|		|
@@ -329,7 +331,7 @@ for i=1:numFish
     F(i).ID = string(fishIDs{i,1});
     F(i).Age = fishAges(i);
     F(i).Strain = fishStrains(i);
-    
+
     switch str2double(fishIDs{i,1}(3))
         case 1 || 4
             arena = 1;
@@ -341,10 +343,10 @@ for i=1:numFish
     F(i).Arena = arena;
     F(i).ExpTask = task;
     F=judge_ExpType(task,F,i);
-    
+
     F(i).ExpStartTime = expStartTime;
     F(i).FrameRate = frameRate;
-    
+
     %         Scheme for fish positions in arena
     %               xCut
     %         |		|		|
@@ -360,7 +362,7 @@ for i=1:numFish
         F(i).ConfinedRect = [delimX,0,frameSize(1)-delimX,frameSize(2)];
     end
     F(i).yDivide = yDivide;
-    
+
 end
 
 
@@ -539,4 +541,3 @@ else
 end
 
 end
-

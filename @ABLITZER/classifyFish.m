@@ -11,28 +11,12 @@
 %   [3]: https://github.com/samuellab/mindcontrol
 %
 %
-%   Filename: classifyFishByKeys.m (method of ABLITZER class)
 %   Abstract:
 %      Classify fishStack into groups of full combinations of keys,
 %   and record indices in fishGroup struct
 %
 %   SYNTAX:
-%       1. classifyFishByKeys(obj,keys)
-%       2. obj.classifyFishByKeys(keys)
-%   INPUT:
-%       obj: the object of ABLITZER
-%       keys: string array, represents which field user to classify
-%   into different groups based on different values of this field.
-%   the number of keys should no more than 3, otherwise, it may cause
-%   memory failure
-%
-%   OUTPUT:
-%       Implicit output, saved the classified results in fishGroup struct
-%   in called ABLITZER object
-%
-%
-%
-%
+%       1. obj.classifyFishByKeys(keys) where keys should be a string array
 %
 %
 %
@@ -45,7 +29,8 @@
 %   Created on: May 3, 2018
 
 
-function classifyFishByKeys(obj,keys)
+function classifyFish(obj, ... % ABLITZER object
+	keys) % string array, consists of fields to classify on
 	fishStack = obj.FishStack;
     obj.FishGroups = []; % clear former classification
     %numFish = length(fishStack);

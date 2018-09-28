@@ -1,12 +1,14 @@
-
+%Abstract
 % Find desired fish by providing key-value pairs
 
 %SYNTAX:
-%       1.  findFishByKeyValuePairs(obj,key1,value1,...)
-%       2. obj. findFishByKeyValuePairs(key1,value2,...)
+%       1.  findFish(obj,key1,value1,...)
+
+%TODO: Example code
 
 
-function indices = findFishByKeyValuePairs(obj,varargin)
+function indices = findFish(obj, ... % ABLITZER object
+  varargin) % key-value pairs, where keys are fields in FISHDATA
 if nargin==0
     error('There\''s no input')
 end
