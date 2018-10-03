@@ -35,7 +35,7 @@ classdef RESDATA
         ExtinctTime = NaN; % memory extinction time
         IfLearned = NaN; % whether fish learned, nan for control data
         % Task performance elevation based on time
-        PItime = struct('Phase','','Scores',[],'PIfish',NaN);
+        PItime = struct('Phase','','Scores',[],'PIfish',NaN,'Trial',[]);
         % Task performance elevation based on turning behaviors
         PIturn = struct('Phase','','TurnTiming',[],...
             'PreAngle',[],'PostAngle',[],'AngleChange',[],...
@@ -43,7 +43,7 @@ classdef RESDATA
         % Task performance elevation based on received shocks
         PIshock = struct('Phase',[],'ShockTiming',[],...
             'NumShocks',NaN,'Scores',[],'PIfish',NaN);
-        Trials;
+        
 
     end
 end

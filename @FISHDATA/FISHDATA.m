@@ -47,6 +47,7 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
         ExpNote = ''; % additional detail info about the experiment
 
         FrameRate = NaN; % frame rate of the camera used in the experiment
+        TrialDuration = 2 * 60; % it can be load from yaml files later, just like FrameRate
         ConfinedRect = [NaN, NaN, NaN, NaN]; % [topLeft_x, topLeft_y, width, height] in pixels
         yDivide = NaN; % pixel, Y position to equally devide the patch into CS and NCS area
 
