@@ -43,7 +43,8 @@ classdef RESDATA
         % Task performance elevation based on received shocks
         PIshock = struct('Phase',[],'ShockTiming',[],...
             'NumShocks',NaN,'Scores',[],'PIfish',NaN,'Trial',[]);
-        
+        PIincreTime = NaN;
+        PIincreTurn = NaN;
 
     end
 end

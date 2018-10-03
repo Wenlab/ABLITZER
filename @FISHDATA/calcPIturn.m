@@ -90,7 +90,7 @@ function calcPIturn(obj)
         end
         trialIdx = trialNum + trialIdx;
     end
-
+    obj.Res.PIincreTurn = obj.Res.PIturn(4).PIfish - obj.Res.PIturn(1).PIfish;
 end
 
 function angleDiff = calcCirAngleChange(angleArray)

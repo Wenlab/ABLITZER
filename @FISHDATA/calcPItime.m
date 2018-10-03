@@ -52,6 +52,6 @@ function calcPItime(obj)
             obj.Res.PItime(n).Trial(j) = length(find(scoresTrial==1)) / length(find(scoresTrial~=0));
         end
     end
-
+    obj.Res.PIincreTime = obj.Res.PItime(4).PIfish - obj.Res.PItime(1).PIfish;
 
 end
