@@ -39,10 +39,10 @@ classdef RESDATA
         % Task performance elevation based on turning behaviors
         PIturn = struct('Phase','','TurnTiming',[],...
             'PreAngle',[],'PostAngle',[],'AngleChange',[],...
-            'TurnPos',[],'PatternIdx',[],'Scores',[],'PIfish',NaN);
+            'TurnPos',[],'PatternIdx',[],'Scores',[],'PIfish',NaN,'Trial',[]);
         % Task performance elevation based on received shocks
         PIshock = struct('Phase',[],'ShockTiming',[],...
-            'NumShocks',NaN,'Scores',[],'PIfish',NaN);
+            'NumShocks',NaN,'Scores',[],'PIfish',NaN,'Trial',[]);
         
 
     end
