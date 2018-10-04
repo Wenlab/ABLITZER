@@ -8,21 +8,23 @@
 
 % TODO: rewrite this function to find the extinction point
 
-function [extTime,num_trail,Test_trail,meanBT] = sayExtTimeandIfLearned(obj)
+function [extTime,num_trial,Test_trial,meanBT] = sayExtTimeandIfLearned(obj)
   obj.ratePerformance();
-  Baseline_trail=measure_trail(obj,1);
-  Test_trail=measure_trail(obj,4);
-  meanBT=mean(Baseline_trail);
-  idx=find(Test_trail<meanBT,1);
-  num_trail=idx-1;
-  if num_trail<2
+  % Baseline_trail=measure_trial(obj,1);
+  % Test_trail=measure_trial(obj,4);
+  Baseline_trial = obj.Res.PItime(1).Trial;
+  Test_trial = obj.Res.PItime(4).Trial;
+  meanBT=mean(Baseline_trial);
+  idx=find(Test_trial<meanBT,1);
+  num_trial=idx-1;
+  if num_trial<2
        extTime=[];
        h = 0;
        p = nan;
   else
-     extTime = num_trail*120;  % seconds
-    [h,p] = ttest2(Baseline_trail,Test_trail(1:num_trail));
-   end
+     extTime = num_trial*120;  % seconds
+    [h,p] = ttest2(Baseline_trial,Test_trial(1:num_trial));
+  end 
     obj.Res.ExtinctTime = extTime;
     obj.Res.IfLearned = h;
 end

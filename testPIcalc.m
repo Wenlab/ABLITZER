@@ -2,8 +2,5 @@
 % aObj = ABLITZER, and the name of object must be "aObj"
 for n = 1:4
     fish = aObj.FishStack(n);
-    fish.evaluateDataQuality;
-    fish.calcPItime;
-    fish.calcPIshock;
-    fish.calcPIturn;
+    fish.ratePerformance;
 end
