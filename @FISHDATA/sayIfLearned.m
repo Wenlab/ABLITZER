@@ -4,44 +4,25 @@
 % not and measure the memory extinction
 % TODO: Modularize code
 % Caution: not correct, do not use
-function [h, p, extincTime] = sayIfLearned(obj,metric,plotFlag)
-    TrRes = obj.ratePerformanceByTrials(metric, plotFlag);
-    if contains(metric,'time','IgnoreCase',true) % normally used
-        idxMetric = 1;
-    elseif contains(metric,'turn','IgnoreCase',true)
-        idxMetric = 2;
-    elseif contains(metric,'maxCSstayTime','IgnoreCase',true)
-        idxMetric = 3;
-    elseif contains(metric,'dist2centerline','IgnoreCase',true)
-        idxMetric = 4;
-    else
-        fprintf('Unrecognized metric, please choose one metric from the following:\n');
-        fprintf('"time", "turn", "maxCSstayTime", "dist2centerline"');
-        return;
-    end
-    preTrain = TrRes(1:5,idxMetric);
-    postTrain = TrRes(end-8:end,idxMetric);
-
-    idx = find(postTrain < mean(preTrain),1);
-    if isempty(idx)
-        [h,p] = ttest2(preTrain,postTrain);
-    elseif idx <= 2 % at least one switch
-        h = 0;
-        p = nan;
-    else
-        [h,p] = ttest2(preTrain,postTrain(1:idx-1));
-    end
-
-    if h
-        if isempty(idx)
-            extincTime = inf;
-        else
-            extincTime = (idx - 1) * 2 * 60; % seconds
-        end
-    else
-        extincTime = nan;
-    end
-
+function [h, p, extincTime] = sayIfLearned(obj)
+  obj.ratePerformance();
+  Baseline_trial = obj.Res.PItime(1).Trial;
+  Test_trial = obj.Res.PItime(4).Trial;
+  BasePT = obj.Res.PItime(1).PIfish;
+  idx=find(Test_trial<BasePT,1);
+  if(isempty(idx))
+      idx = length(Test_trial) + 1;
+  end
+  num_trial=idx-1;
+  if num_trial<2
+       extincTime=[];
+       h = 0;
+       p = nan;
+  else
+     extincTime = num_trial*120;  % seconds
+    [h,p] = ttest2(Baseline_trial,Test_trial(1:num_trial));
+  end 
+    obj.Res.ExtinctTime = extincTime;
     obj.Res.IfLearned = h;
 
 end
