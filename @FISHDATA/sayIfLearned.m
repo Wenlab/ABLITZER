@@ -8,8 +8,8 @@ function [h, p, extincTime] = sayIfLearned(obj)
   obj.ratePerformance();
   Baseline_trial = obj.Res.PItime(1).Trial;
   Test_trial = obj.Res.PItime(4).Trial;
-  BasePT = obj.Res.PItime(1).PIfish;
-  idx=find(Test_trial<BasePT,1);
+  BasePI = obj.Res.PItime(1).PIfish;
+  idx=find(Test_trial<BasePI,1);
   if(isempty(idx))
       idx = length(Test_trial) + 1;
   end
