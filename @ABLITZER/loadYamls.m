@@ -218,6 +218,7 @@ while (~ifReached && ~feof(fid))
                 arena = str2num(value);
             case 'ExpStartTime'
                 expStartTime = value;
+                expDate = string(expStartTime(1:8));
             case 'FrameRate'
                 frameRate = str2num(value);
             case 'FrameSize'
@@ -248,6 +249,7 @@ for i=1:numFish
 
 
     F(i).ExpStartTime = expStartTime;
+    F(i).ExpDate = expDate;
     F(i).FrameRate = frameRate;
 
     %         Scheme for fish positions in arena
@@ -309,6 +311,7 @@ while (~ifReached && ~feof(fid))
         switch key
             case 'ExpStartTime'
                 expStartTime = value;
+                expDate = string(expStartTime(1:8));
             case 'FrameRate'
                 frameRate = str2num(value);
             case 'FrameSize'
@@ -345,6 +348,7 @@ for i=1:numFish
     F=judge_ExpType(task,F,i);
 
     F(i).ExpStartTime = expStartTime;
+    F(i).ExpDate = expDate;
     F(i).FrameRate = frameRate;
 
     %         Scheme for fish positions in arena

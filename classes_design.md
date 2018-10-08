@@ -27,10 +27,13 @@
   - structure needs to be defined
 
 ## Utility functions (classification/finding/search for)
-- classifyFishByKeys
+- [x] classifyFish： classify fish in groups by keys (e.g., ages, strains)
   - ABLITZER method
 
-- findFish: find specific fish by key-value pair or keywords
+- [x] findFish: find specific fish by key-value pair or keywords
+  - ABLITZER method
+
+- [x] removeInvalidData: remove FISHDATA (in pair) whose data quality lower than the threshold
   - ABLITZER method
 
 - outputFeatures: output as print-out message/variable (struct)
@@ -38,22 +41,22 @@
   - arg1: indices to output (all/selective)
 
 ## Analysis functions
-- evaluateDataQuality:
-- calcPItime(PositionalIndex):
+- [x] evaluateDataQuality:
+- [x] calcPItime(PositionalIndex):
   - FISHDATA method
   - phaseByPhase
     - add trials' values for each phase
     - add increments in RESDATA
-- calcPIturn(TurningIndex):
+- [x] calcPIturn(TurningIndex):
   - FISHDATA method
   - phaseByPhase
     - add trials' values for each phase
     - add increments in RESDATA
-- calcPIshock(ShockIndex):
+- [x] calcPIshock(ShockIndex):
   - FISHDATA method
   - phaseByPhase
     - add trials' values for each phase
-- [ifLearned, MemLen] = sayIfLearned
+- [x] [ifLearned, MemLen] = sayIfLearned
   - FISHDATA method
   - add "MemoryLength" in seconds
   - "ExtinctTime" should be converted to the idxFrame / seconds from the experiment beginning.

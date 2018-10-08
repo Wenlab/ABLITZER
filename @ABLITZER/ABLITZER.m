@@ -60,15 +60,18 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         % load mat files which matches keys provided in the same directory
         loadMats(obj, fileNames, pathName, keywords, loadMethod);
 
+        % save FishData into different files based on keys
+        saveData(obj, keys, savingPath, maxFileSize);
+
         % remove fish data whose data quality lower than threshold
         remove_invalid_data_pair(obj);
 
         % classify data into different groups by keys. (e.g. Experiment
         % Type): To Improve
-        classifyFishByKeys(obj, keys);
+        classifyFish(obj, keys);
 
         % Find desired fish by providing key-value pairs
-        indices = findFishByKeyValuePairs(obj,varargin);
+        indices = findFish(obj,varargin);
 
         % plot PIs of an entire group to see whether there's
         % any statistical significance. Normally, use this function
