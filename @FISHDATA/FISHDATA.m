@@ -110,7 +110,7 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
         resMat = plotLearningCurveByTrials(obj,metric);
 
         % plot distance to centerline over time
-        plotDist2centerline(obj);
+        plotDist2centerline(obj,phase,mark);
         % Plot PI (performance index) versus time,
         % mStr: string to represent which metric to plot
         % ('Time','Turn','Shock')
