@@ -3,8 +3,8 @@
 %        Plot distance to centerline of the arena for a FISHDATA.
 %
 %   SYNTAX:
-%       1. obj.plotDist2centerline(phase,mark)
-%       2. plotDist2centerline(obj,phase,mark)
+%       1. obj.plotDist2centerline(phase,varargin)
+%       2. plotDist2centerline(obj,phase,varargin)
 %
 % - plotDistance2centerline:
 %      - FISHDATA method
@@ -17,7 +17,9 @@
 %       When use new data, Change 29399 to 29400(the last frame num)
 function plotDist2centerline(obj,...FISHDATA object
     phase,...  % 0: Entire experimental phases;  1:Baseline; 2:Training 4:Test
-    mark)  % mark is a matrix of any combination of "shadows","shock" and "extinction point" 
+    varargin)  % varargin arbitrarily choose a combination from "shadows","shock" and ...
+                 ..."extinction point" to decide what mark to display last.
+
     frameRate = obj.FrameRate;
     height = obj.ConfinedRect(4);
     yDiv = obj.yDivide;
@@ -39,21 +41,21 @@ function plotDist2centerline(obj,...FISHDATA object
     shockTiming = obj.Res.PIshock.ShockTiming / frameRate / 60 + 10;
     ExtinctTime = obj.Res.ExtinctTime/60+31;
     frameNum = [1,29399;1,6000;6001,18000;18001,18600;18601,29399];       % new data: 29399->29400
-    plotFigure(frameNum(phase+1,:),y,shockTiming,ExtinctTime,frameRate,phase,mark);
+    plotFigure(frameNum(phase+1,:),y,shockTiming,ExtinctTime,frameRate,phase,varargin);
    
 end
-function plotFigure(numFrame,y,shockTiming,ExtinctTime,frameRate,phase,s2)
+function plotFigure(numFrame,y,shockTiming,ExtinctTime,frameRate,phase,varargin)
     figure;
     s1 = ["shadows","shock","extinction point"];
-    if length(s2)==3
+    if length(varargin{1,1})==3
         idx=[1,2,3];
-    elseif length(s2)==2
-      flag1 = strcmpi(s1,s2(1));  
-      flag2 = strcmpi(s1,s2(2)); 
+    elseif length(varargin{1,1})==2
+      flag1 = strcmpi(s1,varargin{1,1}{1,1});  
+      flag2 = strcmpi(s1,varargin{1,1}{1,2}); 
       idx(1)= find(flag1==1);
       idx(2)= find(flag2==1);
     else
-      flag = strcmpi(s1,s2);
+      flag = strcmpi(s1,varargin{1,1}{1,1});
       idx = find(flag==1);
     end
     if ~isempty(find(idx==1))
