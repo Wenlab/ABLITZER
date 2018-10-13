@@ -3,8 +3,8 @@
 %        Plot distance to centerline of the arena for a FISHDATA.
 %
 %   SYNTAX:
-%       1. obj.plotDist2centerline(phase,varargin)
-%       2. plotDist2centerline(obj,phase,varargin)
+%       1. obj.plotDist2centerline(phase,key1,value1,...)
+%       2. plotDist2centerline(obj,phase,key1,value1,...)
 %
 % - plotDistance2centerline:
 %      - FISHDATA method
@@ -17,9 +17,10 @@
 %       When use new data, Change 29399 to 29400(the last frame num)
 function plotDist2centerline(obj,...FISHDATA object
     phase,...  % 0: Entire experimental phases;  1:Baseline; 2:Training 4:Test
-    varargin)  % varargin arbitrarily choose a combination from "shadows","shock" and ...
-                 ..."extinction point" to decide what mark to display last.
-
+    varargin)  % key-value pairs, where key is choosen form "shadows","shock","extinction point", value is boolean.
+    if mod(length(varargin),2)~=0
+    error('The arguments should be in pairs,such as ("shadows",1,"shocks",0)')
+    end
     frameRate = obj.FrameRate;
     height = obj.ConfinedRect(4);
     yDiv = obj.yDivide;
@@ -47,18 +48,18 @@ end
 function plotFigure(numFrame,y,shockTiming,ExtinctTime,frameRate,phase,varargin)
     figure;
     s1 = ["shadows","shock","extinction point"];
-    if length(varargin{1,1})==3
-        idx=[1,2,3];
-    elseif length(varargin{1,1})==2
-      flag1 = strcmpi(s1,varargin{1,1}{1,1});  
-      flag2 = strcmpi(s1,varargin{1,1}{1,2}); 
-      idx(1)= find(flag1==1);
-      idx(2)= find(flag2==1);
-    else
-      flag = strcmpi(s1,varargin{1,1}{1,1});
-      idx = find(flag==1);
+    keys = string(varargin{1,1}(1:2:end));
+    for i = 1:length(keys)
+    values(i) = varargin{1,1}{1,(2*i)};
     end
-    if ~isempty(find(idx==1))
+    idx = find (values==1);
+    if ~isempty(idx)
+    for i = 1:length(idx)
+        flag(i) = find(strcmpi(s1,keys(idx(i)))==1);
+    end
+    end
+    
+    if ~isempty(find(flag==1))
       X1 = [0 0 10 10];
       X2 = [30 30 31 31];
       Y = [-15 15 15 -15];
@@ -66,11 +67,11 @@ function plotFigure(numFrame,y,shockTiming,ExtinctTime,frameRate,phase,varargin)
       hold on;
       fill(X2,Y,[0.9,0.9,0.9],'EdgeColor','none');
     end
-     if ~isempty(find(idx==2))
+     if ~isempty(find(flag==2))
         scatter(shockTiming, 14*ones(size(shockTiming)),8,'r.');
         hold on;
      end  
-      if ~isempty(find(idx==3))
+      if ~isempty(find(flag==3))
          if ~isempty(ExtinctTime)
             scatter(ExtinctTime,0,'b');
              hold on;
