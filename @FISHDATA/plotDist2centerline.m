@@ -17,9 +17,9 @@
 %       When use new data, Change 29399 to 29400(the last frame num)
 function plotDist2centerline(obj,...FISHDATA object
     phase,...  % 0: Entire experimental phases;  1:Baseline; 2:Training 4:Test
-    varargin)  % key-value pairs, where key is choosen form "shadows","shock","extinction point", value is boolean.
+    varargin)  % key-value pairs, where key is choosen form "withShadow","shocks","extinction point", value is boolean.
     if mod(length(varargin),2)~=0
-    error('The arguments should be in pairs,such as ("shadows",1,"shocks",0)')
+    error('The arguments should be in pairs,such as ("withShadow",1,"shocks",0)')
     end
     frameRate = obj.FrameRate;
     height = obj.ConfinedRect(4);
@@ -41,13 +41,13 @@ function plotDist2centerline(obj,...FISHDATA object
     y = (y2CL./(height/2)).*15;
     shockTiming = obj.Res.PIshock.ShockTiming / frameRate / 60 + 10;
     ExtinctTime = obj.Res.ExtinctTime/60+31;
-    frameNum = [1,29399;1,6000;6001,18000;18001,18600;18601,29399];       % new data: 29399->29400
+    frameNum = [1,29400;1,6000;6001,18000;18001,18600;18601,29400];      
     plotFigure(frameNum(phase+1,:),y,shockTiming,ExtinctTime,frameRate,phase,varargin);
    
 end
 function plotFigure(numFrame,y,shockTiming,ExtinctTime,frameRate,phase,varargin)
     figure;
-    s1 = ["shadows","shock","extinction point"];
+    s1 = ["withShadow","shocks","extinction point"];
     keys = string(varargin{1,1}(1:2:end));
     for i = 1:length(keys)
     values(i) = varargin{1,1}{1,(2*i)};
