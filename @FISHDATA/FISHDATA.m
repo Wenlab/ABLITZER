@@ -110,10 +110,9 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
         resMat = plotLearningCurveByTrials(obj,metric);
 
         % plot distance to centerline over time
-        plotDist2centerline(obj);
-        % Plot PI (performance index) versus time,
-        % mStr: string to represent which metric to plot
-        % ('Time','Turn','Shock')
+        plotDist2centerline(obj,phase,varargin);
+        % Plot distance to centerline of the arena for a FISHDATA.
+
         plotPI(obj,mStr);
         % Annotate raw video with fish's head, tail and CS pattern
         annotateRawVideo(obj,startFrame,videoName);
