@@ -16,7 +16,7 @@
   - arg2: append data / rewrite Data
   - arg3: old-flag to deal with old yaml files
 
-- saveData(by keywords/size): save fishStack in ABLITZER obj into multiples files
+- [x] saveData(by keywords/size): save fishStack in ABLITZER obj into multiples files
   - ABLITZER method
   - arg0: savingPath
   - arg1: which keywords to be classified
