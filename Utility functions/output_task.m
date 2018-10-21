@@ -1,40 +1,36 @@
-function output = output_task(a,task)
+function output = output_task(obj,task)
   % a is a matrix: "n*1 ABLITZER";
    output=[];
-   end_idx = 0;
-   m = 0;
-   for j = 1:length(a)
+    m = 0;
+      for t = 1 :length(obj.FishStack) % number of fish in the fishStack
 
-
-     for t = 1 :length(a(j).FishStack) % number of fish in the fishStack
-
-         if a(j).FishStack(t).ExpTask==task
+         if obj.FishStack(t).ExpTask==task
            m = m + 1;
-           a(j).FishStack(t).ratePerformance();
+           obj.FishStack(t).ratePerformance();
           % Assign values to output
-          output.ID(m) = string(a(j).FishStack(t).ID);
-          output.Age(m) = a(j).FishStack(t).Age;
-          output.Task(m) = string(a(j).FishStack(t).ExpTask);
+          output.ID(m) = string(obj.FishStack(t).ID);
+          output.Age(m) = obj.FishStack(t).Age;
+          output.Task(m) = string(obj.FishStack(t).ExpTask);
 
-          output.DataQuality(m) = a(j).FishStack(t).Res.DataQuality;
+          output.DataQuality(m) = obj.FishStack(t).Res.DataQuality;
           % PItime
-          output.PITime_Baseline(m) = a(j).FishStack(t).Res.PItime(1).PIfish;
-          output.PITime_Training(m) = a(j).FishStack(t).Res.PItime(2).PIfish;
-          output.PITime_Test(m) = a(j).FishStack(t).Res.PItime(4).PIfish;
+          output.PITime_Baseline(m) = obj.FishStack(t).Res.PItime(1).PIfish;
+          output.PITime_Training(m) = obj.FishStack(t).Res.PItime(2).PIfish;
+          output.PITime_Test(m) = obj.FishStack(t).Res.PItime(4).PIfish;
 
           % PIturn
-          output.PITurn_Baseline(m) = a(j).FishStack(t).Res.PIturn(1).PIfish;
-          output.PITurn_Training(m) = a(j).FishStack(t).Res.PIturn(2).PIfish;
-          output.PITurn_Test(m) = a(j).FishStack(t).Res.PIturn(4).PIfish;
+          output.PITurn_Baseline(m) = obj.FishStack(t).Res.PIturn(1).PIfish;
+          output.PITurn_Training(m) = obj.FishStack(t).Res.PIturn(2).PIfish;
+          output.PITurn_Test(m) = obj.FishStack(t).Res.PIturn(4).PIfish;
 
           % PIshock
-          output.NumShock(m) = a(j).FishStack(t).Res.PIshock.NumShocks;
-          output.PIshock(m) = a(j).FishStack(t).Res.PIshock.PIfish;
+          output.NumShock(m) = obj.FishStack(t).Res.PIshock.NumShocks;
+          output.PIshock(m) = obj.FishStack(t).Res.PIshock.PIfish;
 
           % Learners 1;non-Learners 0
-          output.IfLearned(m) = a(j).FishStack(t).Res.IfLearned;
+          output.IfLearned(m) = obj.FishStack(t).Res.IfLearned;
           disp(m);
         end
      end
    end
-end
+

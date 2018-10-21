@@ -109,6 +109,8 @@ classdef ABLITZER < handle % Make the class a real class not a value class
 
         output = generate_output(obj);
 
+        [OLcontrol,OLexp,p] = plotPIs(obj,flag1,flag2);
+         % Plot performance index (positional/turning) of different groups (1. exp only; 2. with self-control; 3. with unpaired control)
     end
 
 end
