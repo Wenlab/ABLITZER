@@ -107,8 +107,10 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         % statistically plot non-CS area proportion versus time
         plotPIsInTest(obj);
 
-        output = generate_output(obj);
+        generate_output(obj);
 
+         plotPIs(obj.numGroups,metrics)
+         % Plot performance index (positional/turning) of different groups (1. exp only; 2. with self-control; 3. with unpaired control)
     end
 
 end
