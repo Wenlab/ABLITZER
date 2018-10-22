@@ -18,26 +18,41 @@ end
 
 aObj.FishStack(idxRemove) = [];
 
-%% Calculate the positional index
-numFish = length(aObj.FishStack);
-for i = 1:numFish
-    fish = aObj.FishStack(i);
-    fish.calcPItime;
+%% Classification on strains
+aObj.classifyFish("Strain");
+numGroups = length(aObj.FishGroups);
+for i = 1:numGroups
+    idx = aObj.FishGroups(i).Data;
+    %% Calculate the positional index
+    numFish = length(idx);
+    PItimeMat = zeros(numFish,2);
+    titleStr = string(fish.Age) + 'dpf-' + fish.Strain + '-'...
+        + fish.CSpattern + '-' + fish.ExpTask;
+    for j = 1:numFish
+        fish = aObj.FishStack(j);
+        fish.calcPItime;
+        PItimeMat(j,1) = fish.Res.PItime(1).PIfish;
+        PItimeMat(j,2) = fish.Res.PItime(2).PIfish;
+    end
+    plot_figure(PItimeMat,titleStr)
+    
 end
 
+
+
+
+
+
+
+
+
+function plot_figure(PItimeMat,titleStr)
 
 
 %% Visualize the results
-
-PItimeMat = zeros(numFish,2);
-for i = 1:numFish
-    fish = aObj.FishStack(i);
-    PItimeMat(i,1) = fish.Res.PItime(1).PIfish;
-    PItimeMat(i,2) = fish.Res.PItime(2).PIfish;
-    
-end
 figure;
 hold on;
+numFish = size(PItimeMat,1);
 xArr = 1:numFish;
 scatter(xArr,PItimeMat(:,1),'markerEdgeColor','none','markerFaceColor','blue');
 scatter(xArr,PItimeMat(:,2),'markerEdgeColor','none','markerFaceColor','red');
@@ -59,4 +74,5 @@ legend({'Baseline','Test'});
 ylabel('Blue Preference Index');
 xlabel('Fish Number');
 
-title('12dpf-MW3-blueTest-with-the-fullWhite-pattern');
+title(titleStr);
+end
