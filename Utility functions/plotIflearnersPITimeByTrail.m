@@ -1,4 +1,7 @@
 function [num_Ls,num_nLs]=plotIflearnersPITimeByTrail(Ls,nLs)
+%% Rename this function as plotLearningCurves
+
+
 %get [Ls,nLs] by function divideByIflearned(a);
 All.FishStack=[Ls.FishStack,nLs.FishStack];
 [LsTrailMean,LsTrailSem]=calcMeanSemByTrail(Ls);

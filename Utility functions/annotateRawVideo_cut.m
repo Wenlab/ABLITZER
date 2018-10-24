@@ -2,6 +2,7 @@
 % TODO: add press esc to quit
 function annotateRawVideo_cut(expData)
 %% Read Video File
+% what does this "cut" mean?
   
    [f,p] = uigetfile('*.avi');
    videoName = [p,f];

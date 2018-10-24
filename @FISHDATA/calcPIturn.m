@@ -2,12 +2,11 @@
 function calcPIturn(obj)
     yDivide = obj.yDivide;
     expPhase = cat(1,obj.Frames.ExpPhase);
+    trialFrameNum = obj.FrameRate * obj.TrialDuration;
     head = cat(1,obj.Frames.Head);
     tail = cat(1,obj.Frames.Tail);
     H2T = head - tail;
     H2T = sqrt(H2T(:,1).^2+H2T(:,2).^2);
-    
-    centers = cat(1,obj.Frames.Center);
     idxNan = find(head == -1);
     head(idxNan) = nan;
     patternIdx = cat(1,obj.Frames.PatternIdx);
@@ -16,7 +15,8 @@ function calcPIturn(obj)
     ACthre = 15; % degrees, angle change threshold
     bodyLength = obj.calcFishLen();
     boundWidth = 30; % to eliminate the influence of boundary effect
-    xLimits = [min(head(:,1))+boundWidth,max(head(:,1))-boundWidth];
+    % xLimits = [min(head(:,1))+boundWidth,max(head(:,1))-boundWidth];
+    trialIdx = 0;
     % Baseline - Training - Blackout - Test
     for n = 1:4
         if n == 1
@@ -26,6 +26,7 @@ function calcPIturn(obj)
         elseif n == 3
             obj.Res.PIturn(n).Phase = 'Blackout';
             obj.Res.PIturn(n).PIfish = [];
+            trialIdx = trialIdx + 1 * 60 / obj.TrialDuration ; % the 0.5 means blackout
             continue;
         elseif n == 4
             obj.Res.PIturn(n).Phase = 'Test';
@@ -59,8 +60,8 @@ function calcPIturn(obj)
             
             turnMat = calc_score_for_turn(turnMat,ACthre,yDivide,bodyLength);
             % eliminate 0 score turns
-            idx = find(turnMat(:,7));
-            turnMat = turnMat(idx,:);
+            idx1 = find(turnMat(:,7));
+            turnMat = turnMat(idx1,:);
             
             
             obj.Res.PIturn(n).TurnTiming = turnMat(:,1);
@@ -72,9 +73,24 @@ function calcPIturn(obj)
             obj.Res.PIturn(n).Scores = turnMat(:,7);
             PIfish = sum(turnMat(:,7))/sum(turnMat(:,7)~=0);
             obj.Res.PIturn(n).PIfish = (PIfish + 1) / 2; % map to [0,1]
-        end    
+        end  
+        
+        
+        trialNum = round(length(idx)/trialFrameNum);
+        obj.Res.PIturn(n).Trial = zeros(trialNum,1);
+        for j = 1:trialNum
+            lower = trialIdx * trialFrameNum + (j-1)*trialFrameNum + 1;
+            if(j~=trialNum) 
+                upper = trialIdx * trialFrameNum + j * trialFrameNum;
+            else
+                upper = trialIdx * trialFrameNum + length(idx);
+            end
+            scoresTrial = obj.Res.PIturn(n).Scores(find(obj.Res.PIturn(n).TurnTiming>lower & obj.Res.PIturn(n).TurnTiming<=upper));
+            obj.Res.PIturn(n).Trial(j) = (sum(scoresTrial)/sum((scoresTrial)~=0) + 1) / 2;
+        end
+        trialIdx = trialNum + trialIdx;
     end
-
+    obj.Res.PIincreTurn = obj.Res.PIturn(4).PIfish - obj.Res.PIturn(1).PIfish;
 end
 
 function angleDiff = calcCirAngleChange(angleArray)

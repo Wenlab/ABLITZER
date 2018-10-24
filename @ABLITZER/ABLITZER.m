@@ -27,9 +27,9 @@
 %
 %
 %
-%   Current Version: 1.2
+%   Current Version: 2.0
 %   Author: Wenbin Yang <bysin7@gmail.com>
-%   Modified on: May 6, 2018
+%   Modified on: Sep. 27, 2018
 %
 %   Orinigal Version: 1.0
 %   Author: Wenbin Yang <bysin7@gmail.com>
@@ -48,51 +48,30 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         StatRes; % statistical results about the entire experiment
 
         Notes = ''; % additional notes about the dataset
-
-
     end
 
     methods
-%         function obj = ABLITZER(numFish) % Constructor
-%             tempExpData(obj.MaxFrames) = EXPDATA;
-%             obj.ExpData = tempExpData;
-%             if (nargin == 0)
-%                 resArray(obj.MaxFish) = RESDATA;
-%                 obj.ResAll = resArray;
-%             elseif (nargin == 1)
-%                 resArray(numFish) = RESDATA;
-%                 obj.ResAll = resArray;
-%             else
-%                 error('Wrong initialization for ABLITZER');
-%             end
-%         end
-
-
         % Reads in a yaml file produced by the BLITZ software
         % and exports a struct of BLITZ experiment data that is
         % easy to manipulate in MATLAB
-        yaml2matlab(obj, endFrame, pathName, fileName);
+        loadYamls(obj, fileNames, pathName, keywords, loadMethod, oldFlag);
 
         % load mat files which matches keys provided in the same directory
-        importMatsByKeys(obj, keys, pathName);
+        loadMats(obj, fileNames, pathName, keywords, loadMethod);
+
+        % save FishData into different files based on keys
+        saveData(obj, keys, savingPath, maxFileSize);
 
         % remove fish data whose data quality lower than threshold
         remove_invalid_data_pair(obj);
 
         % classify data into different groups by keys. (e.g. Experiment
         % Type): To Improve
-        classifyFishByKeys(obj, keys);
+        classifyFish(obj, keys);
 
         % Find desired fish by providing key-value pairs
-        indices = findFishByKeyValuePairs(obj,varargin);
-        % convert old expData and resData to ABLITZER
-        importOldData2Ablitzer(obj, pathName, fileName);
+        indices = findFish(obj,varargin);
 
-        % process all yaml files in one day
-        processOneDayYamls(obj,pathName,expDate);
-
-
-        quantifyMemoryStat(obj);
         % plot PIs of an entire group to see whether there's
         % any statistical significance. Normally, use this function
         % after "classifyFishByKeys".
@@ -101,13 +80,8 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         %   idxCtrlGroup: the index of control group data in FishGroup struct
         visualizeLearningResponses(obj,idxExpGroup,idxCtrlGroup,metricType);
 
-        % plot performance versus fish age
-        plotOntogenyByPI(obj,metricType);
-
-        % statistically plot non-CS area proportion versus time
-        plotPIsInTest(obj);
-
-        generate_output(obj);
+        % list all KPIs in a struct
+        output = generate_output(obj);
 
          plotPIs(obj.numGroups,metrics)
          % Plot performance index (positional/turning) of different groups (1. exp only; 2. with self-control; 3. with unpaired control)

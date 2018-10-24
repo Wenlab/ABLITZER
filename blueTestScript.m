@@ -1,31 +1,78 @@
 % script to import data from yaml and do basic analysis to check there is
 % light preference in this paradigm
-aObj = ABLITZER;
-aObj.yaml2matlab;
-fish = aObj.FishStack(1);
-yDivide = fish.yDivide;
-expPhase = cat(1,fish.Frames.ExpPhase);
-head = cat(1,fish.Frames.Head);
-pIdx = cat(1,fish.Frames.PatternIdx);
-% add a new line
-% checheck whether there is light preference in training section
-idx = find(expPhase == 1);
-tempPattern = pIdx(idx);
-tempHead = head(idx,2);
-idxNaN = find(tempHead == -1);
-scores = zeros(length(idx),1);
-% add a new line 
-% when the fish is in CS area, give him a credit, otherwise no point
-for i = 1:length(idx)
-    if tempPattern(i) == 0 % CS on the top
-        scores(i) = 2*(tempHead(i) < yDivide) - 1;
-    elseif tempPattern(i) == 1 % CS on the bottom
-        scores(i) = 2*(tempHead(i) > yDivide) - 1;
-    elseif tempPattern(i) == 2 % blackout
-        scores(i) = 0;
+% aObj = ABLITZER;
+% date = inputdlg;
+% date = string(date{1,1});
+% aObj.loadYamls([],'F:\FishExpData\',date);
+% 
+% %% Remove invalid data
+% numFish = length(aObj.FishStack);
+% idxRemove = [];
+% for i = 1:numFish
+%     fish = aObj.FishStack(i);
+%     fish.evaluateDataQuality;
+%     if (fish.Res.DataQuality < 0.9)
+%         idxRemove = [idxRemove,i];
+%     end
+% end
+% 
+% aObj.FishStack(idxRemove) = [];
+
+%% Classification on strains
+aObj.classifyFish("Strain");
+numGroups = length(aObj.FishGroups);
+for i = 1:numGroups
+    idx = aObj.FishGroups(i).Data;
+    %% Calculate the positional index
+    numFish = length(idx);
+    PItimeMat = zeros(numFish,2);
+    titleStr = string(fish.Age) + 'dpf-' + fish.Strain + '-'...
+        + fish.CSpattern + '-' + fish.ExpTask;
+    for j = 1:numFish
+        fish = aObj.FishStack(j);
+        fish.calcPItime;
+        PItimeMat(j,1) = fish.Res.PItime(1).PIfish;
+        PItimeMat(j,2) = fish.Res.PItime(2).PIfish;
     end
+    plot_figure(PItimeMat,titleStr)
+    
 end
 
-scores(idxNaN) = 0; % exclude the impact of invalid points
-fish.Res.PItime(2).Scores = scores;
-fish.Res.PItime(2).PIfish = length(find(scores==1)) / length(find(scores~=0));
+
+
+
+
+
+
+
+
+function plot_figure(PItimeMat,titleStr)
+
+
+%% Visualize the results
+figure;
+hold on;
+numFish = size(PItimeMat,1);
+xArr = 1:numFish;
+scatter(xArr,PItimeMat(:,1),'markerEdgeColor','none','markerFaceColor','blue');
+scatter(xArr,PItimeMat(:,2),'markerEdgeColor','none','markerFaceColor','red');
+
+% plot the average levels for both phases
+meanBaseline = mean(PItimeMat(:,1));
+meanTest = mean(PItimeMat(:,2));
+
+line([0,numFish+1],[meanBaseline,meanBaseline],'lineStyle',':','color','blue');
+text(numFish+1,meanBaseline,sprintf('Average: %4.2f',meanBaseline)); 
+line([0,numFish+1],[meanTest,meanTest],'lineStyle',':','color','red');
+text(numFish+1,meanTest,sprintf('Average: %4.2f',meanTest)); 
+% plot the arrow graph
+quiver(xArr',PItimeMat(:,1),0*xArr',PItimeMat(:,2)-PItimeMat(:,1),0,...
+    'color',[0,0,0],'MaxHeadSize',0.5,'lineWidth',1);
+ylim([0,1]);
+
+legend({'Baseline','Test'});
+ylabel('Blue Preference Index');
+xlabel('Fish Number');
+
+title(titleStr);
+end
