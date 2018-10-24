@@ -1,22 +1,22 @@
 % script to import data from yaml and do basic analysis to check there is
 % light preference in this paradigm
-aObj = ABLITZER;
-date = inputdlg;
-date = string(date{1,1});
-aObj.loadYamls([],'F:\FishExpData\',date);
-
-%% Remove invalid data
-numFish = length(aObj.FishStack);
-idxRemove = [];
-for i = 1:numFish
-    fish = aObj.FishStack(i);
-    fish.evaluateDataQuality;
-    if (fish.Res.DataQuality < 0.9)
-        idxRemove = [idxRemove,i];
-    end
-end
-
-aObj.FishStack(idxRemove) = [];
+% aObj = ABLITZER;
+% date = inputdlg;
+% date = string(date{1,1});
+% aObj.loadYamls([],'F:\FishExpData\',date);
+% 
+% %% Remove invalid data
+% numFish = length(aObj.FishStack);
+% idxRemove = [];
+% for i = 1:numFish
+%     fish = aObj.FishStack(i);
+%     fish.evaluateDataQuality;
+%     if (fish.Res.DataQuality < 0.9)
+%         idxRemove = [idxRemove,i];
+%     end
+% end
+% 
+% aObj.FishStack(idxRemove) = [];
 
 %% Classification on strains
 aObj.classifyFish("Strain");
