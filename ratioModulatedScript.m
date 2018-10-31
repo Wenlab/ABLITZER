@@ -19,4 +19,11 @@ end
 
 aObj.FishStack(idxRemove) = [];
 
+%% Evaluate performance
+for i = 1:length(aObj.FishStack)
+    fish = aObj.FishStack(i);
+    fish.ratePerformance;
+end
+
+
 %% Visualize results

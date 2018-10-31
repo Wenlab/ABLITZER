@@ -100,7 +100,7 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
         [h, p] = sayIfSelfAbused(obj,metric,plotFlag);
 
         % Rate performance by trials, every 2 mins is counted as a trial
-        TrRes = ratePerformanceByTrials(obj,metric,plotFlag);
+        % TrRes = ratePerformanceByTrials(obj,metric,plotFlag);
 
         % Calculate reaction time for each trial
         reactionTime = calcReactTimeByTrials(obj);
