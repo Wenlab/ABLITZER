@@ -39,39 +39,39 @@
 
 
 classdef ABLITZER < handle % Make the class a real class not a value class
-
+    
     properties
         FishStack; % Stack to store all fish data
         % Devide fishStack into different groups based on different tags
         % Put idx of data in 2nd column
         FishGroups = struct('Value',[],'idxData',[],'Key',[],'Note',[]);
         StatRes; % statistical results about the entire experiment
-
+        
         Notes = ''; % additional notes about the dataset
     end
-
+    
     methods
         % Reads in a yaml file produced by the BLITZ software
         % and exports a struct of BLITZ experiment data that is
         % easy to manipulate in MATLAB
         loadYamls(obj, fileNames, pathName, keywords, loadMethod, oldFlag);
-
+        
         % load mat files which matches keys provided in the same directory
         loadMats(obj, fileNames, pathName, keywords, loadMethod);
-
+        
         % save FishData into different files based on keys
         saveData(obj, keys, savingPath, maxFileSize);
-
+        
         % remove fish data whose data quality lower than threshold
-        remove_invalid_data_pair(obj);
-
+        removeInvalidData(obj,ifPaired,qualThre);
+        
         % classify data into different groups by keys. (e.g. Experiment
         % Type): To Improve
         classifyFish(obj, keys);
-
+        
         % Find desired fish by providing key-value pairs
         indices = findFish(obj,varargin);
-
+        
         % plot PIs of an entire group to see whether there's
         % any statistical significance. Normally, use this function
         % after "classifyFishByKeys".
@@ -79,12 +79,11 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         %   idxExpGroup: the index of experiment group data in FishGroup struct
         %   idxCtrlGroup: the index of control group data in FishGroup struct
         visualizeLearningResponses(obj,idxExpGroup,idxCtrlGroup,metricType);
-
+        
         % list all KPIs in a struct
         output = generate_output(obj);
-
-         plotPIs(obj.numGroups,metrics)
-         % Plot performance index (positional/turning) of different groups (1. exp only; 2. with self-control; 3. with unpaired control)
+        
+        %plotPIs(obj.numGroups,metrics);
+        % Plot performance index (positional/turning) of different groups (1. exp only; 2. with self-control; 3. with unpaired control)
     end
-
 end

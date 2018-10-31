@@ -1,35 +1,35 @@
 % script to import data from yaml and do basic analysis to check there is
 % light preference in this paradigm
-% aObj = ABLITZER;
-% date = inputdlg;
-% date = string(date{1,1});
-% aObj.loadYamls([],'F:\FishExpData\',date);
-% 
-% %% Remove invalid data
-% numFish = length(aObj.FishStack);
-% idxRemove = [];
-% for i = 1:numFish
-%     fish = aObj.FishStack(i);
-%     fish.evaluateDataQuality;
-%     if (fish.Res.DataQuality < 0.9)
-%         idxRemove = [idxRemove,i];
-%     end
-% end
-% 
-% aObj.FishStack(idxRemove) = [];
+bObj = ABLITZER;
+date = inputdlg;
+date = string(date{1,1});
+bObj.loadYamls([],'F:\BlueTest\ExpData\',date);
+
+%% Remove invalid data
+numFish = length(bObj.FishStack);
+idxRemove = [];
+for i = 1:numFish
+    fish = bObj.FishStack(i);
+    fish.evaluateDataQuality;
+    if (fish.Res.DataQuality < 0.9)
+        idxRemove = [idxRemove,i];
+    end
+end
+
+bObj.FishStack(idxRemove) = [];
 
 %% Classification on strains
-aObj.classifyFish("Strain");
-numGroups = length(aObj.FishGroups);
+bObj.classifyFish("Strain");
+numGroups = length(bObj.FishGroups);
 for i = 1:numGroups
-    idx = aObj.FishGroups(i).Data;
+    idx = bObj.FishGroups(i).Data;
     %% Calculate the positional index
     numFish = length(idx);
     PItimeMat = zeros(numFish,2);
     titleStr = string(fish.Age) + 'dpf-' + fish.Strain + '-'...
         + fish.CSpattern + '-' + fish.ExpTask;
     for j = 1:numFish
-        fish = aObj.FishStack(j);
+        fish = bObj.FishStack(j);
         fish.calcPItime;
         PItimeMat(j,1) = fish.Res.PItime(1).PIfish;
         PItimeMat(j,2) = fish.Res.PItime(2).PIfish;
