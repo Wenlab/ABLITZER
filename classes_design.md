@@ -62,12 +62,12 @@
   - "ExtinctTime" should be converted to the idxFrame / seconds from the experiment beginning.
 
 ## Plotting functions
-- plotPIs: plot performance index (positional/turning/shock) of different groups (1. exp only; 2. with self-control; 3. with unpaired control)
+- [ ] plotPIs: plot performance index (positional/turning/shock) of different groups (1. exp only; 2. with self-control; 3. with unpaired control)
   - ABLITZER method
   - arg1: metric type (positional/turning/shock)
   - arg2: (number of arguments) which groups to plot (1. exp only; 2. with self-control; 3. with unpaired control)
 
-- plotDistance2centerline:
+- [ ] plotDistance2centerline:
   - (FishData method)
   - arg1: the entire process / test-phase only / baseline-phase / training-phase
   - arg2: pixelSize
@@ -75,18 +75,18 @@
   - arg4: w/o shocking events (red filled-circles)
   - arg5: w/o shadows to demarcate consecutive phases
 
-- plotLearningCurves: plot performance index (positional/turning/shock) of different classes (1. learners only; 2. with non-learners; 3. with all)
+- [ ] plotLearningCurves: plot performance index (positional/turning/shock) of different classes (1. learners only; 2. with non-learners; 3. with all)
   - ABLITZER method
   - arg1: metric type (positional/turning/shock)
   - arg2: which classes to plot (1. learners only; 2. with non-learners; 3. with all)
   - we can also design a global function to deal with saved trialBytrialPImat.
 
-- histPlotMemLen: plot the histograms of memory lengths of different cases
+- [ ] histPlotMemLen: plot the histograms of memory lengths of different cases
   - ABLITZER method
   - arg1: which case(s) to plot. (white-black checkerboard, red-black checkerboard, pure-black patterns)
   - arg2: binEdges/width
 
-- plotOntogeny: plot different metrics (memory length, positional index increments, turning index increments) versus ages.
+- [ ] plotOntogeny: plot different metrics (memory length, positional index increments, turning index increments) versus ages.
   - ABLITZER method
   - arg1: ages
 

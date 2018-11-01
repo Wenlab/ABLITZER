@@ -66,22 +66,39 @@ pause(0.1); %pause allows the figure to be created
 xPos = [];
 numBobjs = numel(h);
 if numBobjs == 1 % not grouped
-    ax = h.Children;
     h.CData = (white+black)/2; % gray
-    xPos = ax.Position;
+    xPos = h.XData;
     if exist('err') % plot errorbar
-        errorbar(xPos,y,err);
+        errorbar(xPos,y,err,'k.','color',errorBarClr);
     end
     
     if exist('sigMat') % sigStar plot
         for i = 1:size(sigMat,1) % draw one line for each row
-            drawSigStar(xPos(sigMat(i,1)),xPos(sigMat(i,2)),max(y)+0.05,p(i));
+            drawSigStar(xPos(sigMat(i,1)),xPos(sigMat(i,2)),max(y(:))+0.05,sigMat(i,3));
         end
     end
     
     if exist('regMethod') %TODO: finish this snippet
         regMethod = 'linear'; % currently, we only use the linear regression
+        % mdl = fitlm(x,y);
+        % cTable = mdl.Coefficients; % table of coefficients
+        % 
+        % yFit = cTable{1,1} + cTable{2,1} .* x;
+        % plot(x,yFit,'--or');
+        % 
+        % xticks(x);
+        % xlabel('Ages (dpf)');
+        % %xlabel(mat2cell(x));
+        % 
+        % R2 = mdl.Rsquared.Ordinary;
+        % p = cTable{2,length(x)};
     end
+    
+    if exist('xtLabs') % add xticklabels
+        xticks(1.5);
+        xticklabels(xtLabs);
+    end
+
     
 else % grouped
     for ib = 1:numBobjs
@@ -96,23 +113,24 @@ else % grouped
             errorbar(xData,y(:,ib),err(:,ib),'k.','color',errorBarClr);
         end
         
-        if exist('sigMat') % sigStar plot
-            for i = 1:size(sigMat,1) % draw one line for each row
-                drawSigStar(xPos(sigMat(i,1)),xPos(sigMat(i,2)),max(y)+0.05,p(i));
-            end
+    end
+    
+    if exist('sigMat') % sigStar plot
+        for i = 1:size(sigMat,1) % draw one line for each row
+            drawSigStar(xPos(sigMat(i,1)),xPos(sigMat(i,2)),max(y(:))+0.05,sigMat(i,3));
         end
-        
-        if exist('regMethod') %TODO: finish this snippet
-            regMethod = 'linear'; % currently, we only use the linear regression
-        end
-        
-        
+    end
+    
+    if exist('regMethod') %TODO: finish this snippet
+        regMethod = 'linear'; % currently, we only use the linear regression
+    end
+    
+    if exist('xtLabs') % add xticklabels
+        xticks(1:length(xtLabs));
+        xticklabels(xtLabs);
     end
 end
 
-if exist('xtLabs') % add xticklabels
-    xticklabels(xtLabs);
-end
 
 if exist('yLab') % add ylabel
     ylabel(yLab);
@@ -120,30 +138,6 @@ end
 
 ylim([0,1]);
 hold off;
-
-% Judge if a grouped chart? x-positions will be different
-
-
-% errorBarClr = [0,0,0];
-% barFaceClr = [0.5,0.5,0.5];
-% 
-% h = figure;
-% hold on;
-% bar(x,y,'faceColor',barFaceClr);
-% errorbar(x,y,err,'color',errorBarClr);
-% 
-% mdl = fitlm(x,y);
-% cTable = mdl.Coefficients; % table of coefficients
-% 
-% yFit = cTable{1,1} + cTable{2,1} .* x;
-% plot(x,yFit,'--or');
-% 
-% xticks(x);
-% xlabel('Ages (dpf)');
-% %xlabel(mat2cell(x));
-% 
-% R2 = mdl.Rsquared.Ordinary;
-% p = cTable{2,length(x)};
 
 
 
