@@ -89,5 +89,9 @@
 - plotOntogeny: plot different metrics (memory length, positional index increments, turning index increments) versus ages.
   - ABLITZER method
   - arg1: ages
+
+## Demo scripts
+- plot Figures 1-4
+- basic usages
   - arg2: corresponding indices to ages
   - arg3: metrics (memory length, positional index increments, turning index increments)

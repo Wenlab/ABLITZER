@@ -6,12 +6,55 @@
 %5. xticklabels
 %6. ylabel
 % plot bar graph with error and regression
-function [R2,p,h] = barPlot(y,... % bins height
-    err,... % errors for each bin, has to be in the same dimension with y
+function h = barPlot(y,... % bins height
     varargin) % serves for key-value pairs
 
 % bar face color auto grayscale from 1 to 0
 % errorbar color: black
+if nargin==0
+    error('There\''s no input')
+end
+if mod(length(varargin),2)~=0
+    error('The arguments should be in pairs,in which the first one is a string, as in ("ExpType","exp","Age",7)')
+end
+
+keys = string(varargin(1:2:end));
+values = varargin(2:2:end);
+
+%% Process key-value pairs
+
+% errors
+idx = find(keys == "errorbar");
+if ~isempty(idx)
+err = values{idx};
+end
+
+% sigStars
+idx = find(keys == "significance");
+if ~isempty(idx)
+sigMat = values{idx}; % 1st and 2nd cols are cols compared and 3rd col is p-values
+end
+
+% regression
+idx = find(keys == "regression");
+if ~isempty(idx)
+regMethod = values{idx};
+end
+
+% xticklabels
+idx = find(keys == "xticklabels");
+if ~isempty(idx)
+xtLabs = values{idx};
+end
+
+% ylabel
+idx = find(keys == "ylabel");
+if ~isempty(idx)
+yLab = values{idx};
+end
+
+
+
 white = [1,1,1];
 black = [0,0,0];
 errorBarClr = black;
@@ -24,7 +67,22 @@ xPos = [];
 numBobjs = numel(h);
 if numBobjs == 1 % not grouped
     ax = h.Children;
+    h.CData = (white+black)/2; % gray
     xPos = ax.Position;
+    if exist('err') % plot errorbar
+        errorbar(xPos,y,err);
+    end
+    
+    if exist('sigMat') % sigStar plot
+        for i = 1:size(sigMat,1) % draw one line for each row
+            drawSigStar(xPos(sigMat(i,1)),xPos(sigMat(i,2)),max(y)+0.05,p(i));
+        end
+    end
+    
+    if exist('regMethod') %TODO: finish this snippet
+        regMethod = 'linear'; % currently, we only use the linear regression
+    end
+    
 else % grouped
     for ib = 1:numBobjs
         ratio = 1-1/(numBobjs-1)*(ib-1);
@@ -34,9 +92,34 @@ else % grouped
         %of each distinct group
         xData = h(ib).XData+h(ib).XOffset;
         xPos = cat(1,xPos,xData);
+        if exist('err') % plot errorbar
+            errorbar(xData,y(:,ib),err(:,ib),'k.','color',errorBarClr);
+        end
+        
+        if exist('sigMat') % sigStar plot
+            for i = 1:size(sigMat,1) % draw one line for each row
+                drawSigStar(xPos(sigMat(i,1)),xPos(sigMat(i,2)),max(y)+0.05,p(i));
+            end
+        end
+        
+        if exist('regMethod') %TODO: finish this snippet
+            regMethod = 'linear'; % currently, we only use the linear regression
+        end
+        
+        
     end
 end
-    
+
+if exist('xtLabs') % add xticklabels
+    xticklabels(xtLabs);
+end
+
+if exist('yLab') % add ylabel
+    ylabel(yLab);
+end
+
+ylim([0,1]);
+hold off;
 
 % Judge if a grouped chart? x-positions will be different
 
@@ -65,4 +148,34 @@ end
 
 
 end
+
+% draw significance between two columns
+function drawSigStar(x1,...% x-psotion of column 1
+    x2,...% x-position of column 2
+    y,... % height of the connected line
+    p) % p-value
+%sigSyms = ["n.s.",... % P > 0.05
+ %           "*",...   % P < 0.05
+ %           "**",...  % P < 0.01
+ %           "***",... % P < 0.001
+ %           "****"];  % P < 0.0001 % occassionally use
+ line([x1,x2],[y,y],'Color',[0,0,0]);
+ x = (x1+x2)/2;
+ if p > 0.05 % n.s.
+     text(x,y+0.05,'n.s.','FontSize',14);
+ elseif p < 0.0001 % "****"
+     text(x,y+0.05,'****','FontSize',20);
+ elseif p < 0.001 % "***"
+     text(x,y+0.05,'***','FontSize',20);
+ elseif p < 0.01 % "**"
+     text(x,y+0.05,'**','FontSize',20);
+ elseif p < 0.05 % "*"
+     text(x,y+0.05,'*','FontSize',20);
+ end
+
+
+
+end
+
+
 
