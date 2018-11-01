@@ -1,22 +1,22 @@
 % script to import data from yaml and do basic analysis to check there is
 % light preference in this paradigm
-% bObj = ABLITZER;
-% date = inputdlg;
-% date = string(date{1,1});
-% bObj.loadYamls([],'F:\BlueTest\ExpData\',date);
-% 
-% %% Remove invalid data
-% numFish = length(bObj.FishStack);
-% idxRemove = [];
-% for i = 1:numFish
-%     fish = bObj.FishStack(i);
-%     fish.evaluateDataQuality;
-%     if (fish.Res.DataQuality < 0.9)
-%         idxRemove = [idxRemove,i];
-%     end
-% end
-% 
-% bObj.FishStack(idxRemove) = [];
+bObj = ABLITZER;
+date = inputdlg;
+date = string(date{1,1});
+bObj.loadYamls([],'F:\BlueTest\ExpData\',date);
+
+%% Remove invalid data
+numFish = length(bObj.FishStack);
+idxRemove = [];
+for i = 1:numFish
+    fish = bObj.FishStack(i);
+    fish.evaluateDataQuality;
+    if (fish.Res.DataQuality < 0.9)
+        idxRemove = [idxRemove,i];
+    end
+end
+
+bObj.FishStack(idxRemove) = [];
 
 %% Classification on strains
 bObj.classifyFish("ExpStartTime");

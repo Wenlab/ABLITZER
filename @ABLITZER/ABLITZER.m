@@ -81,7 +81,7 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         visualizeLearningResponses(obj,idxExpGroup,idxCtrlGroup,metricType);
         
         % list all KPIs in a struct
-        output = generate_output(obj);
+        output = outputFeatures(obj);
         
         %plotPIs(obj.numGroups,metrics);
         % Plot performance index (positional/turning) of different groups (1. exp only; 2. with self-control; 3. with unpaired control)

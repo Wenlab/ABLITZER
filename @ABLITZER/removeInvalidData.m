@@ -26,7 +26,7 @@ end
 
 if strcmpi(ifPaired,'paired') % remove invalid fishData in pair
     badIndices = [];
-    keys = ["ExpDate","Strain","ID"];
+    keys = ["ExpDate","Strain","ID","CSpattern"];
     if nargin == 2
         qualThre = 0.95;
     elseif nargin == 3
