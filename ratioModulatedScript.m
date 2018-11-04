@@ -6,8 +6,6 @@ date = inputdlg;
 date = string(date{1,1});
 aObj.loadYamls([],'F:\FishExpData\',date);
 
-%% Remove invalid data
-aObj.removeInvalidData("paired",0.95);
 
 %% Evaluate performance
 for i = 1:length(aObj.FishStack)
@@ -15,5 +13,9 @@ for i = 1:length(aObj.FishStack)
     fish.ratePerformance;
 end
 
+%% Remove invalid data
+
+aObj.removeInvalidData("paired",0.95);
 
 %% Visualize results
+% obj.plotPIs(2,'positional');
