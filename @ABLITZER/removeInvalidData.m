@@ -37,9 +37,10 @@ if strcmpi(ifPaired,'paired') % remove invalid fishData in pair
     for i = 1:numGroups % if one fails, eliminate the entire group
         fishGroup = obj.FishGroups(i).Data;
         for j = 1:length(fishGroup)
-            fish = fishGroup(j);
+            fish = obj.FishStack(fishGroup(j));
+            fprintf('Data Quality: %4.2f\n',fish.Res.DataQuality);
             if fish.Res.DataQuality < qualThre
-                badIndices = cat(1,badIndices,i);
+                badIndices = cat(2,badIndices,fishGroup);
                 break;
             end
         end

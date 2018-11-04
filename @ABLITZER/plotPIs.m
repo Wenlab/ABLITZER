@@ -85,8 +85,8 @@ numCols = size(PIs,2);
 M = mean(PIs,1);
 err = std(PIs,1,1)/sqrt(size(PIs,1));
 
-M = reshape(M,[numCols/2,2]);
-err = reshape(err,[numCols/2,2]);
+M = transpose(reshape(M,[2,numCols/2]));
+err = transpose(reshape(err,[2,numCols/2]));
 
 % significance calculation
 sigMat = reshape(1:numCols,2,numCols/2);
