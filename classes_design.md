@@ -62,7 +62,7 @@
   - "ExtinctTime" should be converted to the idxFrame / seconds from the experiment beginning.
 
 ## Plotting functions
-- [ ] plotPIs: plot performance index (positional/turning/shock) of different groups (1. exp only; 2. with self-control; 3. with unpaired control)
+- [x] plotPIs: plot performance index (positional/turning/shock) of different groups (1. exp only; 2. with self-control; 3. with unpaired control)
   - ABLITZER method
   - arg1: metric type (positional/turning/shock)
   - arg2: (number of arguments) which groups to plot (1. exp only; 2. with self-control; 3. with unpaired control)
