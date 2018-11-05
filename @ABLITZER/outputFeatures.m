@@ -1,11 +1,14 @@
 % Generate an output struct for checking all features/results in a single
-function output = outputFeatures(obj)
+% TODO: add keys to selectly choose fields to output; use two levels of
+% keys to select
+function output = outputFeatures(obj) % ABLITZER object
+    
 
 output = struct('ID',[],'Age',[],'Task',[],'DataQuality',[],...
-'PITime_Baseline',[],'PITime_Training',[],'PITime_Test',[],...
-'PITurn_Baseline',[],'PITurn_Training',[],'PITurn_Test',[],...
-'NumShock',[],'PIShock',[]);
-
+        'PITime_Baseline',[],'PITime_Training',[],'PITime_Test',[],...
+        'PITurn_Baseline',[],'PITurn_Training',[],'PITurn_Test',[],...
+        'NumShock',[],'PIShock',[]);
+    
 for i=1:length(obj.FishStack)
 
     obj.FishStack(i).ratePerformance();
@@ -31,4 +34,6 @@ for i=1:length(obj.FishStack)
 
     output(i).IflLearned = obj.FishStack(i).Res.IfLearned;
 end
+    
+
 end

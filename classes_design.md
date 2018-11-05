@@ -36,7 +36,7 @@
 - [x] removeInvalidData: remove FISHDATA (in pair) whose data quality lower than the threshold
   - ABLITZER method
 
-- outputFeatures: output as print-out message/variable (struct)
+- [x] outputFeatures: output as print-out message/variable (struct)
   - ABLITZER method
   - arg1: indices to output (all/selective)
 
@@ -75,7 +75,7 @@
   - arg4: w/o shocking events (red filled-circles)
   - arg5: w/o shadows to demarcate consecutive phases
 
-- [ ] plotLearningCurves: plot performance index (positional/turning/shock) of different classes (1. learners only; 2. with non-learners; 3. with all)
+- [x] plotLearningCurves: plot performance index (positional/turning/shock) of different classes (1. learners only; 2. with non-learners; 3. with all)
   - ABLITZER method
   - arg1: metric type (positional/turning/shock)
   - arg2: which classes to plot (1. learners only; 2. with non-learners; 3. with all)
