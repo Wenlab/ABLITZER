@@ -72,18 +72,16 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         % Find desired fish by providing key-value pairs
         indices = findFish(obj,varargin);
         
-        % plot PIs of an entire group to see whether there's
-        % any statistical significance. Normally, use this function
+        % Plot performance index (positional/turning) of different groups 
+        % (1. exp only; 2. with self-control; 3. with unpaired control)
+        % Normally, use this function
         % after "classifyFishByKeys".
-        % INPUT:
-        %   idxExpGroup: the index of experiment group data in FishGroup struct
-        %   idxCtrlGroup: the index of control group data in FishGroup struct
-        visualizeLearningResponses(obj,idxExpGroup,idxCtrlGroup,metricType);
+        plotPIs(obj,numGroups,metric);
         
         % list all KPIs in a struct
         output = outputFeatures(obj);
         
-        %plotPIs(obj.numGroups,metrics);
-        % Plot performance index (positional/turning) of different groups (1. exp only; 2. with self-control; 3. with unpaired control)
+        
+        
     end
 end

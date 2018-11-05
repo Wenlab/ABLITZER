@@ -96,33 +96,23 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
         % Measure whether fish learned or not
         [h, p, extincTime] = sayIfLearned(obj,metric,plotFlag);
 
-        % Measure self-abusement in fish
-        [h, p] = sayIfSelfAbused(obj,metric,plotFlag);
-
-        % Rate performance by trials, every 2 mins is counted as a trial
-        % TrRes = ratePerformanceByTrials(obj,metric,plotFlag);
-
-        % Calculate reaction time for each trial
-        reactionTime = calcReactTimeByTrials(obj);
-
         % Get start index, end index and expPhase for each trial
         % Every pattern change is counted as a trial
         TrMat = getTrIndices(obj);
 
         % Plot learning curve by PIs in each trial in training
-        resMat = plotLearningCurveByTrials(obj,metric);
+        plotLearningCurve(obj,metric);
 
         % plot distance to centerline over time
         plotDist2centerline(obj,phase,varargin);
         % Plot distance to centerline of the arena for a FISHDATA.
 
         plotPI(obj,mStr);
+        
         % Annotate raw video with fish's head, tail and CS pattern
         annotateRawVideo(obj,startFrame,videoName);
 
-        [extTime,num_trail,Test_trail,meanBT] = sayExtTimeandIfLearned(obj);
-
-        Trail=measure_trail(obj,m)
+        
     end
 
 
