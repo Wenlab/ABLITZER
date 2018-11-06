@@ -27,6 +27,7 @@ end
 
 trials = cat(1,PI.Trial);
 t = (1:length(trials)) * 2; % mins
+t(end-9:end) = t(end-9:end) + 1; % shift the time due to the blackout
 
 figure;
 plot(t,trials);

@@ -4,7 +4,9 @@
 aObj = ABLITZER;
 date = inputdlg;
 date = string(date{1,1});
+
 aObj.loadYamls([],'F:\FishExpData\',date);
+%aObj.loadMats([],'D:\FishExpData\ABLITZER_DATA\',date);
 
 
 %% Evaluate performance

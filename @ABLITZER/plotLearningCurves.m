@@ -53,6 +53,7 @@ NLers = trMat(idxNL,:);
 figure;
 hold on;
 t = (1:size(trMat,2))*2; % min
+t(end-9:end) = t(end-9:end) + 1; % shift the time due to the blackout
 if whichClass == 0
     meanL = mean(Lers,1);
     semL = std(Lers,1,1)/sqrt(numL); % standard error of the mean
