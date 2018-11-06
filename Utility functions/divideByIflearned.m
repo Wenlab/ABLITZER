@@ -12,6 +12,7 @@ end
 Learners = divideBylearning(a,1);
 non_Learners = divideBylearning(a,0);
 end
+
 function members = divideBylearning(a,m)
     members=[];
     q=1;

@@ -1,3 +1,20 @@
+%   Copyright 2018 Wenbin Yang <bysin7@gmail.com>
+%   This file is part of A-BLITZ-ER[1] (Analyzer of Behavioral Learning
+%   In The ZEbrafish Result.) i.e. the analyzer of BLITZ[2].
+%
+%   BLITZ (Behavioral Learning In The Zebrafish) is a software that
+%   allows researchers to train larval zebrafish to associate
+%   visual pattern with electric shock in a fully automated way, which
+%   is adapted from MindControl.[3]
+%   [1]: https://github.com/Wenlab/ABLITZER
+%   [2]: https://github.com/Wenlab/BLITZ
+%   [3]: https://github.com/samuellab/mindcontrol
+
+
+%   Current Version: 1.1
+%   Author: Wenbin Yang <bysin7@gmail.com>
+%   Modified on: Nov. 2, 2018
+
 %custom bar plot with several options:
 %1. grouped/not grouped
 %2. w/o errorbar
