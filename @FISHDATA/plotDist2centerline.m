@@ -56,7 +56,6 @@ function plotDist2centerline(obj,...FISHDATA object
         y2CL = calcDist2Centerline(pIdx,headY,yDiv,pixelSize);
         
         % plot figure
-        figure;
         hold on;
         
         % plot shadows if asked
@@ -68,7 +67,7 @@ function plotDist2centerline(obj,...FISHDATA object
             fill(X2,Y,[0.9,0.9,0.9],'EdgeColor','none');
         end
         
-        plot(t,y2CL,'k');
+        scatter(t,y2CL,'k.');
         
         % plot shocking events if asked
         if shockFlag
@@ -95,10 +94,9 @@ function plotDist2centerline(obj,...FISHDATA object
         y2CL = calcDist2Centerline(pIdx,headY,yDiv,pixelSize);
         
         % plot figure
-        figure;
         hold on;
         
-        plot(t,y2CL,'k');
+        scatter(t,y2CL,'k.');
         
         xlim([min(t)-1,max(t)+1]);
         ylim([-15,15]);
