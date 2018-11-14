@@ -8,6 +8,7 @@
 %       2. obj.removeInvalidData(ifPaired,qualThre),
 %  
 %
+% Test git add and commit single file
 % save FishData into different files based on keys
 function saveData(obj,... % ABLITZER object
     keys,... % keys to classify fishData into groups
