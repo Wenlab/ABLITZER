@@ -15,7 +15,7 @@ for i=1:length(obj.FishStack)
     % Assign values to output
     output(i).ID = obj.FishStack(i).ID;
     output(i).Age = obj.FishStack(i).Age;
-    output(i).Task = obj.FishStack(i).ExpTask;
+    output(i).Task = string(obj.FishStack(i).ExpTask);
     output(i).CSpattern = obj.FishStack(i).CSpattern;
     output(i).DataQuality = obj.FishStack(i).Res.DataQuality;
     % PItime
