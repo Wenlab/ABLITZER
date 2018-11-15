@@ -20,7 +20,7 @@ keys = string(varargin(1:2:end));
 values = varargin(2:2:end);
 
 %% Process key-value pairs
-obj.classifyFishByKeys(keys);
+obj.classifyFish(keys);
 str = values2str(values);
 Values = cat(1,obj.FishGroups.Value);
 IDX = find(Values == str);
