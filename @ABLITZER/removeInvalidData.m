@@ -20,7 +20,7 @@ function removeInvalidData(obj,... % ABLITZER object
 if nargin == 1
     fprintf('Please enter **paired** or **unpaired** as the 1st argument\n');
     fprintf('to remove fishData whose data quality lower than the threshold.');
-    exit();
+    return;
 end
 
 
@@ -57,7 +57,7 @@ elseif strcmpi(ifPaired,'unpaired') % remove invalid fishData individually
     end
     for i = 1:length(obj.FishStack)
         fish = obj.FishStack(i);
-        if fish.DataQuality < qualThre
+        if fish.Res.DataQuality < qualThre
             badIndices = cat(1,badIndices,i);
         end
     end
@@ -66,7 +66,7 @@ elseif strcmpi(ifPaired,'unpaired') % remove invalid fishData individually
 else
     fprintf('Please enter **paired** or **unpaired** as the 1st argument\n');
     fprintf('to remove fishData whose data quality lower than the threshold.');
-    exit();
+    return;
 end
 
 
