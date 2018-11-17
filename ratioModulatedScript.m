@@ -5,7 +5,8 @@ aObj = ABLITZER;
 date = inputdlg;
 date = string(date{1,1});
 
-aObj.loadYamls([],'F:\FishExpData\',date);
+keys = [date,"OL"];
+aObj.loadYamls([],'F:\FishExpData\',keys);
 %aObj.loadMats([],'D:\FishExpData\ABLITZER_DATA\',date);
 
 
@@ -17,7 +18,7 @@ end
 
 %% Remove invalid data
 
-aObj.removeInvalidData("paired",0.95);
+% aObj.removeInvalidData("paired",0.95);
 
 %% Visualize results
-% obj.plotPIs(2,'positional');
+% aObj.plotPIs(2,'positional');
