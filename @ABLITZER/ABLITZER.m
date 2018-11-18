@@ -72,6 +72,10 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         % Find desired fish by providing key-value pairs
         indices = findFish(obj,varargin);
         
+        
+        % Find all learners in FishStack
+        [idxL, idxNL] = findLearners(obj);
+        
         % Plot performance index (positional/turning) of different groups 
         % (1. exp only; 2. with self-control; 3. with unpaired control)
         % Normally, use this function
