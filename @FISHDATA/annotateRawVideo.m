@@ -4,7 +4,7 @@
 function annotateRawVideo(obj,startFrame,videoName)
 if nargin == 1
     startFrame = 1;
-    [f,p] = uigetfile();
+    [f,p] = uigetfile('*.avi');
     videoName = [p,f];
 elseif nargin == 2
    [f,p] = uigetfile('*.avi');
