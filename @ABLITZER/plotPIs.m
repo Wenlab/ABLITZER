@@ -27,7 +27,7 @@ end
 
 tasks = cat(1,output.Task);
 if numGroups == 1 % plot the experiment group only
-    idxExp = find(strcmp(tasks,'OLexp')); 
+    idxExp = find(contains(tasks,'exp','IgnoreCase',true)); 
     if strcmpi(metric,"positional")
         PIs = cat(2,cat(1,output(idxExp).PITime_Baseline),cat(1,output(idxExp).PITime_Test));
         yLab = "Positional Index";
@@ -40,8 +40,8 @@ if numGroups == 1 % plot the experiment group only
     xtLabels = ["Experiment"];
     
 elseif numGroups == 2 % plot the experiment group with the self-control group
-    idxExp = find(strcmp(tasks,'OLexp')); 
-    idxCtrl = find(strcmp(tasks,'OLcontrol')); 
+    idxExp = find(contains(tasks,'exp','IgnoreCase',true)); 
+    idxCtrl = find(contains(tasks,'control','IgnoreCase',true)); 
     if strcmpi(metric,"positional")
         PIs = cat(2,cat(1,output(idxCtrl).PITime_Baseline),cat(1,output(idxCtrl).PITime_Test),...
             cat(1,output(idxExp).PITime_Baseline),cat(1,output(idxExp).PITime_Test));
