@@ -1,9 +1,9 @@
 % plot learning curves of learners, non-learners, and the all
 function plotLearningCurves(obj, ... % ABLITZER object
-    metric, ... % metric type (positional/turning/shock)
+    metric, ... % metric type (positional/turning)
     whichClass) % which classes to plot (0. all fish 1. learners only; 2. with non-learners)
     
-fprintf('Please make sure fish performance are rated.\n');
+fprintf('Please make sure fish performances have been rated.\n');
 
 
 obj.classifyFish("ExpTask");
