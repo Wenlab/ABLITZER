@@ -22,7 +22,7 @@ obj.classifyFish("ExpTask");
 if numGroups > length(obj.FishGroups)
     fprintf('No data available for the entered numGroups\n');
     fprintf('Please enter 1 or 2 for the numGroups');
-    exit(0);
+    return;
 end
 
 tasks = cat(1,output.Task);
