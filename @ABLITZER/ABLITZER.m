@@ -84,6 +84,10 @@ classdef ABLITZER < handle % Make the class a real class not a value class
         % after "classifyFishByKeys".
         plotPIs(obj,numGroups,metric);
         
+        % Plot performance index (positional/turning) of learners,
+        % non-learners, and the all
+        plotLearnersPerformance(obj, metric);
+        
         % plot learning curves of learners, non-learners, and the all
         plotLearningCurves(obj, metric, whichClass);
         
