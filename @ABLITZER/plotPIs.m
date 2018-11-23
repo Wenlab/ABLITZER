@@ -13,7 +13,7 @@
 %  TODO:
 
 
-function [sigMat,PIs] = plotPIs(obj,...ABLITZAER object
+function [sigMat,PIs] = plotPIs(obj,... %ABLITZAER object
 numGroups,... % 1: exp only; 2: with self-control; 3: with unpaired control
 metric)    % "positional" or "turning"
 
