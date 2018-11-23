@@ -173,17 +173,18 @@ function drawSigStar(x1,...% x-psotion of column 1
  line([x1,x2],[y,y],'Color',[0,0,0]);
  x = (x1+x2)/2;
  if p > 0.05 % n.s.
-     text(x,y+0.05,'n.s.','FontSize',14);
+     str = sprintf('n.s. p=%6.4f\n',p);
  elseif p < 0.0001 % "****"
-     text(x,y+0.05,'****','FontSize',20);
+     str = sprintf('**** p=%6.4f\n',p);
  elseif p < 0.001 % "***"
-     text(x,y+0.05,'***','FontSize',20);
+     str = sprintf('*** p=%6.4f\n',p);
  elseif p < 0.01 % "**"
-     text(x,y+0.05,'**','FontSize',20);
+     str = sprintf('** p=%6.4f\n',p);
  elseif p < 0.05 % "*"
-     text(x,y+0.05,'*','FontSize',20);
+     str = sprintf('* p=%6.4f\n',p);
  end
-
+ 
+ text(x,y+0.05,str,'FontSize',14);
 
 
 end
