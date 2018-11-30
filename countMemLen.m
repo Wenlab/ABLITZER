@@ -1,7 +1,7 @@
 % count learners' memory lengths
 
 aObj = ABLITZER;
-aObj.loadMats([],'F:\Shiwanzhuo\GCaMP\',"OL");
+aObj.loadMats([],'F:\FishData\',"OL");
 %% Plot distance to centerline for each fish in the experiment group
 h = figure;
 figNum = h.Number;
