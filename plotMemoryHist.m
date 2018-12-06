@@ -1,5 +1,5 @@
 y = zeros(4,1);
-FishStack = MemoryLengthStack(3).SmartfishStack;
+FishStack = MemLenStat_GCaMP(1).SmartfishStack;
 ML = cat(1,FishStack.MemoryLength);
 meanML = round(mean(ML));
 for n = 1:length(FishStack)
@@ -21,7 +21,7 @@ xlabel('Memory Length(s)');
 ylabel('Count');
 line([meanML,meanML],ylim,'Color','m');
 ticks = get(gca,'XTick');
-ticklabels = {'240~360','480~720','840~960','Not ectinct'};
+ticklabels = {'240~360','480~720','840~960','Not extinct'};
 [ticks,idx] = sort(ticks);
 ticklabels = ticklabels(idx);
 set(gca,'Xtick',ticks,'XTickLabel',ticklabels);

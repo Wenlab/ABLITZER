@@ -1,13 +1,13 @@
 % count learners' memory lengths
 
 aObj = ABLITZER;
-aObj.loadMats([],'F:\FishData\',"OL");
+aObj.loadMats([],'F:\FishData\',["OL","RGB96"]);
 %% Plot distance to centerline for each fish in the experiment group
 h = figure;
 figNum = h.Number;
 aObj.classifyFish("ExpType");
 idxExp = aObj.FishGroups(2).Data;
-SmartfishStack = struct('fishAge',NaN,'fishID','','MemoryLength',NaN);
+SmartfishStack = struct('fishAge',NaN,'fishID','','MemoryLength',NaN,'ExtinctRate',NaN);
 MemoryLengthStack = struct('CSPattern','','SmartfishStack',[]);
 MemoryLengthStack(1).CSPattern = "RGB32";
 MemoryLengthStack(2).CSPattern = "RGB43";
@@ -32,12 +32,5 @@ for i = 1:length(idxExp)
         MemoryLengthStack(k).SmartfishStack(l+1).fishAge = fish.Age;
         MemoryLengthStack(k).SmartfishStack(l+1).fishID = fish.ID;
         MemoryLengthStack(k).SmartfishStack(l+1).MemoryLength = extincTime;
-    % fprintf("%s-%s-%ddpf-%s-%s\n",fish.ExpDate,fish.ExpTime,fish.Age,fish.ID,fish.CSpattern);
-    % fprintf('Smart fish\n');
-    % fprintf('Memory Length (s): %d\n',extincTime);
-    % else
-    % fprintf('Stupid fish\n');
     end
-    % fprintf('P-value: %4.2f\n',p);
-    % pause;
 end
