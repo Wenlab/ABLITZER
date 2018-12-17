@@ -3,7 +3,7 @@
 function boutStat = boutAnalysis(obj)
 boutStat = struct;
 
-pixelSize = 30/300;
+pixelSize = 40/fish.ConfinedRect(4);
 spThre = 0.5 * 1 ./ pixelSize; % 1.0 mm/s
 durThre = 2; % frames, 200 ms
 cumLen = calcAccumLen(obj);
@@ -23,7 +23,7 @@ for i = 1:numBout
         boutStat(i).interval = boutStat(i).start - boutStat(i-1).end;
     end
     tempVec = obj.Frames(idx(1)).Head - obj.Frames(idx(end)).Head;
-    boutStat(i).dist = norm(tempVec);
+    boutStat(i).dist = norm(tempVec) * pixelSize;
     
     
 end
