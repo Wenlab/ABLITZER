@@ -86,6 +86,12 @@ classdef FISHDATA < matlab.mixin.SetGet % inherit get method
 
         % Calculate fish swimming speed
         swimSpeed = calcSwimSpeed(obj,expPhase);
+        
+        % calculate the accumulated length of fish swimming
+        cumLen = calcAccumLen(obj);
+        
+        % behavioral analysis based on bout events
+        boutStat = boutAnalysis(obj);
 
         % Measure the memory extinction in the task
         extTime = measureExtinction(obj);
