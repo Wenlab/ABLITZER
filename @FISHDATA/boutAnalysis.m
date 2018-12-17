@@ -16,7 +16,7 @@ for i = 1:numBout
     idx = find(L == i);
     boutStat(i).start = idx(1); % frame
     boutStat(i).end = idx(end);
-    boutStat(i).duration = length(idx);
+    boutStat(i).duration = length(idx)/10; % seconds
     if i == 1
         boutStat(i).interval = nan;
     else
