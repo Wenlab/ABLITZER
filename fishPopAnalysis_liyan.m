@@ -3,6 +3,8 @@
 %sObj.loadMats; % load fishData from the same strain
 
 %% Process the data, do the computation
+numBins = 10;
+pixelSize = 0.09; % mm/pixel
 numFish = length(sObj.FishStack);
 popStat = struct;
 motRatios = zeros(numFish,1); % the percentage of motile states
@@ -16,11 +18,15 @@ varBoutIntervals = zeros(numFish,1); % the mean of bout intervals
 varBoutDurations = zeros(numFish,1);
 varBoutDistances = zeros(numFish,1);
 
+ds = zeros(numBins,numBins,numFish);
 for i = 1:numFish
     fish = sObj.FishStack(i);
     fish.evaluateDataQuality;
     fish.calcPIturn;
-    
+    heads = cat(1,fish.Frames.Head);
+    [N,Xedges,Yedges] = histcounts2(heads(:,1),heads(:,2),numBins);
+    N = N / sum(N(:));
+    ds(:,:,i) = N;
     boutStat = fish.boutAnalysis;
     if isempty(boutStat)
         motRatios(i) = fish.Res.DataQuality;
@@ -65,6 +71,21 @@ popStat.meanBoutDistances = meanBoutDistances;
 popStat.varBoutDurations = varBoutIntervals;
 
 %% Visualize the results
+% plot the averaged heatmap of all fish
+meanN = mean(ds,3);
+width = fish.ConfinedRect(3);
+height = fish.ConfinedRect(4);
+xlabels = ((1:width/numBins:width) + width/2/numBins)*pixelSize;
+ylabels = ((1:height/numBins:height) + height/2/numBins)*pixelSize;
+
+figure;
+h = heatmap(xlabels,ylabels,meanN,'CellLabelColor','none');
+
+title('Heat map of fish track density distribution');
+xlabel('Horizontal (mm)');
+ylabel('Vertical (mm)');
+
+
 figure;
 UnivarScatter(motRatios,'Label',{char(fish.Strain)});
 ylabel('Motile Ratio');
