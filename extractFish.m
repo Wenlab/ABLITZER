@@ -20,21 +20,21 @@ function extractFish()
         scatter(centroids(:,1),centroids(:,2),20,'b','filled');
         pause(0.1);
 
-%% scatter the tail of the two fishes     
+%% scatter the tail of the two fishes
         [B,~] = bwboundaries(bwFish,'noholes');
         L = bwlabel(bwFish);   %get the points of two fishes
         [fish_x, fish_y] = find(L==1);
-        fish = [fish_x,fish_y]';           
+        fish = [fish_x,fish_y]';
         C = B{1,1};
         tail = find_tail(C,fish);
         scatter(tail(2,1),tail(1,1),20,'r','o')
         pause(0.1);
         disp(i);
-   end     
-end     
+   end
+end
 
 %% function:get the point of tail
-function head = find_tail(B,fish)
+function tail = find_tail(B,fish)
     c = minBoundingBox(B');
     C = zeros(2,1);
     C(1) = norm(c(:,1) - c(:,2));
@@ -42,54 +42,55 @@ function head = find_tail(B,fish)
     min_norm_c = min(C);
     if min_norm_c == C(1)
         f1 = c(:,1);  f2 = c(:,2);  f3 = c(:,3);  f4 = c(:,4);
-    else     
+    else
         f1 = c(:,2);  f2 = c(:,3);  f3 = c(:,4);  f4 = c(:,1);
     end
-    f1_m = (f1+f2)./2;   f2_m = (f3+f4)./2;
-    f3_m = (f2+f3)./2;   f4_m = (f4+f1)./2;
-    [f_mid,D] = find_D(fish,f1_m,f2_m,f3_m,f4_m);
+    midPoint = [(f1+f2)./2,(f3+f4)./2,(f2+f3)./2,(f4+f1)./2];
+    [tail_midPoint,D] = findMidpointandDistance(fish,midPoint);
     D_norm = sqrt(D(1,:).^2+D(2,:).^2);
     min_D_norm = min(D_norm);
     idx = find(D_norm == min_D_norm);
-    head = D(:,idx) + f_mid;
+    tail = D(:,idx) + tail_midPoint;
 end
 
 %% get a matrix of distance and f_mid
-function  [f_mid,D] = find_D(fish,f1_m,f2_m,f3_m,f4_m)
-    k = (f3_m(1,1) - f4_m(1,1))./(f3_m(2,1) - f4_m(2,1));
-    b = f3_m(1,1) - k.*f3_m(2,1); 
-    if f3_m(2,1) == f4_m(2,1)
-        num1 = length(find(fish(2,:) - f3_m(2,1)<0));
-        num2 = length(find(fish(2,:) - f3_m(2,1)>0));
+function  [tail_midPoint,D] = findMidpointandDistance(fish,midPoint)
+  % tail_midPoint is the midpoint of the edge of the rectangle closest to the tail
+  % D is a
+    k = (midPoint(1,3) - midPoint(1,4))./(midPoint(2,3) - midPoint(2,4));
+    b = midPoint(1,3) - k.*midPoint(2,3);
+    if midPoint(2,3) == midPoint(2,4)
+        num1 = length(find(fish(2,:) - midPoint(2,3)<0));
+        num2 = length(find(fish(2,:) - midPoint(2,3)>0));
         if num1 > num2
-           if f1_m(2,1) > f2_m(2,1)
-                f_mid = f1_m;    D = fish - f1_m;
+           if midPoint(2,1) > midPoint(2,2)
+                tail_midPoint = midPoint(:,1);    D = fish - midPoint(:,1);
            else
-                f_mid = f2_m;   D = fish - f2_m;
+                tail_midPoint = midPoint(:,2);    D = fish - midPoint(:,2);
            end
         else
-           if  f1_m(2,1) < f2_m(2,1)
-                f_mid = f1_m;    D = fish - f1_m;
+           if midPoint(2,1) < midPoint(2,2)
+                tail_midPoint = midPoint(:,1);    D = fish - midPoint(:,1);
            else
-                f_mid = f2_m;    D = fish - f2_m;
+                tail_midPoint = midPoint(:,2);    D = fish - midPoint(:,2);
            end
-        end   
+        end
     else
         num1 = length(find(k.*fish(2,:)+b-fish(1,:)<0));
         num2 = length(find(k.*fish(2,:)+b-fish(1,:)>0));
         if num1 > num2
-            if  f1_m(1,1) < f2_m(1,1)
-                  f_mid = f1_m;    D = fish - f1_m;
-            else
-                  f_mid = f2_m;    D = fish - f2_m;
-            end
+          if  midPoint(1,1) < midPoint(1,2)
+                tail_midPoint = midPoint(:,1);    D = fish - midPoint(:,1);
+          else
+                tail_midPoint = midPoint(:,2);    D = fish - midPoint(:,2);
+          end
         else
-           if  f1_m(1,1) > f2_m(1,1)
-                   f_mid = f1_m;   D = fish - f1_m;
-           else
-                   f_mid=f1_m;   D=fish-f2_m;
-           end
+          if  midPoint(1,1) > midPoint(1,2)
+                tail_midPoint = midPoint(:,1);    D = fish - midPoint(:,1);
+          else
+                tail_midPoint = midPoint(:,2);    D = fish - midPoint(:,2);
+          end
         end
     end
-      
+
 end
