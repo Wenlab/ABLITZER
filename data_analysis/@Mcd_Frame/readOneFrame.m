@@ -26,14 +26,6 @@ while ~isEndOfFrame(tline)
                 [sElapsed tline]=getVal(fid,tline);
             case 'msRemElapsed'
                 [msRemElapsed tline]=getVal(fid,tline);
-            case 'TimeStamp(ns)'
-                [mcdf.TimeStamp tline]=getVal(fid,tline);
-            case 'TimeStamp'
-                [mcdf.TimeStamp tline]=getVal(fid,tline); 
-            case 'EyeOrientation'
-                [mcdf.EyeOrientation tline]=getxy(fid,tline);
-            case 'CrossedAngle'
-                [mcdf.CrossedAngle tline]=getVal(fid,tline);
             case 'Head'
                 [mcdf.Head tline]=getxy(fid,tline);
             case 'Tail'
@@ -57,17 +49,23 @@ while ~isEndOfFrame(tline)
             case 'IllumRectRadius'
                 [mcdf.IllumRectRadius tline]=getxy(fid,tline);
             case 'StageVelocity'
-                [mcdf.StageVelocity tline]=getij(fid,tline);     
+                [mcdf.StageVelocity tline]=getij(fid,tline);
+            case 'StagePosition'
+                [mcdf.StagePosition tline]=getij(fid,tline);
             case 'ProtocolIsOn'
                 [mcdf.ProtocolIsOn tline]=getVal(fid,tline);
             case 'ProtocolStep'
                 [mcdf.ProtocolStep tline]=getVal(fid,tline);
+            case 'HeadCurv'
+                [mcdf.HeadCurv tline]=getVal(fid,tline);
+            case 'HeadCurvDeriv'
+                [mcdf.HeadCurvDeriv tline]=getVal(fid,tline); 
+            case 'LaserPower'
+                [mcdf.GreenLaser mcdf.BlueLaser tline]=getLaserPower(fid,tline);
             otherwise
                 disp(['fname matched nothing: ',fname])
                 tline=fgets(fid);
-                
-                
-        end
+       end
         
         
         
@@ -171,33 +169,6 @@ else
 end
 end
 
-
-function [xy tline] = getlr(fid,tline)
-% Get the xy values from a field that has two subfields, x & y
-
-%The current line should be a field with no values, only children
-if ~isFieldWithValue(tline)
-    %Advance to the next line
-    tline=fgets(fid);
-    fname= getField(tline);
-    while strcmp(fname,'LeftEye') || strcmp(fname,'RightEye')
-        switch fname
-            case 'LeftEye'
-                [xy(1) tline]=getVal(fid,tline);
-                fname= getField(tline);
-            case 'RightEye'
-                [xy(2) tline]=getVal(fid, tline);
-                fname= getField(tline);
-                
-        end
-    end
-         
-else
-    %Something was wrong
-    xy=NaN;
-end
-end
-
 function [ij tline] = getij(fid,tline)
 % Get the ij values from a field that has two subfields, x & y
 
@@ -225,6 +196,36 @@ else
     xy=NaN;
 end
 end
+
+function[Green Blue tline]=getLaserPower(fid,tline)
+%Get the blue and green laser powers from a YAML struct
+%The current line should be a field with no values, only children
+if ~isFieldWithValue(tline)
+    %Advance to the next line
+    tline=fgets(fid);
+    fname= getField(tline);
+    while strcmp(fname,'Blue') || strcmp(fname,'Green')
+        switch fname
+            case 'Blue'
+                [Blue tline]=getVal(fid,tline);
+                fname= getField(tline);
+            case 'Green'
+                [Green tline]=getVal(fid, tline);
+                fname= getField(tline);
+                
+        end
+    end
+    
+    
+    
+else
+    %Something was wrong
+    Green=-1;
+    Blue=-1;
+end
+end
+
+
 
 function [data tline]=getCVseq(fid,tline)
 %Parce the CV Sequence and advanced the line feed
@@ -279,9 +280,11 @@ end
 
 function vec=parseIntDataStr(str)
 %Parses a string containing a bunch of integers delimited in some way
-ind=regexp(str,'[0-9]*');
-for n=1:length(ind)
-    vec(n)=sscanf(str(ind(n):end),'%d');
+%strs = regexp(str,'[0-9]*','match');
+%vec = str2double(strs);
+ind =  regexp(str,'[0-9]*','start');
+vec = zeros(size(ind));
+for j = 1:length(ind)
+    vec(j) = sscanf(str(ind(j):end), '%d');
 end
-
 end

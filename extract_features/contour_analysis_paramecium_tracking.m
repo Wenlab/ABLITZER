@@ -18,14 +18,13 @@ istart=str2double(answer{1});
 iend=str2double(answer{2});
 fps=str2double(answer{3});
 
-prompt = {'Enter max parameciums area:','Enter min parameciums area:','Fish body width:'};
+prompt = {'Enter max parameciums area:','Enter min parameciums area:'};
 dlg_title = 'Select paramecium bw Area Range';
 num_lines = 1;
-def = {num2str(0), num2str(0), num2str(0)};
+def = {num2str(0), num2str(0)};
 answer = inputdlg(prompt,dlg_title,num_lines,def);
 area_max = floor(str2double(answer{1}));
 area_min = floor(str2double(answer{2}));
-BodyWidth = floor(str2double(answer{3}));
 
 N=iend-istart+1;
 
@@ -126,9 +125,9 @@ for j=istart:iend
     
     img_bw=imclose(img_bw,se);
  %   img_bw=imfill(img_bw,'holes');
-    img_bw = bwareaopen(img_bw,1000);
+    img_bw = bwareaopen(img_bw,200);
     
-    se2=strel('disk',round(BodyWidth/2));
+    se2=strel('disk',7);
     
     img_bw_head = imopen(img_bw,se2);
     

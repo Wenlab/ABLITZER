@@ -68,9 +68,6 @@ function [head_end_position,head_tip_position,true_orientation]=compute_head_pos
     d=sqrt((B2(:,1).^2+B2(:,2).^2)).*sin_theta;
 
     diffs_prior=abs(bpts_orientation-head_orientation_prior);
-    diffs_cos = cos(diffs_prior);
-    diffs_cos_plus = abs(diffs_cos+1);
-    diffs_cos_minus = abs(diffs_cos-1);
     
     [~,idx]=sort(d); %acending order
     
@@ -89,7 +86,7 @@ function [head_end_position,head_tip_position,true_orientation]=compute_head_pos
     
     
     for j=1:B1_size
-        if ((diffs_cos_minus(idx(j)))<0.2)
+        if ((diffs_prior(idx(j)))<pi/3)
             head_idx=idx(j);
             head_tip_position=B1(head_idx,:);
             true_orientation=bpts_orientation(head_idx);
@@ -100,7 +97,7 @@ function [head_end_position,head_tip_position,true_orientation]=compute_head_pos
     end
             
    for j=1:B1_size
-        if ((diffs_cos_plus(idx(j)))<0.2)
+        if ((diffs_prior(idx(j)))>pi/3)
             head_idx=idx(j);
             head_end_position=B1(head_idx,:);
     

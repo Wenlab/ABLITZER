@@ -54,10 +54,8 @@ function [midline_mixed,path1_rescaled,path2_rescaled,tail_position]=compute_cen
     
     v_backtip_B = B_whole - repmat(headbacktip_position,[size(B_whole,1),1]); 
     circle_points_idx = find(sqrt(v_backtip_B(:,1).^2+v_backtip_B(:,2).^2)<20);
-    
     head_orientation_vector = head_position-headbacktip_position;
     head_orientation_vector = head_orientation_vector./norm(head_orientation_vector);
-    
     %[sin(head_props(num).Orientation*pi/180),cos(head_props(num).Orientation*pi/180)];
     sin_B_orient = (v_backtip_B(:,2)*head_orientation_vector(:,1)-v_backtip_B(:,1)*head_orientation_vector(:,2))./sqrt(v_backtip_B(:,1).^2+v_backtip_B(:,2).^2);
     
@@ -74,11 +72,8 @@ function [midline_mixed,path1_rescaled,path2_rescaled,tail_position]=compute_cen
    % section_point_idx = find(B_whole(:,1)==head_section_points(2,1) & B_whole(:,2)==head_section_points(2,2));
 
     tmp_idx2 = mod(tmp_idx2+1-tmp_idx1,size(B_whole,1));
-    
-    B_diff_head = B_whole - repmat(head_position,size(B_whole,1),1);
-    B_diff_head = B_diff_head(:,1).^2+B_diff_head(:,2).^2;
-    
-    if min(B_diff_head(1:tmp_idx2))>min(B_diff_head((tmp_idx2+1):end))
+   
+    if tmp_idx2 > size(B_whole,1)/2
         B1 = B_whole(1:tmp_idx2,:);
     else
         B_whole = circshift(B_whole,[1-tmp_idx2,0]);
@@ -105,8 +100,8 @@ function [midline_mixed,path1_rescaled,path2_rescaled,tail_position]=compute_cen
     B1_angle_cos = (AA(:,1).*BB(:,1)+AA(:,2).*BB(:,2))./sqrt(AA(:,1).^2+AA(:,2).^2)./sqrt(BB(:,1).^2+BB(:,2).^2);
 
 
-    [~,tail_idx] = max(B1_angle_cos((ksep+1):B1_size-ksep)); % find point on boundary w/ minimum angle between AA, BB
-    tail_idx = tail_idx + ksep;
+    [~,tail_idx] = max(B1_angle_cos(ksep:B1_size-ksep+1)); % find point on boundary w/ minimum angle between AA, BB
+    tail_idx = tail_idx + ksep-1;
     
     tail_position=B1(tail_idx,:);
     %B1_angle2 = circshift(B1_angle, -min1);

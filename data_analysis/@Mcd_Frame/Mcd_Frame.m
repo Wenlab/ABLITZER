@@ -3,9 +3,6 @@ classdef Mcd_Frame
     properties
         FrameNumber = NaN; %internal frame number, not nth recorded frame
         TimeElapsed = NaN; %time since start of experiment (in s)
-        TimeStamp = NaN %time stamp on each frame (in ns)
-        EyeOrientation = [NaN NaN];
-        CrossedAngle = NaN;
         Head = [NaN NaN]; %position in pixels on camera
         Tail = [NaN NaN]; %position in pixels on camera
         BoundaryA = [1:200]*NaN; %2*N length vector xyxyxy position in pixels on camera
@@ -18,8 +15,19 @@ classdef Mcd_Frame
         IllumRectOrigin =0; %center of the freehand rectangular illumination in wormspace
         IllumRectRadius =0; %xy value describing dimension of rectangle
         StageVelocity =0; %velocity sent to stage in stage units/second
+        StagePosition =0; %position of stage in stage units
         ProtocolIsOn =0; %bool whether you're using protocol
         ProtocolStep =0; %what step within protocol is currently selected
+        GreenLaser =0; %int 0-100 of relative laser power. -1 means leaser is not being controlled programmatically
+        BlueLaser =0; %int 0-100 of relative laser power. -1 means leaser is not being controlled programmatically
+        HeadCurv =0; %curvature of the head
+        HeadCurvDeriv =0; %derivative of curvature of the head
+    end
+    
+    methods (Static)
+        mcdf_arr = yaml2matlab(fname,endFrame);
+        mcdf = readOneFrame(fid);
+        success = seekToFirstFrame(fid);
     end
         
 end
