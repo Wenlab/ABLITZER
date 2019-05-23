@@ -43,7 +43,11 @@ function angle = extractFish()
             angle(i,1) = abs(acos(cos)/pi*180);
         end
         disp(i);
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 4852705b865b585265ef388f073008759355fd85
     end
    baseline_angle = mean(angle(1:m));
    angle = angle - baseline_angle;
