@@ -1,5 +1,5 @@
 function angle = extractFish()
-% get the angle between vector "head-centroids" and vector "centroids-tail"
+% get the angle of between vector "head-centroids" and "centroids-tail"
     [f,p] = uigetfile('*.avi');
     fName = [p,f];
     vobj = VideoReader(fName);
