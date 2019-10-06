@@ -2,16 +2,40 @@ function [head,centroid,tail,angle] = getDataFromFreeSwim()
     % angle: vector "head-centroids" and vector "centroids-tail"
     ...centroids: the centroid of swimming bladder
     ...head: the midpoint of two eyes
-    ...tail:9/10 tail
+    ...tail: 9/10 tail
     [f,p] = uigetfile('*.avi');
     fName = [p,f];
-    vobj = VideoReader(fName);
-    n = 50;    % Use the first 200 frames 
-    angle = zeros(n,1);
-    for i = 1:n    
-        frame = readFrame(vobj);
-        grayImg = rgb2gray(frame);
-        BW = imbinarize(grayImg,'adaptive','ForegroundPolarity','dark','Sensitivity',0.85);
+    v0bj = VideoReader(fName);
+    numFrame = 5000;
+    BgFrame = 400;
+    n = 0;
+    ImgStack = zeros(v0bj.Height,v0bj.Width,BgFrame);
+ %   angle = zeros(n,1);
+    %% get the first two hundred ImgStack
+for i = 1:BgFrame                 
+    frame = readFrame(v0bj);       % read one frame from vObj
+    grayImg = rgb2gray(frame)./100;
+    ImgStack(:,:,i) = grayImg;
+end
+%% updata mean background image,get and imshow bwfish
+for i = BgFrame+1:numFrame         
+     n = n+1;         %meaningless,used for counting   
+     frame = readFrame(v0bj);
+     grayImg = rgb2gray(frame)./100;
+     [meanBg,ImgStack] = update_meanBg(grayImg,ImgStack); 
+     frontImg = double(grayImg) - meanBg;     %get frontImg
+                             %Convert image to binary image
+     idx = find(frontImg<0);      
+     frontImg(idx)=0;
+    
+      BW = imbinarize(frontImg,0.2);
+ 
+ 
+ 
+    
+     %   frame = readFrame(vobj);
+      %  grayImg = rgb2gray(frame);
+       % BW = imbinarize(grayImg,'adaptive','ForegroundPolarity','dark','Sensitivity',0.85);
         bwFish = bwareaopen(BW,1100);  % Remove objects in image containing fewer than 1100 pixels which often appear in the fish brain
         s = regionprops( bwFish,'centroid');
         centroid_raw = s.Centroid';
@@ -26,8 +50,9 @@ function [head,centroid,tail,angle] = getDataFromFreeSwim()
         D(1,:)=P(2,:);
          D(2,:)=P(1,:);
         [tail_raw,head_raw] = findRawTailHead(C,fish);
-        centroid(:,i) = head_raw*(1/4)+centroid_raw*(3/4);   % centroids: the centroid of swimming bladder
-        head(:,i) = head_raw*(7/8)+centroid_raw*(1/8);      % head: the midpoint of two eyes
+        centroid(:,i) = centroid_raw;
+    %    centroid(:,i) = head_raw*(1/4)+centroid_raw*(3/4);   % centroids: the centroid of swimming bladder
+        head(:,i) = head_raw*(3/4)+centroid_raw*(1/4);      % head: the midpoint of two eyes
              
         tailAxis = tail_raw - centroid(:,i);
         
@@ -35,11 +60,13 @@ function [head,centroid,tail,angle] = getDataFromFreeSwim()
         Pointb=[-tailAxis(1); tailAxis(2)];
         tailPt_a = centroid(:,i) + tailAxis * 9 / 10 + Pointa/4;
 	    tailPt_b = centroid(:,i) + tailAxis * 9 / 10 + Pointb/4;
+        d = [];
        for t = 1:length(D)
            d(t) = abs(det([tailPt_a-tailPt_b,D(:,t)-tailPt_a]))/norm(tailPt_a-tailPt_b);
        end
        idx = find(d<1);
        Y=[];
+      
        Y = D(:,idx);
        d1=[];
        d2=[];
@@ -76,9 +103,15 @@ function [head,centroid,tail,angle] = getDataFromFreeSwim()
         end
         disp(i);
 
+end
   
-    end
-  
+end
+
+%% function: updata mean background image 
+function [meanBg,ImgStack]=update_meanBg(grayImg,ImgStack)
+    ImgStack(:,:,1)=[];
+    ImgStack=cat(3,ImgStack,grayImg);
+    meanBg=mean(ImgStack,3);
 end
 
 %% function:get the point of raw tail and head
